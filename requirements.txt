@@ -1,0 +1,4 @@
+selenium
+ipykernel
+python-dotenv
+requests

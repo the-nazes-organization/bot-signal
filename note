@@ -1,0 +1,9 @@
+# Generate qr CODE 
+signal-cli link
+qr "asf" > img.png
+
+group_id=JHq3SP4I+DFaQ1ARTcz5GdTBoHPUZoI+buh0ehOzElA="
+
+
+create volume with credential manualy, don't do it with an entrypoint 
+use command to start python script
