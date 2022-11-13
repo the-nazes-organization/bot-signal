@@ -19,6 +19,3 @@ WORKDIR /app
 
 RUN useradd app
 USER app
-
-#volume for auth $HOME/.local/share/signal-cli/data/
-ENTRYPOINT sh entrypoint.sh
