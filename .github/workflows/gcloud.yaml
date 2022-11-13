@@ -63,4 +63,4 @@ jobs:
       run: |-
         gcloud compute instances update-container "signal-bot" \
           --zone "${{ env.GCE_INSTANCE_ZONE }}" \
-          --container-image "${{ secrets.DOCKER_HUB_USER }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }}"
+          --container-image "${{ steps.meta.outputs.tags }}"

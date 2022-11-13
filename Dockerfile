@@ -18,4 +18,4 @@ RUN mkdir /app
 WORKDIR /app
 COPY . . 
 
-CMD ["uvicorn", "signal_bot.backend.main:app", "--host=0.0.0.0"]
+CMD ["uvicorn", "signal_bot.backend.main:app", "--host=0.0.0.0", "--port=80"]
