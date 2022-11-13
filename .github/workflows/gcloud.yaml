@@ -13,6 +13,8 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  GCE_INSTANCE: signal-bot
+  GCE_INSTANCE_ZONE: us-central1-a
 
 jobs:
   gcloud_cicd:
@@ -24,20 +26,18 @@ jobs:
       packages: write
 
     steps:
-    - id: 'auth'
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: "Auth to google cloud"
+      id: 'auth'
       uses: 'google-github-actions/auth@v1'
       with:
         workload_identity_provider: "projects/417901482483/locations/global/workloadIdentityPools/my-pool/providers/my-provider"
-        service_account: 'my-service-account@my-project.iam.gserviceaccount.com'
+        service_account: 'my-service-account@signal-bot-368420.iam.gserviceaccount.com'
 
     - name: 'Set up Cloud SDK'
       uses: 'google-github-actions/setup-gcloud@v1'
-
-    - name: 'Use gcloud CLI'
-      run: 'gcloud info'
-
-    - name: Checkout repository
-      uses: actions/checkout@v3
 
     - name: Log in to the Container registry
       uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
@@ -59,3 +59,9 @@ jobs:
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+
+    - name: Deploy
+      run: |-
+        gcloud compute instances update-container "signal-bot" \
+          --zone "$GCE_INSTANCE_ZONE" \
+          --container-image "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
