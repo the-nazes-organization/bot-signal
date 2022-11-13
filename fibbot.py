@@ -20,31 +20,26 @@ logger.setLevel(logging.INFO)
 load_dotenv()
 
 parser = argparse.ArgumentParser(
-    description='Bot to send message from signal to facebook',
+    description="Bot to send message from signal to facebook",
 )
 parser.add_argument(
-    '--signal_id', '-s',
-    required=True,
-    type=str,
-    help='signal group id',
+    "--signal_id", "-s", required=True, type=str, help="signal group id",
 )
 parser.add_argument(
-    '--facebook_id', '-f',
-    required=True,
-    type=str,
-    help='facebook group id',
+    "--facebook_id", "-f", required=True, type=str, help="facebook group id",
 )
 args = parser.parse_args()
 signal.signal(signal.SIGINT, exit_ctl_c)
 
+
 def exit_ctl_c(signum, frame):
-    #clean selenium session if exit with ctl c
+    # clean selenium session if exit with ctl c
     res = requests.get("http://selenium:4444/status")
     id = input("Id to delete:")
     res_del = requests.delete(f"http://selenium:4444/session/{id}")
     logger.info(f"Clean session {res_del}: {res_del.content}")
     exit(1)
- 
+
 
 def extract_info(res):
     message = {}
@@ -114,7 +109,7 @@ def main():
     facebook.auth()
     logger.info("Waiting to auth facebook")
     time.sleep(20)
-    
+
     signal = Signal("+33681155580")
 
     handler(signal=signal, facebook=facebook)
@@ -126,7 +121,7 @@ if __name__ == "__main__":
         main()
     except Exception as e:
         logger.error(f"Main error : {e}")
-        #clean selenium session
+        # clean selenium session
         res = requests.get("http://selenium:4444/status")
         id = res.json()["value"]["nodes"][0]["slots"][0]["session"]["sessionId"]
         res_del = requests.delete(f"http://selenium:4444/session/{id}")

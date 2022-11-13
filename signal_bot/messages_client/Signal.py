@@ -8,6 +8,7 @@ logger.setLevel(logging.INFO)
 
 MESSAGE_BUFFER = 8192
 
+
 class Signal:
     def __init__(self, account, socket_path="/tmp/signal-cli/socket", id=42):
         self.signal = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)

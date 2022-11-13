@@ -7,11 +7,8 @@
 # To get a newer version, you will need to update the SHA.
 # You can also reference a tag or branch, but the action may change without warning.
 
-on:
-  push:
-    branches:
-      - main
-      - 'release/**'
+name: Deploy GCP
+on: [workflow_dispatch]
 
 env:
   REGISTRY: ghcr.io
