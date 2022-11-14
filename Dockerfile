@@ -1,5 +1,6 @@
 FROM python:bullseye
 
+EXPOSE 8000
 USER 0
 
 # Install signal-cli
@@ -11,11 +12,10 @@ RUN curl -sL -o /etc/apt/trusted.gpg.d/morph027-signal-cli.asc https://packaging
 		signal-cli-dbus-service
 
 COPY requirements.txt requirements.txt
-
 RUN pip install -r requirements.txt
 
 RUN mkdir /app
 WORKDIR /app
+COPY . . 
 
-RUN useradd app
-USER app
+CMD ["uvicorn", "signal_bot.backend.main:app", "--host=0.0.0.0", "--port=80"]

@@ -1,4 +1,6 @@
-selenium
+fastapi
 ipykernel
 python-dotenv
 requests
+selenium
+uvicorn[standard]

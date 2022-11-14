@@ -40,9 +40,9 @@ class Facebook:
             self.driver.find_element(by=By.ID, value="checkpointSubmitButton").click()
 
     def paste_content(self, elem, content):
-        #https://stackoverflow.com/questions/51706256/sending-emojis-with-seleniums-send-keys
+        # https://stackoverflow.com/questions/51706256/sending-emojis-with-seleniums-send-keys
         self.driver.execute_script(
-            f'''
+            f"""
                 const text = `{content}`;
                 const dataTransfer = new DataTransfer();
                 dataTransfer.setData('text', text);
@@ -51,14 +51,16 @@ class Facebook:
                 bubbles: true
                 }});
                 arguments[0].dispatchEvent(event)
-            ''',
-            elem
+            """,
+            elem,
         )
 
     def send_message(self, message, message_id):
         logger.info(f"Send message to {message_id}")
         self.driver.get(f"https://www.facebook.com/messages/t/{message_id}")
-        elem = self.driver.find_element(by=By.XPATH, value="//*[@aria-label='Écrire un message']")
+        elem = self.driver.find_element(
+            by=By.XPATH, value="//*[@aria-label='Écrire un message']"
+        )
         self.paste_content(elem, message)
         self.driver.find_element(
             by=By.XPATH, value="//*[@aria-label='Écrire un message']"
@@ -74,5 +76,3 @@ class Facebook:
         self.driver.delete_all_cookies()
         self.driver.refresh()
         self.driver.quit()
-
-
