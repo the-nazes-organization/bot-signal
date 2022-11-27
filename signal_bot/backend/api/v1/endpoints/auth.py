@@ -9,6 +9,8 @@ from signal_bot.backend.core.security import is_id_token_valid
 from signal_bot.backend import schemas
 
 settings = get_settings()
+logger = logging.getLogger(__name__)
+
 
 router = APIRouter()
 
@@ -16,26 +18,23 @@ def inject_or_delete_state_token(state: str, type: str = "inject") -> bool :
     modif = False
 
     with open(settings.GOOGLE.AUTH_ANTIFORGERY_FILE, "r+") as antiforgery_file:
-
         antiforgery_obj = json.load(antiforgery_file)
-        antiforgery_tokens : list = antiforgery_obj["tokens"]
 
-        try:
-            index_state = antiforgery_tokens.index(state)
+    if type == "inject":
+        if antiforgery_obj.get(state) == None:
+            antiforgery_obj[state] = True
+            modif = True
+            logger.info("State token injected")
+        
+    elif type == "delete":
+        if antiforgery_obj.get(state, None) != None:
+            del antiforgery_obj[state]
+            modif = True
+            logger.info("State token deleted")
 
-            if type == "delete":
-                antiforgery_tokens.pop(index_state)
-                modif = True
-    
-        except ValueError:
-            if type == "inject":
-                antiforgery_tokens.append(state)
-                modif = True
-
-        if modif == True:
-            antiforgery_file.seek(0)
+    if modif:
+        with open(settings.GOOGLE.AUTH_ANTIFORGERY_FILE, "w") as antiforgery_file:
             json.dump(antiforgery_obj, antiforgery_file)
-            antiforgery_file.truncate()
 
     return modif
 
@@ -49,10 +48,8 @@ async def google_auth() -> schemas.AuthRedirect :
     auth_url, state = flow.authorization_url()
 
     if inject_or_delete_state_token(state) == False:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Couldnt store state token for securing Google Authent connection"
-        )
+        logger.info("State token already exists")
+
     return {"redirect_url": auth_url}
 
 @router.get("/callback", response_model=schemas.AuthIdToken)
