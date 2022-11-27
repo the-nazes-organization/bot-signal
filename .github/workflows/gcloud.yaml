@@ -10,7 +10,7 @@
 name: Deploy GCP
 on:
   push:
-    branch:
+    branches:
       - main
 
 env:
