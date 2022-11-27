@@ -12,16 +12,10 @@ from signal_bot.backend.core.data import get_google_config
 
 settings = get_settings()
 
-def is_user_whitelisted(type: str, info: str) -> bool:
+def is_user_whitelisted(type: str, info: str) -> bool :
     with open(settings.WHITELIST_FILE, "r") as whitelist_file:
         whitelist_obj = json.load(whitelist_file)
-        whitelisted_infos : list = whitelist_obj[type]
-        try:
-            whitelisted_infos.index(info)
-            return True
-        except ValueError:
-            pass
-    return False
+    return True if whitelist_obj[type].get(info, False) else False
 
 def is_id_token_valid(token : str):
     invalidTokenException = HTTPException(
@@ -38,9 +32,8 @@ def is_id_token_valid(token : str):
 
     # To check sub value for everybody account because sub is unique email can change
     # sys.stdout.write(json.dumps(token_info))
-    if is_user_whitelisted("email", token_info["email"]) == False:
+    if not is_user_whitelisted("email", token_info["email"]):
         raise invalidTokenException
 
 def get_auth_user(authorization: str = Header()):
-    header_shredded = authorization.split("Bearer ")
-    is_id_token_valid(header_shredded[1])
+    is_id_token_valid(authorization[7:])
