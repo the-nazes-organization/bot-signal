@@ -1,3 +1,3 @@
 from .test import Test
 from .auth import AuthRedirect
-from .auth import AuthIdToken
+from .auth import AuthToken

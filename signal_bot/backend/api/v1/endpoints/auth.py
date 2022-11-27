@@ -55,8 +55,8 @@ async def google_auth(request: Request):
 
     return RedirectResponse(auth_url)
 
-@router.get("/callback", response_model=schemas.AuthIdToken)
-async def google_auth_callback(request: Request, state: str, code: str) -> schemas.AuthIdToken :
+@router.get("/callback", response_model=schemas.AuthToken)
+async def google_auth_callback(request: Request, state: str, code: str) -> schemas.AuthToken :
 
     if inject_or_delete_state_token(state, "delete") == False:
         raise HTTPException(
@@ -72,4 +72,4 @@ async def google_auth_callback(request: Request, state: str, code: str) -> schem
     credentials = flow.credentials
     is_id_token_valid(credentials.id_token)
 
-    return {"id_token": credentials.id_token}
+    return {"access_token": credentials.id_token, "token_type": "Bearer "}
