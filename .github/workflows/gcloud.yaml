@@ -17,7 +17,7 @@ env:
   REGISTRY: romfib
   IMAGE_NAME: signal-bot
   GCE_INSTANCE: signal-bot
-  GCE_INSTANCE_ZONE: us-west1-a
+  GCE_INSTANCE_ZONE: us-west1-b
 
 
 jobs:
