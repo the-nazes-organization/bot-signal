@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Request
 
 from google_auth_oauthlib.flow import Flow
 
@@ -6,6 +6,8 @@ import json
 
 from signal_bot.backend.core.config import get_settings
 from signal_bot.backend.core.security import is_id_token_valid
+from signal_bot.backend.core.data import get_google_config
+
 from signal_bot.backend import schemas
 
 settings = get_settings()
@@ -41,10 +43,10 @@ def inject_or_delete_state_token(state: str, type: str = "inject") -> bool :
 
 
 @router.get("/", response_model=schemas.AuthRedirect) 
-async def google_auth() -> schemas.AuthRedirect :
+async def google_auth(request: Request) -> schemas.AuthRedirect :
 
-    flow = Flow.from_client_secrets_file(settings.GOOGLE.CLIENT_SECRET_FILE, settings.GOOGLE.SCOPES)
-    flow.redirect_uri = settings.GOOGLE.CALLBACK_URL
+    flow = Flow.from_client_config(get_google_config(), settings.GOOGLE.SCOPES)
+    flow.redirect_uri = request.url_for("callback")
     auth_url, state = flow.authorization_url()
 
     if inject_or_delete_state_token(state) == False:
@@ -61,8 +63,7 @@ async def google_auth_callback(state: str, code: str) -> schemas.AuthIdToken :
             detail="Unknown state token"
         )
 
-    flow = Flow.from_client_secrets_file(settings.GOOGLE.CLIENT_SECRET_FILE, settings.GOOGLE.SCOPES, state=state)
-    flow.redirect_uri = settings.GOOGLE.CALLBACK_URL
+    flow = Flow.from_client_config(get_google_config(), settings.GOOGLE.SCOPES, state=state)
 
     flow.fetch_token(code=code)
 
