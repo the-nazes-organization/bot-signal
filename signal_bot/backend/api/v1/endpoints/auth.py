@@ -55,6 +55,8 @@ async def google_auth(request: Request):
 
     return RedirectResponse(auth_url)
 
+
+
 @router.get("/callback", response_model=schemas.AuthToken)
 async def google_auth_callback(request: Request, state: str, code: str) -> schemas.AuthToken :
 
