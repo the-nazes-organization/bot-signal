@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, status, Request
+from fastapi.responses import RedirectResponse
 
 from google_auth_oauthlib.flow import Flow
 
@@ -42,8 +43,8 @@ def inject_or_delete_state_token(state: str, type: str = "inject") -> bool :
 
 
 
-@router.get("/", response_model=schemas.AuthRedirect) 
-async def google_auth(request: Request) -> schemas.AuthRedirect :
+@router.get("/") 
+async def google_auth(request: Request):
 
     flow = Flow.from_client_config(get_google_config(), settings.GOOGLE.SCOPES)
     flow.redirect_uri = request.url_for("google_auth_callback")
@@ -52,7 +53,7 @@ async def google_auth(request: Request) -> schemas.AuthRedirect :
     if inject_or_delete_state_token(state) == False:
         logger.info("State token already exists")
 
-    return {"redirect_url": auth_url}
+    return RedirectResponse(auth_url)
 
 @router.get("/callback", response_model=schemas.AuthIdToken)
 async def google_auth_callback(request: Request, state: str, code: str) -> schemas.AuthIdToken :
