@@ -74,4 +74,4 @@ async def google_auth_callback(request: Request, state: str, code: str) -> schem
     credentials = flow.credentials
     is_id_token_valid(credentials.id_token)
 
-    return {"access_token": credentials.id_token, "token_type": "Bearer "}
+    return {"access_token": credentials.id_token, "token_type": "bearer"}
