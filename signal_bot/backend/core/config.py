@@ -17,6 +17,8 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Signal Bot"
     WHITELIST_FILE: str = "signal_bot/local_db/whitelist.json"
     GOOGLE: GoogleSettings = GoogleSettings()
+    SOCKET_FILE: str = "/tmp/signal_cli/socket"
+    PROCESSES_FILE: str = "signal_bot/local_db/processes.json"
 
 
 @lru_cache()

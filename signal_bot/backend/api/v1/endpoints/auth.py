@@ -20,7 +20,7 @@ router = APIRouter()
 def inject_or_delete_state_token(state: str, type: str = "inject") -> bool :
     modif = False
 
-    with open(settings.GOOGLE.AUTH_ANTIFORGERY_FILE, "r+") as antiforgery_file:
+    with open(settings.GOOGLE.AUTH_ANTIFORGERY_FILE, "r") as antiforgery_file:
         antiforgery_obj = json.load(antiforgery_file)
 
     if type == "inject":
