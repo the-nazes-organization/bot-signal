@@ -5,12 +5,12 @@ from signal_bot.backend.message_client.Signal import SignalCliProcess
 
 router = APIRouter()
 
-@router.get("/start", response_model=schemas.SignalCliProcessInfo)
+@router.post("/start", response_model=schemas.SignalCliProcessInfo)
 async def start_signal_cli(account: str):
     signal = SignalCliProcess(account=account)
     return signal.start_cli_daemon()
 
-@router.get("/stop", response_model=schemas.SignalCliProcessInfo)
+@router.post("/stop", response_model=schemas.SignalCliProcessInfo)
 async def stop_signal_cli(account: str):
     signal = SignalCliProcess(account=account)
     return signal.stop_cli_daemon()
