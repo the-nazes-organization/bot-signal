@@ -2,12 +2,11 @@ from fastapi import APIRouter, Query, HTTPException, status, Depends
 
 from signal_bot.backend import schemas
 from signal_bot.backend import errors
+from signal_bot.backend.api import deps
 from signal_bot.backend.message_client.Signal import SignalProcess
 
 router = APIRouter()
 
-async def check_account_number(account: str = Query(description="Number of the phone for the account", regex="^[0-9]*$")):
-    return "+" + account
 
 @router.post("/start", response_model=schemas.SignalCliProcessResponse)
 async def start_signal_cli():
@@ -34,7 +33,7 @@ async def stop_signal_cli():
     return schemas.SignalCliProcessResponse()
 
 @router.post("/register", response_model=schemas.SignalCliRegisterResponse)
-async def register_account_signal(register: schemas.SignalRegister, account: str = Depends(check_account_number)):
+async def register_account_signal(register: schemas.SignalRegister, account: str = Depends(deps.check_account_number)):
     signal = SignalProcess()
     try:
         output, code = signal.register(account, register.captcha_token)
@@ -46,7 +45,7 @@ async def register_account_signal(register: schemas.SignalRegister, account: str
     return schemas.SignalCliRegisterResponse(information_cli=output, exit_code=code)
 
 @router.post("/register/verify", response_model=schemas.SignalCliRegisterResponse)
-async def verify_account_signal(verify: schemas.SignalRegisterVerify, account: str = Depends(check_account_number)):
+async def verify_account_signal(verify: schemas.SignalRegisterVerify, account: str = Depends(deps.check_account_number)):
     signal = SignalProcess()
     try:
         output, code = signal.verify(account, verify.code)

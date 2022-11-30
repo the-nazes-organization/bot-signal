@@ -3,7 +3,7 @@ from google.auth import exceptions
 from google.auth.transport import requests
 from google_auth_oauthlib.flow import Flow
 
-from fastapi import Header, HTTPException, status
+from fastapi import HTTPException, status
 
 import sys
 
@@ -35,6 +35,3 @@ def is_id_token_valid(token : str):
     # sys.stdout.write(json.dumps(token_info))
     if not is_user_whitelisted("email", token_info["email"]):
         raise invalidTokenException
-
-def get_auth_user(authorization: str = Header()):
-    is_id_token_valid(authorization[7:])
