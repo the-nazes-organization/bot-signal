@@ -5,16 +5,17 @@ from google_auth_oauthlib.flow import Flow
 
 from fastapi import Header, HTTPException, status
 
-import json, sys
+import sys
 
 from signal_bot.backend.core.config import get_settings
 from signal_bot.backend.core.data import get_google_config
+from signal_bot.backend.db import DbManager
 
 settings = get_settings()
 
 def is_user_whitelisted(type: str, info: str) -> bool :
-    with open(settings.WHITELIST_FILE, "r") as whitelist_file:
-        whitelist_obj = json.load(whitelist_file)
+    db = DbManager.Db()
+    whitelist_obj = db.get_users_whitelisted()
     return True if whitelist_obj[type].get(info, False) else False
 
 def is_id_token_valid(token : str):
