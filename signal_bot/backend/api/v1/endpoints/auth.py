@@ -3,12 +3,13 @@ from fastapi.responses import RedirectResponse
 
 from google_auth_oauthlib.flow import Flow
 
-import json, logging
+import logging
 
 from signal_bot.backend.core.config import get_settings
 from signal_bot.backend.core.security import is_id_token_valid
 from signal_bot.backend.core.data import get_google_config
 
+from signal_bot.backend.db import DbManager
 from signal_bot.backend import schemas
 
 settings = get_settings()
@@ -20,8 +21,8 @@ router = APIRouter()
 def inject_or_delete_state_token(state: str, type: str = "inject") -> bool :
     modif = False
 
-    with open(settings.GOOGLE.AUTH_ANTIFORGERY_FILE, "r") as antiforgery_file:
-        antiforgery_obj = json.load(antiforgery_file)
+    db = DbManager.Db()
+    antiforgery_obj = db.get_antiforgery_tokens()
 
     if type == "inject":
         if antiforgery_obj.get(state) == None:
@@ -36,8 +37,7 @@ def inject_or_delete_state_token(state: str, type: str = "inject") -> bool :
             logger.info("State token deleted")
 
     if modif:
-        with open(settings.GOOGLE.AUTH_ANTIFORGERY_FILE, "w") as antiforgery_file:
-            json.dump(antiforgery_obj, antiforgery_file)
+        db.put_antiforgery_tokens(antiforgery_obj)
 
     return modif
 
@@ -74,4 +74,4 @@ async def google_auth_callback(request: Request, state: str, code: str) -> schem
     credentials = flow.credentials
     is_id_token_valid(credentials.id_token)
 
-    return {"access_token": credentials.id_token, "token_type": "bearer"}
+    return schemas.AuthToken(access_token=credentials.id_token, token_type="bearer")
