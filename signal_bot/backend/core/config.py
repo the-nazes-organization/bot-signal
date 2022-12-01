@@ -19,8 +19,14 @@ class Settings(BaseSettings):
     GOOGLE: GoogleSettings = GoogleSettings()
     SOCKET_FILE: str = "/tmp/signal_cli/socket"
     PROCESSES_FILE: str = "signal_bot/local_db/processes.json"
+    STORAGE_PROVIDER_USER_DB: str = "file"
+    STORAGE_PROVIDER_STATE_DB: str = "file"
+    STORAGE_PROVIDER_PROCESS_DB: str = "file"
+    DB_USER: str = "signal_bot/local_db/users.json"
+    DB_STATE: str = "signal_bot/local_db/state.json"
+    DB_PROCESS: str = "signal_bot/local_db/processes.json"
 
 
 @lru_cache()
 def get_settings():
-	return Settings()
+    return Settings()
