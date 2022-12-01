@@ -1,6 +1,6 @@
 from signal_bot.backend.core.config import get_settings
 from signal_bot.backend.db import ObjectStorage
-from signal_bot.backend.db.Provider.FileStorage import FileStorage
+from signal_bot.backend.db.provider.FileStorage import FileStorage
 
 storage_mapping = {
     "file": FileStorage

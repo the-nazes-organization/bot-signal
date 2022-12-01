@@ -30,7 +30,7 @@ class FileStorage(ObjectStorage):
         return self._get_data_from_file()
     
     def put_all(self, data: any) -> None:
-        self.put_data_to_file(data)
+        self._put_data_to_file(data)
     
     def _get_data_from_file(self) -> any:
         with open(self.file, "r") as fd:
