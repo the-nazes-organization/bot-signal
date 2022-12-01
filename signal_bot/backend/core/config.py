@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     GOOGLE: GoogleSettings = GoogleSettings()
     SOCKET_FILE: str = "/tmp/signal_cli/socket"
     PROCESSES_FILE: str = "signal_bot/local_db/processes.json"
+    PYTHON_BOT_FILE: str = "signal_bot/backend/message_client/bot_startup.py"
 
 
 @lru_cache()
