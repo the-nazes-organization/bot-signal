@@ -18,7 +18,7 @@ class SignalProcess:
         self.db = db
 
     def start_cli_daemon(self) -> int:
-        pid = self.db.get_cli_process_pid()
+        pid = self.db.get("cli").get("alive")
 
         if pid is not None:
             p = psutil.Process(pid)
@@ -34,12 +34,12 @@ class SignalProcess:
             "--no-receive-stdout"
         )
         daemon = subprocess.Popen(args=cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        self.db.save_cli_process_pid(daemon.pid)
+        self.db.put("cli", {"alive": daemon.pid})
 
         return daemon.pid
 
     def stop_cli_daemon(self) -> None:
-        pid = self.db.get_cli_process_pid()
+        pid = self.db.get("cli").get("alive")
 
         if pid is None:
             raise errors.SignalCliProcessError("No SignalCli process alive")
@@ -50,9 +50,7 @@ class SignalProcess:
             p.wait(timeout=3)
         except psutil.TimeoutExpired:
             raise errors.SignalCliProcessError(f"SignalCli process ({pid}) couldn't terminate properly, please try again!")
-            
-        self.db.delete_cli_process_pid()
-            
+        self.db.put("cli", {"alive": None})
 
     def register(self, account: str, captcha_token: str) -> tuple[str, int]:
         return self.run_and_get_process_response(
@@ -64,7 +62,6 @@ class SignalProcess:
         return self.run_and_get_process_response(
             self.get_full_command("--account", account, "verify", code)
         )
-
 
 
     ###############
@@ -83,26 +80,3 @@ class SignalProcess:
     def get_full_command(self, *args) -> list:
         command = ["signal-cli", "--service-environment", "staging"]
         return command + list(args)
-
-
-
-class ProcessStorage:
-
-    def __init__(self) -> None:
-        self.db = DbManager.Db()
-
-    def get_cli_process_pid(self) -> int | None:
-        processes_obj = self.db.get_processes_list()
-        cli_processes = processes_obj.get("cli")
-        return cli_processes.get("alive")
-
-
-    def save_cli_process_pid(self, pid: int):
-        processes_obj = self.db.get_processes_list()
-        processes_obj["cli"]["alive"] = pid
-        self.db.put_processes_list(processes_obj)
-
-    def delete_cli_process_pid(self):
-        processes_obj = self.db.get_processes_list()
-        del processes_obj["cli"]["alive"]
-        self.db.put_processes_list(processes_obj)
