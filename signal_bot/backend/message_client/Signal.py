@@ -1,21 +1,26 @@
 import subprocess, psutil, json
 
-from signal_bot.backend import errors
+from fastapi import Depends
 
+from signal_bot.backend import errors
 from signal_bot.backend.core.config import get_settings
-from signal_bot.backend.db import DbManager
+from signal_bot.backend.db.ObjectStorage import ObjectStorage
+
+from signal_bot.backend.dependencies import get_process_db
+
 
 settings = get_settings()
 
+
 class SignalProcess:
 
-    def __init__(self) -> None:
-        self.db = ProcessStorage()
+    def __init__(self, db: ObjectStorage = Depends(get_process_db)) -> None:
+        self.db = db
 
     def start_cli_daemon(self) -> int:
         pid = self.db.get_cli_process_pid()
 
-        if pid != None:
+        if pid is not None:
             p = psutil.Process(pid)
             raise errors.SignalCliProcessError(f"SignalCli process already running ({p.name()}:{pid} {p.status()})")
 
@@ -32,11 +37,11 @@ class SignalProcess:
         self.db.save_cli_process_pid(daemon.pid)
 
         return daemon.pid
-    
+
     def stop_cli_daemon(self) -> None:
         pid = self.db.get_cli_process_pid()
 
-        if pid == None:
+        if pid is None:
             raise errors.SignalCliProcessError("No SignalCli process alive")
 
         p = psutil.Process(pid)
@@ -78,6 +83,8 @@ class SignalProcess:
     def get_full_command(self, *args) -> list:
         command = ["signal-cli", "--service-environment", "staging"]
         return command + list(args)
+
+
 
 class ProcessStorage:
 
