@@ -2,6 +2,8 @@ from signal_bot.backend.core.config import get_settings
 
 settings = get_settings()
 
+#TODO Put that in settings
+
 def get_google_config():
     return {
 	    "web": {
