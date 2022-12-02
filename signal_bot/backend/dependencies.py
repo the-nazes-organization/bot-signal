@@ -1,14 +1,8 @@
-from fastapi import Depends, Header, Query
-
-from signal_bot.backend.core.security import Auth
+from fastapi import Query
 
 from signal_bot.backend.core.config import get_settings
 from signal_bot.backend.db import ObjectStorage
 from signal_bot.backend.db.provider.FileStorage import FileStorage
-
-def get_auth_user(authorization: str = Header(), auth: Auth = Depends()):
-    auth.is_id_token_valid(authorization[7:])
-
 
 async def check_account_number(account: str = Query(description="Number of the phone for the account", regex="^[0-9]*$")):
     return "+" + account

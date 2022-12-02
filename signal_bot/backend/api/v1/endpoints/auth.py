@@ -9,7 +9,6 @@ from signal_bot.backend.core.config import get_settings
 from signal_bot.backend.core.security import Auth
 from signal_bot.backend.core.data import get_google_config
 
-from signal_bot.backend.db import DbManager
 from signal_bot.backend import schemas
 
 settings = get_settings()

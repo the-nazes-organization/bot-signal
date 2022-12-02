@@ -17,15 +17,14 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Signal Bot"
     WHITELIST_FILE: str = "signal_bot/local_db/whitelist.json"
     GOOGLE: GoogleSettings = GoogleSettings()
+    PYTHON_BOT_FILE: str = "signal_bot/backend/message_client/bot_startup.py"
     SOCKET_FILE: str = "/tmp/signal_cli/socket"
-    PROCESSES_FILE: str = "signal_bot/local_db/processes.json"
     STORAGE_PROVIDER_USER_DB: str = "file"
     STORAGE_PROVIDER_STATE_DB: str = "file"
     STORAGE_PROVIDER_PROCESS_DB: str = "file"
     DB_USER: str = "signal_bot/local_db/users.json"
     DB_STATE: str = "signal_bot/local_db/state.json"
     DB_PROCESS: str = "signal_bot/local_db/processes.json"
-    PYTHON_BOT_FILE: str = "signal_bot/backend/message_client/bot_startup.py"
 
 
 @lru_cache()

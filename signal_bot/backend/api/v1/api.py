@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from signal_bot.backend.dependencies import get_auth_user
+from signal_bot.backend.core.security import get_auth_user
 from signal_bot.backend.api.v1.endpoints import (
     auth,
     signal_cli,

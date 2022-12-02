@@ -3,7 +3,7 @@ from google.auth import exceptions
 from google.auth.transport import requests
 from google_auth_oauthlib.flow import Flow
 
-from fastapi import Header, HTTPException, status, Depends
+from fastapi import HTTPException, status, Depends, Header
 
 import logging
 
@@ -72,3 +72,6 @@ class Auth:
                 modif = True
 
         return modif
+
+def get_auth_user(authorization: str = Header(), auth: Auth = Depends()):
+    auth.is_id_token_valid(authorization[7:])

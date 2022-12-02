@@ -30,16 +30,12 @@ class SignalProcess:
 
 class SignalCliProcess(SignalProcess):
 
-    def __init__(self) -> None:
-        super().__init__()
-        self.__class__.__name__ = "Signal-cli process"
-
     def start_cli_daemon(self) -> int:
         pid = self.db.get("cli")
 
         if pid is not None:
             p = psutil.Process(pid)
-            raise errors.SignalCliProcessError(f"SignalCli process already running ({p.name()}:{pid} {p.status()})")
+            raise errors.SignalCliProcessError(self.error_message(ERROR_PROCESS_EXIST, f"{p.name()}:{pid} {p.status()}"))
 
         cmd = self.get_full_command(
             "daemon",
@@ -61,7 +57,12 @@ class SignalCliProcess(SignalProcess):
         if pid is None:
             raise errors.SignalCliProcessError(self.error_message(ERROR_PROCESS_INEXISTANT))
 
-        p = psutil.Process(pid)
+        try:
+            p = psutil.Process(pid)
+        except psutil.NoSuchProcess:
+            self.db.delete("cli")
+            raise errors.SignalCliProcessError(self.error_message(ERROR_PROCESS_INEXISTANT))
+
         p.terminate()
         try:
             p.wait(timeout=3)
@@ -103,9 +104,6 @@ class SignalCliProcess(SignalProcess):
 
 
 class SignalBotProcess(SignalProcess):
-    def __init__(self) -> None:
-        super().__init__("bot")
-        self.__class__.__name__ = "Signal Bot process"
 
     def start_bot_daemon(self, properties: any) -> int:
         pid = self.db.get("bot")
@@ -132,9 +130,13 @@ class SignalBotProcess(SignalProcess):
         if pid == None:
             raise errors.SignalBotProcessError(self.error_message(ERROR_PROCESS_INEXISTANT))
         
-        p = psutil.Process(pid)
-        p.terminate()
+        try:
+            p = psutil.Process(pid)
+        except psutil.NoSuchProcess:
+            self.db.delete("bot")
+            raise errors.SignalBotProcessError(self.error_message(ERROR_PROCESS_INEXISTANT))
 
+        p.terminate()
         try:
             p.wait(timeout=3)
         except psutil.TimeoutExpired:
