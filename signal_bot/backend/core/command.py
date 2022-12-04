@@ -51,7 +51,7 @@ class Command:
                     command["function"](message, user)
                 except Exception as exc:
                     logging.exception(
-                        f"Error while handling message: {command['function'].__name__} : {exc}"
+                        "Error while handling message: %s: %s", command['function'].__name__, exc
                     )
 
         message = message.split(" ")
@@ -65,7 +65,7 @@ class Command:
                     command["function"](message, user)
                 except Exception as exc:
                     logging.exception(
-                        f"Error while handling message: {command['function'].__name__} : {exc}"
+                        "Error while handling message: %s: %s", command['function'].__name__, exc
                     )
 
     @staticmethod
@@ -172,8 +172,6 @@ class Command:
         }
 
         """
-        # Check if the condition key is valid
-        # timerange and regex are optional
         if not all(key in ["users", "timerange", "regex"] for key in condition.keys()):
             raise ValueError("Invalid condition")
 

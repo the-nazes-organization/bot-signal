@@ -158,12 +158,12 @@ def test_is_condition_true_timerange_and_regex():
 def test_handle_message(capfd):
     @Command.add(activation_type="message")
     def test_function(message, user):
-        print("Hello world!")
+        print("Test1")
 
     c = Command()
     assert c.handle_message("test", "+33642424242") == None
     out, err = capfd.readouterr()
-    assert out == "Hello world!\n"
+    assert out == "Test1\n"
 
 
 def test_handle_message_function_exception(caplog):
@@ -177,11 +177,18 @@ def test_handle_message_function_exception(caplog):
 
 
 def test_handle_message_command(capfd):
-    @Command.add(activation_type="command", prefix="!test")
-    def test_function(message, user):
+    Command._command = {
+        "command": [],
+        "message": []
+        }
+
+    @Command.add(activation_type="command", prefix="!test_command")
+    def test_function_command(message, user):
         print(message)
 
+
+        
     c = Command()
-    assert c.handle_message("!test hello", "+33642424242") == None
+    assert c.handle_message("!test_command hello", "+33642424242") == None
     out, err = capfd.readouterr()
     assert out == "hello\n"
