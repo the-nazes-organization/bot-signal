@@ -4,15 +4,19 @@ from signal_bot.backend.core.config import get_settings
 from signal_bot.backend.db.object_storage import ObjectStorage
 from signal_bot.backend.db.provider.file_storage import FileStorage
 
-async def check_account_number(account: str = Query(description="Number of the phone for the account", regex="^[0-9]*$")):
+
+async def check_account_number(
+    account: str = Query(
+        description="Number of the phone for the account", regex="^[0-9]*$"
+    )
+):
     return "+" + account
 
 
-storage_mapping = {
-    "file": FileStorage
-}
+storage_mapping = {"file": FileStorage}
 
-#TODO improve this with : https://fastapi.tiangolo.com/advanced/advanced-dependencies/
+# TODO improve this with : https://fastapi.tiangolo.com/advanced/advanced-dependencies/
+
 
 async def get_user_db() -> ObjectStorage:
     settings = get_settings()

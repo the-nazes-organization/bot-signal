@@ -51,7 +51,9 @@ class Command:
                     command["function"](message, user)
                 except Exception as exc:
                     logging.exception(
-                        "Error while handling message: %s: %s", command['function'].__name__, exc
+                        "Error while handling message: %s: %s",
+                        command["function"].__name__,
+                        exc,
                     )
 
         message = message.split(" ")
@@ -65,7 +67,9 @@ class Command:
                     command["function"](message, user)
                 except Exception as exc:
                     logging.exception(
-                        "Error while handling message: %s: %s", command['function'].__name__, exc
+                        "Error while handling message: %s: %s",
+                        command["function"].__name__,
+                        exc,
                     )
 
     @staticmethod

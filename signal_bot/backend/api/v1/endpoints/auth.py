@@ -15,11 +15,9 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-@router.get("/") 
-async def google_auth(
-    request: Request,
-    auth: Auth = Depends()
-    ) -> RedirectResponse :
+
+@router.get("/")
+async def google_auth(request: Request, auth: Auth = Depends()) -> RedirectResponse:
 
     flow = Flow.from_client_config(get_google_config(), settings.GOOGLE.SCOPES)
     flow.redirect_uri = request.url_for("google_auth_callback")

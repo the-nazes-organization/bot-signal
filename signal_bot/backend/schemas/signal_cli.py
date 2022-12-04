@@ -17,9 +17,5 @@ class SignalRegisterVerify(BaseModel):
 
 
 class SignalCliRegisterResponse(BaseModel):
-    information_cli: str = Field(
-        description="Output from signal-cli"
-    )
-    exit_code: int = Field(
-        description="Exit code from signal-cli"
-    )
+    information_cli: str = Field(description="Output from signal-cli")
+    exit_code: int = Field(description="Exit code from signal-cli")

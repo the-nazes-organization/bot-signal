@@ -7,10 +7,6 @@ from google.auth.transport import requests
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
 
-from fastapi import HTTPException, status, Depends, Header
-
-import logging
-
 from signal_bot.backend.core.config import get_settings
 from signal_bot.backend.core.data import get_google_config
 from signal_bot.backend.db.object_storage import ObjectStorage
@@ -74,6 +70,7 @@ class Auth:
                 modif = True
 
         return modif
+
 
 def get_auth_user(authorization: str = Header(), auth: Auth = Depends()):
     auth.is_id_token_valid(authorization[7:])
