@@ -25,5 +25,5 @@ class ObjectStorage(ABC):
         pass
 
     @abstractmethod
-    def put_all(self, data: any) -> None:     
+    def put_all(self, data: any) -> None:
         pass

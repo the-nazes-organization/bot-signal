@@ -1,15 +1,14 @@
+import argparse
 import json
 import logging
 import os
-import requests
+import pprint
+import signal
 import subprocess
 import time
-import signal
-import pprint
-import argparse
 
+import requests
 from dotenv import load_dotenv
-
 from messages_client.Facebook import Facebook
 from messages_client.Signal import Signal
 
@@ -23,10 +22,18 @@ parser = argparse.ArgumentParser(
     description="Bot to send message from signal to facebook",
 )
 parser.add_argument(
-    "--signal_id", "-s", required=True, type=str, help="signal group id",
+    "--signal_id",
+    "-s",
+    required=True,
+    type=str,
+    help="signal group id",
 )
 parser.add_argument(
-    "--facebook_id", "-f", required=True, type=str, help="facebook group id",
+    "--facebook_id",
+    "-f",
+    required=True,
+    type=str,
+    help="facebook group id",
 )
 args = parser.parse_args()
 signal.signal(signal.SIGINT, exit_ctl_c)

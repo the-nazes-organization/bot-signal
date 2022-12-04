@@ -1,5 +1,6 @@
-from pydantic import BaseSettings
 from functools import lru_cache
+
+from pydantic import BaseSettings
 
 
 class GoogleSettings(BaseSettings):
@@ -8,7 +9,7 @@ class GoogleSettings(BaseSettings):
     SCOPES: list[str] = ["https://www.googleapis.com/auth/userinfo.email", "openid"]
     AUTH_ANTIFORGERY_FILE: str = "signal_bot/local_db/auth_antiforgery_tokens.json"
 
-    class Config():
+    class Config:
         env_prefix = "GOOGLE_"
 
 

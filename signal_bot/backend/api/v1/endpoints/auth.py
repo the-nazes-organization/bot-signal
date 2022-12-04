@@ -1,15 +1,13 @@
-from fastapi import APIRouter, HTTPException, status, Request, Depends
-from fastapi.responses import RedirectResponse
-
-from google_auth_oauthlib.flow import Flow
-
 import logging
 
-from signal_bot.backend.core.config import get_settings
-from signal_bot.backend.core.security import Auth
-from signal_bot.backend.core.data import get_google_config
+from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi.responses import RedirectResponse
+from google_auth_oauthlib.flow import Flow
 
 from signal_bot.backend import schemas
+from signal_bot.backend.core.config import get_settings
+from signal_bot.backend.core.data import get_google_config
+from signal_bot.backend.core.security import Auth
 
 settings = get_settings()
 logger = logging.getLogger(__name__)
@@ -17,11 +15,9 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-@router.get("/") 
-async def google_auth(
-    request: Request,
-    auth: Auth = Depends()
-    ) -> RedirectResponse :
+
+@router.get("/")
+async def google_auth(request: Request, auth: Auth = Depends()) -> RedirectResponse:
 
     flow = Flow.from_client_config(get_google_config(), settings.GOOGLE.SCOPES)
     flow.redirect_uri = request.url_for("google_auth_callback")
@@ -35,19 +31,17 @@ async def google_auth(
 
 @router.get("/callback", response_model=schemas.AuthToken)
 async def google_auth_callback(
-    request: Request,
-    state: str,
-    code: str,
-    auth: Auth = Depends()
-) -> schemas.AuthToken :
+    request: Request, state: str, code: str, auth: Auth = Depends()
+) -> schemas.AuthToken:
 
     if auth.inject_or_delete_state_token(state, "delete") is False:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Unknown state token"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Unknown state token"
         )
 
-    flow = Flow.from_client_config(get_google_config(), settings.GOOGLE.SCOPES, state=state)
+    flow = Flow.from_client_config(
+        get_google_config(), settings.GOOGLE.SCOPES, state=state
+    )
     flow.redirect_uri = request.url_for("google_auth_callback")
     flow.fetch_token(code=code)
 

@@ -1,7 +1,7 @@
-import socket
 import json
-import pprint
 import logging
+import pprint
+import socket
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
