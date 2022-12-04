@@ -22,13 +22,3 @@ class SignalCliRegisterResponse(BaseModel):
     exit_code: int = Field(
         description="Exit code from signal-cli"
     )
-
-class SignalCliProcessResponse(BaseModel):
-    information: str = Field(
-        default="",
-        description="Information about signal-cli process"
-    )
-    pid: int = Field(
-        default=0,
-        description="Pid of signal-cli process"
-    )

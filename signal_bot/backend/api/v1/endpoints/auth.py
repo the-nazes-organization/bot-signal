@@ -17,7 +17,6 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-
 @router.get("/") 
 async def google_auth(
     request: Request,
@@ -56,4 +55,3 @@ async def google_auth_callback(
     auth.is_id_token_valid(credentials.id_token)
 
     return schemas.AuthToken(access_token=credentials.id_token, token_type="bearer")
-    
