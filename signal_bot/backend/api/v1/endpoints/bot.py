@@ -7,7 +7,7 @@ from signal_bot.backend.message_client.Signal import SignalBotProcess
 
 router = APIRouter()
 
-@router.post("/start", response_model=schemas.BotProcessResponse)
+@router.put("/", response_model=schemas.BotProcessResponse)
 async def start_bot(
     properties: schemas.BotProperties,
     bot: SignalBotProcess = Depends()
@@ -22,7 +22,7 @@ async def start_bot(
     return schemas.BotProcessResponse(pid=pid)
 
 
-@router.post("/stop", response_model=schemas.BotProcessResponse)
+@router.delete("/", response_model=schemas.BotProcessResponse)
 async def stop_bot(bot: SignalBotProcess = Depends()):
     try:
         bot.stop_bot_daemon()

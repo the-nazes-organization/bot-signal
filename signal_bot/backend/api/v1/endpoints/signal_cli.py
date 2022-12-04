@@ -7,7 +7,7 @@ from signal_bot.backend.message_client.Signal import SignalCliProcess
 
 router = APIRouter()
 
-@router.post("/start", response_model=schemas.SignalCliProcessResponse, )
+@router.put("/", response_model=schemas.SignalCliProcessResponse, )
 async def start_signal_cli(signal: SignalCliProcess = Depends()):
     try:
         pid = signal.start_cli_daemon()
@@ -18,7 +18,7 @@ async def start_signal_cli(signal: SignalCliProcess = Depends()):
         ) from exc
     return schemas.SignalCliProcessResponse(pid=pid)
 
-@router.post("/stop", response_model=schemas.SignalCliProcessResponse)
+@router.delete("/", response_model=schemas.SignalCliProcessResponse)
 async def stop_signal_cli(signal: SignalCliProcess = Depends()):
     try:
         signal.stop_cli_daemon()
@@ -29,7 +29,7 @@ async def stop_signal_cli(signal: SignalCliProcess = Depends()):
         ) from exc
     return schemas.SignalCliProcessResponse()
 
-@router.post("/register", response_model=schemas.SignalCliRegisterResponse)
+@router.put("/register", response_model=schemas.SignalCliRegisterResponse)
 async def register_account_signal(
     register: schemas.SignalRegister,
     account: str = Depends(check_account_number),
@@ -44,7 +44,7 @@ async def register_account_signal(
         ) from exc
     return schemas.SignalCliRegisterResponse(information_cli=output, exit_code=code)
 
-@router.post("/register/verify", response_model=schemas.SignalCliRegisterResponse)
+@router.put("/register/verify", response_model=schemas.SignalCliRegisterResponse)
 async def verify_account_signal(
     verify: schemas.SignalRegisterVerify,
     account: str = Depends(check_account_number),
