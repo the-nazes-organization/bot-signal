@@ -5,7 +5,7 @@ import tempfile
 
 from fastapi.testclient import TestClient
 
-from signal_bot.backend.db.provider.FileStorage import FileStorage
+from signal_bot.backend.db.provider.file_storage import FileStorage
 from signal_bot.backend.main import app
 
 

@@ -1,6 +1,6 @@
 import json
 
-from signal_bot.backend.db.ObjectStorage import ObjectStorage
+from signal_bot.backend.db.object_storage import ObjectStorage
 
 class FileStorage(ObjectStorage):
     """

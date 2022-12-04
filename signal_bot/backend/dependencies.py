@@ -1,8 +1,8 @@
 from fastapi import Query
 
 from signal_bot.backend.core.config import get_settings
-from signal_bot.backend.db import ObjectStorage
-from signal_bot.backend.db.provider.FileStorage import FileStorage
+from signal_bot.backend.db.object_storage import ObjectStorage
+from signal_bot.backend.db.provider.file_storage import FileStorage
 
 async def check_account_number(account: str = Query(description="Number of the phone for the account", regex="^[0-9]*$")):
     return "+" + account

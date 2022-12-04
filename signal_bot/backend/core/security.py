@@ -9,7 +9,7 @@ import logging
 
 from signal_bot.backend.core.config import get_settings
 from signal_bot.backend.core.data import get_google_config
-from signal_bot.backend.db import ObjectStorage
+from signal_bot.backend.db.object_storage import ObjectStorage
 from signal_bot.backend.dependencies import get_user_db, get_state_db
 
 settings = get_settings()
