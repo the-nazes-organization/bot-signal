@@ -12,9 +12,12 @@ storage_mapping = {
     "file": FileStorage
 }
 
+#TODO improve this with : https://fastapi.tiangolo.com/advanced/advanced-dependencies/
+
 async def get_user_db() -> ObjectStorage:
     settings = get_settings()
     return storage_mapping[settings.STORAGE_PROVIDER_USER_DB](settings.DB_USER)
+
 
 async def get_state_db() -> ObjectStorage:
     settings = get_settings()
@@ -24,4 +27,3 @@ async def get_state_db() -> ObjectStorage:
 async def get_process_db() -> ObjectStorage:
     settings = get_settings()
     return storage_mapping[settings.STORAGE_PROVIDER_PROCESS_DB](settings.DB_PROCESS)
-

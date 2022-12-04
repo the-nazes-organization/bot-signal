@@ -8,10 +8,11 @@ class SignalRegister(BaseModel):
         in the url link, the part after signalcaptcha:// is the token."
     )
 
+
 class SignalRegisterVerify(BaseModel):
     code: str = Field(
         description="Code received through a text message on the mobile for the account",
-        regex="^[0-9]{6}$"
+        regex="^[0-9]{6}$",
     )
 
 

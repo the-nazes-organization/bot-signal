@@ -1,6 +1,10 @@
-from google.oauth2 import id_token
+import logging
+import sys
+
+from fastapi import Depends, Header, HTTPException, status
 from google.auth import exceptions
 from google.auth.transport import requests
+from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
 
 from fastapi import HTTPException, status, Depends, Header
@@ -10,10 +14,11 @@ import logging
 from signal_bot.backend.core.config import get_settings
 from signal_bot.backend.core.data import get_google_config
 from signal_bot.backend.db.object_storage import ObjectStorage
-from signal_bot.backend.dependencies import get_user_db, get_state_db
+from signal_bot.backend.dependencies import get_state_db, get_user_db
 
 settings = get_settings()
 logger = logging.getLogger(__name__)
+
 
 class Auth:
     """
@@ -23,38 +28,35 @@ class Auth:
     def __init__(
         self,
         user_db: ObjectStorage = Depends(get_user_db),
-        state_db: ObjectStorage = Depends(get_state_db)
+        state_db: ObjectStorage = Depends(get_state_db),
     ) -> None:
         self.user_db = user_db
         self.state_db = state_db
 
-    def is_user_whitelisted(self, info: str) -> bool :
+    def is_user_whitelisted(self, info: str) -> bool:
         whitelist_obj = self.user_db.get(info)
         return True if whitelist_obj else False
 
-    def is_id_token_valid(self, token : str):
+    def is_id_token_valid(self, token: str):
         request = requests.Request()
         flow = Flow.from_client_config(get_google_config(), settings.GOOGLE.SCOPES)
         try:
             token_info = id_token.verify_oauth2_token(
-                token,
-                request,
-                flow.client_config["client_id"]
+                token, request, flow.client_config["client_id"]
             )
         except (exceptions.GoogleAuthError, ValueError) as exc:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Unauthorized authentication, token is invalid"
+                detail="Unauthorized authentication, token is invalid",
             ) from exc
 
         if not self.is_user_whitelisted(token_info["email"]):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Forbidden authentication, user is not whitelisted"
+                detail="Forbidden authentication, user is not whitelisted",
             )
 
-
-    def inject_or_delete_state_token(self, state: str, flag: str = "inject") -> bool :
+    def inject_or_delete_state_token(self, state: str, flag: str = "inject") -> bool:
         modif = False
 
         antiforgery_obj = self.state_db.get(state)
