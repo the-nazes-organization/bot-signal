@@ -1,5 +1,5 @@
 [MASTER]
-init-hook='import sys; sys.path.append("/home/rfibigr/project/bot-signal")'
+init-hook='import sys; sys.path.append("/home/rfibigr/project/bot-signal"); sys.path.append("/home/suslord/Documents/bot-signal")'
 disable=
     C0114, # missing-module-docstring
 	C0115, # missing-class-docstring
