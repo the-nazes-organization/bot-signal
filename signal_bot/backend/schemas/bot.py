@@ -6,6 +6,9 @@ class BotProperties(BaseModel):
         description="Number of the phone for the account to apply properties on",
         regex=r"^\+[0-9]*$",
     )
-    group_id: int | None = Field(
-        default=None, description="Group id in which the commands will take action"
+    receiver_type: str = Field(
+        default=None, description="Receiver type : two types allowed 'recipient' aka phone_number and 'group_id'"
+    )
+    receiver: str = Field(
+        default=None, description="Receiver data based on the type"
     )

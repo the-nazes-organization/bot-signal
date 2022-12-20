@@ -8,7 +8,7 @@ from fastapi.encoders import jsonable_encoder
 from signal_bot.backend import schemas
 from signal_bot.backend.core.config import get_settings
 from signal_bot.backend.core.process_handler import ProcessHanlder
-from signal_bot.backend.db.ObjectStorage import ObjectStorage
+from signal_bot.backend.db.object_storage import ObjectStorage
 from signal_bot.backend.dependencies import get_process_db
 
 settings = get_settings()

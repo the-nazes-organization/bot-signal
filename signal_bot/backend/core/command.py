@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 class Command:
     """
-    This class is used to manage the commands of the bot
+    This class is used to managesend_to_type the commands of the bot
     There is 2 types of triggers:
         - a command that was register (ex: !hello)
         - on all message (ex: "Hello")
@@ -157,7 +157,7 @@ class Command:
             - condition: dict of condition to check
 
         condition keys:
-            - users: list of users that triggers the command, format if phone number
+        - users: list of users that triggers the command, format if phone number
             - timerange: list of 2 datetime, the command is only triggered between the 2 dates
             - regex: regex to match the message
 
