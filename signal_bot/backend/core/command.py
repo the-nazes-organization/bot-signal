@@ -157,7 +157,7 @@ class Command:
             - condition: dict of condition to check
 
         condition keys:
-            - users: list of users that triggers the command, format if phone number
+        - users: list of users that triggers the command, format if phone number
             - timerange: list of 2 datetime, the command is only triggered between the 2 dates
             - regex: regex to match the message
 

@@ -7,3 +7,4 @@ uvicorn[standard]
 google-auth-oauthlib
 google-auth
 psutil
+openai

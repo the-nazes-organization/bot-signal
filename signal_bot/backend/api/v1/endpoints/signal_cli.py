@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from signal_bot.backend import schemas
 from signal_bot.backend.core.config import get_settings
 from signal_bot.backend.core.process_handler import ProcessHanlder
-from signal_bot.backend.db.ObjectStorage import ObjectStorage
+from signal_bot.backend.db.object_storage import ObjectStorage
 from signal_bot.backend.dependencies import check_account_number, get_process_db
 
 settings = get_settings()
@@ -78,7 +78,7 @@ async def verify_account_signal(
     handler: ProcessHanlder = Depends(),
 ):
     process = handler.start_process(
-        ["signal-cli", "-a", account, "verify", "code", verify.code]
+        ["signal-cli", "-a", account, "verify", verify.code]
     )
     output = process.stdout.read()
     return schemas.SignalCliRegisterResponse(

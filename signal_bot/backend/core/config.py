@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Signal Bot"
     WHITELIST_FILE: str = "signal_bot/local_db/whitelist.json"
     GOOGLE: GoogleSettings = GoogleSettings()
-    PYTHON_BOT_FILE: str = "signal_bot/backend/message_client/bot_startup.py"
+    PYTHON_BOT_FILE: str = "signal_bot/backend/bot/main.py"
     SOCKET_FILE: str = "/tmp/signal_cli/socket"
     STORAGE_PROVIDER_USER_DB: str = "file"
     STORAGE_PROVIDER_STATE_DB: str = "file"
@@ -26,6 +26,9 @@ class Settings(BaseSettings):
     DB_USER: str = "signal_bot/local_db/users.json"
     DB_STATE: str = "signal_bot/local_db/state.json"
     DB_PROCESS: str = "signal_bot/local_db/processes.json"
+
+    OPENAI_API_KEY: str = "openai_api_key"
+    OPENAI_COMPLETION_MAX_TOKEN = "openai_completion_max_token"
 
 
 @lru_cache()
