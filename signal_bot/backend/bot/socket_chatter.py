@@ -62,17 +62,17 @@ class SocketChatter(metaclass=Singleton):
         data_obj: dict = json.loads(data)
 
         if data_obj.get("method") is not None\
-        and data_obj.get("params") is not None:
+        and data_obj.get("params") is not None\
+        and data_obj["params"].get("envelope"):
             return {
                 "type": "message",
-                "params": data_obj["params"]
+                "params": data_obj["params"]["envelope"]
             }
 
         return {"type": "useless"}
 
 
-    def _get_last_message(self) -> str:
-        message_end_marker = b"\n"
+    def _get_last_message(self, message_end_marker = b"\n") -> str:
         data = self.cached_message
 
         while (index_marker := data.find(message_end_marker)) == -1:

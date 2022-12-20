@@ -26,7 +26,9 @@ class Settings(BaseSettings):
     DB_USER: str = "signal_bot/local_db/users.json"
     DB_STATE: str = "signal_bot/local_db/state.json"
     DB_PROCESS: str = "signal_bot/local_db/processes.json"
+
     OPENAI_API_KEY: str = "openai_api_key"
+    OPENAI_COMPLETION_MAX_TOKEN = "openai_completion_max_token"
 
 
 @lru_cache()

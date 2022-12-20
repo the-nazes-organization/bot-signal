@@ -11,8 +11,7 @@ class ProcessHanlder:
         process = subprocess.Popen(
             args=cmd,
             stdin=subprocess.PIPE,
-            # FOR DEV REASON TO HAVE STDOUT IN YOUR LOCAL TERMINAL
-            # stdout=subprocess.PIPE,
+            stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
         )
         if background is False:

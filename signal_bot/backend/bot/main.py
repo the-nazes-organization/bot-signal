@@ -8,24 +8,23 @@ def bot_loop_hole(chatter: SocketChatter, commander: Command):
     while True:
         message_dict = chatter.read_message()
 
-        if message_dict["type"] == "message":
-            if message_dict["params"].get("envelope") is not None\
-            and message_dict["params"]["envelope"].get("dataMessage") is not None\
-            and message_dict["params"]["envelope"]["dataMessage"].get("message") is not None:
-                commander.handle_message(
-                    message=message_dict["params"]["envelope"]["dataMessage"]["message"],
-                    user=message_dict["params"]["envelope"]["sourceNumber"]
-                )
+        if message_dict["type"] == "message"\
+        and message_dict["params"].get("dataMessage") is not None:
+            commander.handle_message(
+                message=message_dict["params"]["dataMessage"]["message"],
+                user=message_dict["params"]["sourceNumber"]
+            )
             
-            #DEV self sending
-            # if message_dict["params"].get("syncMessage") is not None\
-            # and message_dict["params"]["syncMessage"].get("sentMessage") is not None\
-            # and message_dict["params"]["syncMessage"]["sentMessage"].get("message") is not None:
-            #     sys.stdout.write(f"DEV Handling message {message_dict['params']['syncMessage']['sentMessage']['message']}\n")
-            #     commander.handle_message(
-            #         message=message_dict["params"]["syncMessage"]["sentMessage"]["message"],
-            #         user=message_dict["params"]["sourceNumber"]
-            #     )
+        #DEV self sending
+        if message_dict.get("params") is not None\
+        and message_dict["params"].get("syncMessage") is not None\
+        and message_dict["params"]["syncMessage"].get("sentMessage") is not None\
+        and message_dict["params"]["syncMessage"]["sentMessage"].get("message") is not None:
+            sys.stdout.write(f"DEV Handling message {message_dict['params']['syncMessage']['sentMessage']['message']}\n")
+            commander.handle_message(
+                message=message_dict["params"]["syncMessage"]["sentMessage"]["message"],
+                user=message_dict["params"]["sourceNumber"]
+            )
 
 
 def get_properties() -> dict:

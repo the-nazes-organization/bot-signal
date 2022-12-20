@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 class Command:
     """
-    This class is used to managesend_to_type the commands of the bot
+    This class is used to manage the commands of the bot
     There is 2 types of triggers:
         - a command that was register (ex: !hello)
         - on all message (ex: "Hello")

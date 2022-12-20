@@ -9,7 +9,7 @@ def the_first_joke(message, user):
 @Command.add("command", "!help")
 def help(message, user):
     chatter = SocketChatter()
-    chatter.send_message("!tiresurmondoigt, !gpt 'prompt'")
+    chatter.send_message(", ".join([cmd["prefix"] for cmd in Command._command["command"]]))
 
 @Command.add("message", condition={"users":["+33627691798"]})
 def menfou(message, user):
