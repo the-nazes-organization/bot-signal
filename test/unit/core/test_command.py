@@ -37,7 +37,8 @@ def test_command_add_wrong_activation():
         def test_function(message, user):
             pass
 
-    assert "activation_type must be 'message' or 'command'" in str(excinfo.value)
+    assert "activation_type must be
+    " in str(excinfo.value)
 
 
 def test_command_add_command_no_prefix():
@@ -169,21 +170,58 @@ def test_handle_message(capfd):
 def test_handle_message_function_exception(caplog):
     @Command.add(activation_type="message")
     def test_function(message, user):
-        raise Exception("test")
+        raise ValueError("test")
 
     c = Command()
     assert c.handle_message("test", "+33642424242") == None
-    assert "Error while handling message: test_function" in caplog.text
+    assert "Error while handling function: test_function" in caplog.text
 
 
 def test_handle_message_command(capfd):
     Command._command = {"command": [], "message": []}
 
     @Command.add(activation_type="command", prefix="!test_command")
-    def test_function_command(message, user):
+    def test_function_command(message, user, *args, **kwargs):
         print(message)
 
     c = Command()
-    assert c.handle_message("!test_command hello", "+33642424242") == None
+    assert c.handle_message(message="!test_command hello", user="+33642424242") == None
     out, err = capfd.readouterr()
-    assert out == "hello\n"
+    assert "hello\n" in out
+
+
+def test_handle_message_command_no_prefix(capfd):
+    Command._command = {"command": [], "message": []}
+
+    @Command.add(activation_type="command", prefix="!test_command")
+    def test_function_command(message, user, *args, **kwargs):
+        print(message)
+
+    c = Command()
+    assert c.handle_message(message="!test_commandhello", user="+33642424242") == None
+    out, err = capfd.readouterr()
+    assert "hello\n" not in out
+
+def test_handle_typing(capfd):
+    Command._command = {"command": [], "message": [], "typing": [], "attachements": []}
+
+    @Command.add(activation_type="typing")
+    def test_function_command(user, *args, **kwargs):
+        print(user)
+
+    c = Command()
+    assert c.handle_typing(user="+33642424242") == None
+    out, err = capfd.readouterr()
+    assert "+33642424242" in out
+
+def test_handle_attachements(capfd):
+    Command._command = {"command": [], "message": [], "typing": [], "attachements": []}
+
+    @Command.add(activation_type="attachements")
+    def test_function_command(user, *args, **kwargs):
+        print(kwargs["attachements"][0])
+
+    c = Command()
+    assert c.handle_attachements(user="+33642424242", attachements=["image"]) == None
+    out, err = capfd.readouterr()
+    assert "image" in out

@@ -8,9 +8,11 @@ logger = logging.getLogger(__name__)
 class Command:
     """
     This class is used to manage the commands of the bot
-    There is 2 types of triggers:
+    There is 4 types of triggers:
         - a command that was register (ex: !hello)
         - on all message (ex: "Hello")
+        - on typing. This is used to send a message when the user start typing
+        - on attachements
 
     A message can be added to the command (ex: !hello world => "world" is the message)
     if the command is not found, the message is not handled
@@ -22,21 +24,65 @@ class Command:
     _command = {
         "message": [],
         "command": [],
+        "typing": [],
+        "attachements": [],
     }
 
     def __init__(self):
         pass
+    
+    def _start_a_function(self, commands, user, *args, **kwargs):
+        """
+        This function is used to start a function
+        All the function are launched if the condition is true
 
-    def handle_message(self, message: str, user: str) -> None:
+        TODO : add a timeout to avoid infinite loop
+        TODO : start the function in a thread
+
+        """
+        for command in commands:
+
+            if command.get("prefix") is not None:
+                if command["prefix"] != kwargs.get("prefix"):
+                    continue
+
+            if self.is_condition_true(command.get("condition"), kwargs.get("message"), user):
+                try:
+                    command["function"](user=user, *args, **kwargs)
+                except Exception as exc:
+                    logging.exception(
+                        "Error while handling function: %s: %s",
+                        command["function"].__name__,
+                        exc,
+                    ) 
+    
+    def handle_attachements(self, user: str, attachements: list) -> None:
+        """
+        This function take a list of attachements and a user and call the function associated to the command
+
+        parameters:
+            - attachements: the attachements to handle
+            - user: the user who send the message
+        
+        return:
+            None
+        """
+        self._start_a_function(self._command["attachements"], user, attachements=attachements)
+
+    def handle_typing(self, user: str) -> None:
+        """
+        user is typing, call the function associated to the command
+        parameters:
+            - user: the user who is typing
+        
+        return:
+            None
+        """
+        self._start_a_function(self._command["typing"], user)
+
+    def handle_message(self, user: str, message: str) -> None:
         """
         This function take a message and a user and call the function associated to the command
-        All the function associated with an activation_type of 'message' are launched if
-        the condition is true
-        The function associated with the command is launched if the condition is true and
-        the prefix match the command
-
-        In case of activation_type 'command', the message is split by space and the first
-        element is the command. The rest is the message
 
         parameters:
             - message: the message to handle
@@ -45,32 +91,14 @@ class Command:
         return:
             None
         """
-        for command in self._command["message"]:
-            if self.is_condition_true(command.get("condition"), message, user):
-                try:
-                    command["function"](message, user)
-                except Exception as exc:
-                    logging.exception(
-                        "Error while handling message: %s: %s",
-                        command["function"].__name__,
-                        exc,
-                    )
+        # Start for all messages
+        self._start_a_function(self._command["message"], user, message=message)
 
+        # Start for command
         message = message.split(" ")
         prefix = message[0]
         message = " ".join(message[1:])
-        for command in self._command["command"]:
-            if command["prefix"] == prefix and self.is_condition_true(
-                command.get("condition"), message, user
-            ):
-                try:
-                    command["function"](message, user)
-                except Exception as exc:
-                    logging.exception(
-                        "Error while handling message: %s: %s",
-                        command["function"].__name__,
-                        exc,
-                    )
+        self._start_a_function(self._command["command"], user, message=message, prefix=prefix)
 
     @staticmethod
     def is_condition_true(condition, message, user):
@@ -123,8 +151,9 @@ class Command:
             - prefix: the prefix of the command (ex: "hello" => "!hello")
             - condition: dict of condition to check before executing the command
         """
-        if activation_type not in ["command", "message"]:
-            raise ValueError("activation_type must be 'message' or 'command'")
+        activation_list = ["command", "message", "typing", "attachements"]
+        if activation_type not in activation_list:
+            raise ValueError(f"activation_type must be in {activation_list}")
 
         if activation_type == "command":
             if prefix is None:
