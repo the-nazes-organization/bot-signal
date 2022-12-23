@@ -25,5 +25,4 @@ jobs:
         continue-on-error: true
       - name: Run test codes with pytest
         run: |
-          pytest $(git ls-files 'test/*.py')
-        continue-on-error: true
+          pytest $(git ls-files './signal_bot/backend')

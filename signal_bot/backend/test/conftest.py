@@ -14,12 +14,10 @@ def client():
     with TestClient(app) as c:
         yield c
 
-
 # fixture to create a FileStorage object
 @pytest.fixture(scope="module")
 def file_storage(file_json):
     return FileStorage(file_json.name)
-
 
 # fixture to create a temporary file json
 @pytest.fixture(scope="module")
