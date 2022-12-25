@@ -10,7 +10,7 @@ class FileStorage(ObjectStorage):
     """
 
     def __init__(self, path) -> None:
-        self.file = path
+        self.file_path = path
 
     def get(self, key: str) -> any:
         data = self._get_data_from_file()
@@ -34,10 +34,10 @@ class FileStorage(ObjectStorage):
         self._put_data_to_file(data)
 
     def _get_data_from_file(self) -> any:
-        with open(self.file, "r") as fd:
-            data = json.load(fd)
+        with open(self.file_path, "r", encoding="utf-8") as open_file:
+            data = json.load(open_file)
         return data
 
     def _put_data_to_file(self, data: any) -> None:
-        with open(self.file, "w") as fd:
-            json.dump(data, fd)
+        with open(self.file_path, "w", encoding="utf-8") as open_file:
+            json.dump(data, open_file, indent=4)

@@ -30,7 +30,7 @@ class Command:
 
     def __init__(self):
         pass
-    
+
     def _start_a_function(self, commands, user, *args, **kwargs):
         """
         This function is used to start a function
@@ -46,35 +46,40 @@ class Command:
                 if command["prefix"] != kwargs.get("prefix"):
                     continue
 
-            if self.is_condition_true(command.get("condition"), kwargs.get("message"), user):
+            if self.is_condition_true(
+                command.get("condition"), kwargs.get("message"), user
+            ):
                 try:
                     command["function"](user=user, *args, **kwargs)
-                except Exception as exc:
+                except Exception as exc: # pylint: disable=broad-except
                     logging.exception(
                         "Error while handling function: %s: %s",
                         command["function"].__name__,
                         exc,
-                    ) 
-    
+                    )
+
     def handle_attachements(self, user: str, attachements: list) -> None:
         """
-        This function take a list of attachements and a user and call the function associated to the command
+        This function take a list of attachements and a user and call
+        the function associated to the command
 
         parameters:
             - attachements: the attachements to handle
             - user: the user who send the message
-        
+
         return:
             None
         """
-        self._start_a_function(self._command["attachements"], user, attachements=attachements)
+        self._start_a_function(
+            self._command["attachements"], user, attachements=attachements
+        )
 
     def handle_typing(self, user: str) -> None:
         """
         user is typing, call the function associated to the command
         parameters:
             - user: the user who is typing
-        
+
         return:
             None
         """
@@ -82,7 +87,8 @@ class Command:
 
     def handle_message(self, user: str, message: str) -> None:
         """
-        This function take a message and a user and call the function associated to the command
+        This function take a message and a user and call the function
+        associated to the command
 
         parameters:
             - message: the message to handle
@@ -98,7 +104,9 @@ class Command:
         message = message.split(" ")
         prefix = message[0]
         message = " ".join(message[1:])
-        self._start_a_function(self._command["command"], user, message=message, prefix=prefix)
+        self._start_a_function(
+            self._command["command"], user, message=message, prefix=prefix
+        )
 
     @staticmethod
     def is_condition_true(condition, message, user):
@@ -119,24 +127,23 @@ class Command:
             begin_time = time(*map(int, begin_time.split(":")))
             end_time = time(*map(int, end_time.split(":")))
             check_time = check_time or datetime.utcnow().time()
-            if begin_time < end_time:
-                return check_time >= begin_time and check_time <= end_time
-            else:  # crosses midnight
-                return check_time >= begin_time or check_time <= end_time
+            if end_time > begin_time:
+                return begin_time <= check_time <= end_time
+            return check_time >= begin_time or check_time <= end_time
 
         if condition is None:
             return True
-        else:
-            check_user = condition.get("users") is None or user in condition["users"]
-            check_date = condition.get("timerange") is None or is_time_between(
-                condition["timerange"][0], condition["timerange"][1]
-            )
-            check_regex = (
-                condition.get("regex") is None
-                or re.search(condition["regex"], message) is not None
-            )
 
-            return check_user and check_date and check_regex
+        check_user = condition.get("users") is None or user in condition["users"]
+        check_date = condition.get("timerange") is None or is_time_between(
+            condition["timerange"][0], condition["timerange"][1]
+        )
+        check_regex = (
+            condition.get("regex") is None
+            or re.search(condition["regex"], message) is not None
+        )
+
+        return check_user and check_date and check_regex
 
     @classmethod
     def add(
@@ -187,7 +194,8 @@ class Command:
 
         condition keys:
         - users: list of users that triggers the command, format if phone number
-            - timerange: list of 2 datetime, the command is only triggered between the 2 dates
+            - timerange: list of 2 datetime, the command is only triggered
+            between the 2 dates
             - regex: regex to match the message
 
         Error:

@@ -1,5 +1,4 @@
 import logging
-import sys
 
 from fastapi import Depends, Header, HTTPException, status
 from google.auth import exceptions
@@ -8,7 +7,7 @@ from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
 
 from signal_bot.backend.core.config import get_settings
-from signal_bot.backend.core.data import get_google_config
+from signal_bot.backend.core.config import get_google_config
 from signal_bot.backend.db.object_storage import ObjectStorage
 from signal_bot.backend.dependencies import get_state_db, get_user_db
 
@@ -31,7 +30,7 @@ class Auth:
 
     def is_user_whitelisted(self, info: str) -> bool:
         whitelist_obj = self.user_db.get(info)
-        return True if whitelist_obj else False
+        return bool(whitelist_obj)
 
     def is_id_token_valid(self, token: str):
         request = requests.Request()

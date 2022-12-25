@@ -6,7 +6,7 @@ from google_auth_oauthlib.flow import Flow
 
 from signal_bot.backend import schemas
 from signal_bot.backend.core.config import get_settings
-from signal_bot.backend.core.data import get_google_config
+from signal_bot.backend.core.config import get_google_config
 from signal_bot.backend.core.security import Auth
 
 settings = get_settings()

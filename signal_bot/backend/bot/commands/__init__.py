@@ -1,2 +1,2 @@
-from .basic import *
-from .openai import *
+from . import basic
+from . import openai

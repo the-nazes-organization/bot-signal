@@ -7,8 +7,10 @@ class BotProperties(BaseModel):
         regex=r"^\+[0-9]*$",
     )
     receiver_type: str = Field(
-        default=None, description="Receiver type : two types allowed 'recipient' aka phone_number and 'group_id'"
+        default=None,
+        description=(
+            "Receiver type : two types allowed 'recipient' aka phone_number and"
+            " 'group_id'"
+        ),
     )
-    receiver: str = Field(
-        default=None, description="Receiver data based on the type"
-    )
+    receiver: str = Field(default=None, description="Receiver data based on the type")

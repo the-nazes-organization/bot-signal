@@ -3,21 +3,25 @@ from freezegun import freeze_time
 
 from signal_bot.backend.core.command import Command
 
+#pylint: disable=unused-argument
+#pylint: disable=protected-access
+
 
 def test_command_add_message():
     @Command.add(activation_type="message")
-    def test_function(message, user):
+    def test_function(message, user): 
         pass
 
     assert Command._command["message"][0]["function"] == test_function
-    assert Command._command["message"][0]["condition"] == None
-    assert Command._command["message"][0]["prefix"] == None
+    assert Command._command["message"][0]["condition"] is None
+    assert Command._command["message"][0]["prefix"] is None
 
 
 def test_command_add_two_command():
     @Command.add(activation_type="command", prefix="!test")
     def test_function_0(message, user):
-        pass
+        message = message
+        user = user
 
     @Command.add(activation_type="command", prefix="!test2")
     def test_function_1(message, user):
@@ -34,18 +38,16 @@ def test_command_add_wrong_activation():
     with pytest.raises(ValueError) as excinfo:
 
         @Command.add(activation_type="jonas_is_the_best_programmer")
-        def test_function(message, user):
+        def test_function(message, user): #pylint: disable=unused-argument
             pass
-
-    assert "activation_type must be
-    " in str(excinfo.value)
+    assert "activation_type must be" in str(excinfo.value)
 
 
 def test_command_add_command_no_prefix():
     with pytest.raises(ValueError) as excinfo:
 
         @Command.add(activation_type="command")
-        def test_function(message, user):
+        def test_function(message, user): #pylint: disable=unused-argument
             pass
 
     assert "Prefix is missing" in str(excinfo.value)
@@ -55,7 +57,7 @@ def test_command_add_command_wrong_prefix():
     with pytest.raises(ValueError) as excinfo:
 
         @Command.add(activation_type="command", prefix="test")
-        def test_function(message, user):
+        def test_function(message, user): #pylint: disable=unused-argument
             pass
 
     assert "Invalid prefix format" in str(excinfo.value)
@@ -158,7 +160,7 @@ def test_is_condition_true_timerange_and_regex():
 
 def test_handle_message(capfd):
     @Command.add(activation_type="message")
-    def test_function(message, user):
+    def test_function(message, user): #pylint: disable=unused-argument
         print("Test1")
 
     c = Command()
@@ -169,7 +171,7 @@ def test_handle_message(capfd):
 
 def test_handle_message_function_exception(caplog):
     @Command.add(activation_type="message")
-    def test_function(message, user):
+    def test_function(message, user): #pylint: disable=unused-argument
         raise ValueError("test")
 
     c = Command()
