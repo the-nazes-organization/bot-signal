@@ -154,7 +154,7 @@ class Command:
     ):
         """
         Parameter of the decorated function:
-            - activation_type: the type of activation ("command" or "message")
+            - activation_type: the type of activation ("command", "message", "typing", "attachements")
             - prefix: the prefix of the command (ex: "hello" => "!hello")
             - condition: dict of condition to check before executing the command
         """
