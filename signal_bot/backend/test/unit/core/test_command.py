@@ -10,7 +10,7 @@ from signal_bot.backend.commands.command import Command
 
 def test_command_add_message():
     @Command.add(activation_type="message")
-    def test_function(message, user): 
+    def test_function(message, user):
         pass
 
     assert Command._command["message"][0]["function"] == test_function
@@ -163,8 +163,8 @@ def test_handle_message(capfd):
     def test_function(message, user): #pylint: disable=unused-argument
         print("Test1")
 
-    c = Command()
-    assert c.handle_message("test", "+33642424242") is None
+    cmd = Command()
+    assert cmd.handle_message("test", "+33642424242") is None
     out, _ = capfd.readouterr()
     assert out == "Test1\n"
 
@@ -174,8 +174,8 @@ def test_handle_message_function_exception(caplog):
     def test_function(message, user): #pylint: disable=unused-argument
         raise ValueError("test")
 
-    c = Command()
-    assert c.handle_message("test", "+33642424242") is None
+    cmd = Command()
+    assert cmd.handle_message("test", "+33642424242") is None
     assert "Error while handling function: test_function" in caplog.text
 
 
@@ -186,8 +186,10 @@ def test_handle_message_command(capfd):
     def test_function_command(message, user, *args, **kwargs):
         print(message)
 
-    c = Command()
-    assert c.handle_message(message="!test_command hello", user="+33642424242") is None
+    cmd = Command()
+    assert cmd.handle_message(
+        message="!test_command hello", user="+33642424242"
+    ) is None
     out, _ = capfd.readouterr()
     assert "hello\n" in out
 
@@ -199,8 +201,8 @@ def test_handle_message_command_no_prefix(capfd):
     def test_function_command(message, user, *args, **kwargs):
         print(message)
 
-    c = Command()
-    assert c.handle_message(message="!test_commandhello", user="+33642424242") is None
+    cmd = Command()
+    assert cmd.handle_message(message="!test_commandhello", user="+33642424242") is None
     out, _ = capfd.readouterr()
     assert "hello\n" not in out
 
@@ -211,8 +213,8 @@ def test_handle_typing(capfd):
     def test_function_command(user, *args, **kwargs):
         print(user)
 
-    c = Command()
-    assert c.handle_typing(user="+33642424242") is None
+    cmd = Command()
+    assert cmd.handle_typing(user="+33642424242") is None
     out, _ = capfd.readouterr()
     assert "+33642424242" in out
 
@@ -223,7 +225,7 @@ def test_handle_attachements(capfd):
     def test_function_command(user, *args, **kwargs):
         print(kwargs["attachements"][0])
 
-    c = Command()
-    assert c.handle_attachements(user="+33642424242", attachements=["image"]) is None
+    cmd = Command()
+    assert cmd.handle_attachements(user="+33642424242", attachements=["image"]) is None
     out, _ = capfd.readouterr()
     assert "image" in out
