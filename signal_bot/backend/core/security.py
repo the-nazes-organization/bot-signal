@@ -9,7 +9,7 @@ from google_auth_oauthlib.flow import Flow
 from signal_bot.backend.core.config import get_settings
 from signal_bot.backend.core.config import get_google_config
 from signal_bot.backend.db.object_storage import ObjectStorage
-from signal_bot.backend.dependencies import get_state_db, get_user_db
+from signal_bot.backend.api.dependencies import get_state_db, get_user_db
 
 settings = get_settings()
 logger = logging.getLogger(__name__)

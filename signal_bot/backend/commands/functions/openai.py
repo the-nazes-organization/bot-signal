@@ -1,15 +1,16 @@
 import openai
 
-from signal_bot.backend.core.command import Command
-from signal_bot.backend.bot.socket_chatter import SocketChatter
+from signal_bot.backend.commands.command import Command
+from signal_bot.backend.bot.bot import chatter
 from signal_bot.backend.core.config import get_settings
 
+
+#pylint: disable=unused-argument
 
 @Command.add("command", "!gpt")
 def ignorant_ai(message, user):
     settings = get_settings()
     openai.api_key = settings.OPENAI_API_KEY
-    chatter = SocketChatter()
 
     response = openai.Completion.create(
         model="text-davinci-003",

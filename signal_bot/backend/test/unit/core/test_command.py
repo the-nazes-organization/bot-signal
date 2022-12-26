@@ -1,10 +1,11 @@
 import pytest
 from freezegun import freeze_time
 
-from signal_bot.backend.core.command import Command
+from signal_bot.backend.commands.command import Command
 
 #pylint: disable=unused-argument
 #pylint: disable=protected-access
+#pylint: disable=comparison-with-callable
 
 
 def test_command_add_message():
@@ -20,8 +21,7 @@ def test_command_add_message():
 def test_command_add_two_command():
     @Command.add(activation_type="command", prefix="!test")
     def test_function_0(message, user):
-        message = message
-        user = user
+        pass
 
     @Command.add(activation_type="command", prefix="!test2")
     def test_function_1(message, user):
@@ -38,7 +38,7 @@ def test_command_add_wrong_activation():
     with pytest.raises(ValueError) as excinfo:
 
         @Command.add(activation_type="jonas_is_the_best_programmer")
-        def test_function(message, user): #pylint: disable=unused-argument
+        def test_function(message, user):
             pass
     assert "activation_type must be" in str(excinfo.value)
 
@@ -47,7 +47,7 @@ def test_command_add_command_no_prefix():
     with pytest.raises(ValueError) as excinfo:
 
         @Command.add(activation_type="command")
-        def test_function(message, user): #pylint: disable=unused-argument
+        def test_function(message, user):
             pass
 
     assert "Prefix is missing" in str(excinfo.value)
@@ -57,7 +57,7 @@ def test_command_add_command_wrong_prefix():
     with pytest.raises(ValueError) as excinfo:
 
         @Command.add(activation_type="command", prefix="test")
-        def test_function(message, user): #pylint: disable=unused-argument
+        def test_function(message, user):
             pass
 
     assert "Invalid prefix format" in str(excinfo.value)
@@ -109,28 +109,28 @@ def test_is_condition_true():
     condition = {
         "users": ["+33642424242"],
     }
-    assert Command.is_condition_true(condition, "test", "+33642424242") == True
+    assert Command.is_condition_true(condition, "test", "+33642424242") is True
 
 
 def test_is_condition_false():
     condition = {
         "users": ["+33642424242"],
     }
-    assert Command.is_condition_true(condition, "test", "+33642424241") == False
+    assert Command.is_condition_true(condition, "test", "+33642424241") is False
 
 
 def test_is_condition_true_regex():
     condition = {
         "regex": "test",
     }
-    assert Command.is_condition_true(condition, "test", "+33642424241") == True
+    assert Command.is_condition_true(condition, "test", "+33642424241") is True
 
 
 def test_is_condition_false_regex():
     condition = {
         "regex": "test",
     }
-    assert Command.is_condition_true(condition, "jj le bg", "+33642424241") == False
+    assert Command.is_condition_true(condition, "jj le bg", "+33642424241") is False
 
 
 @freeze_time("23:00")
@@ -138,7 +138,7 @@ def test_is_condition_true_timerange():
     condition = {
         "timerange": ["23:00", "02:00"],
     }
-    assert Command.is_condition_true(condition, "test", "+33642424241") == True
+    assert Command.is_condition_true(condition, "test", "+33642424241") is True
 
 
 @freeze_time("23:00")
@@ -146,7 +146,7 @@ def test_is_condition_false_timerange():
     condition = {
         "timerange": ["23:01", "02:00"],
     }
-    assert Command.is_condition_true(condition, "test", "+33642424241") == False
+    assert Command.is_condition_true(condition, "test", "+33642424241") is False
 
 
 @freeze_time("23:00")
@@ -155,7 +155,7 @@ def test_is_condition_true_timerange_and_regex():
         "timerange": ["23:00", "02:00"],
         "regex": "test",
     }
-    assert Command.is_condition_true(condition, "test", "+33642424241") == True
+    assert Command.is_condition_true(condition, "test", "+33642424241") is True
 
 
 def test_handle_message(capfd):
@@ -164,8 +164,8 @@ def test_handle_message(capfd):
         print("Test1")
 
     c = Command()
-    assert c.handle_message("test", "+33642424242") == None
-    out, err = capfd.readouterr()
+    assert c.handle_message("test", "+33642424242") is None
+    out, _ = capfd.readouterr()
     assert out == "Test1\n"
 
 
@@ -175,7 +175,7 @@ def test_handle_message_function_exception(caplog):
         raise ValueError("test")
 
     c = Command()
-    assert c.handle_message("test", "+33642424242") == None
+    assert c.handle_message("test", "+33642424242") is None
     assert "Error while handling function: test_function" in caplog.text
 
 
@@ -187,8 +187,8 @@ def test_handle_message_command(capfd):
         print(message)
 
     c = Command()
-    assert c.handle_message(message="!test_command hello", user="+33642424242") == None
-    out, err = capfd.readouterr()
+    assert c.handle_message(message="!test_command hello", user="+33642424242") is None
+    out, _ = capfd.readouterr()
     assert "hello\n" in out
 
 
@@ -200,8 +200,8 @@ def test_handle_message_command_no_prefix(capfd):
         print(message)
 
     c = Command()
-    assert c.handle_message(message="!test_commandhello", user="+33642424242") == None
-    out, err = capfd.readouterr()
+    assert c.handle_message(message="!test_commandhello", user="+33642424242") is None
+    out, _ = capfd.readouterr()
     assert "hello\n" not in out
 
 def test_handle_typing(capfd):
@@ -212,8 +212,8 @@ def test_handle_typing(capfd):
         print(user)
 
     c = Command()
-    assert c.handle_typing(user="+33642424242") == None
-    out, err = capfd.readouterr()
+    assert c.handle_typing(user="+33642424242") is None
+    out, _ = capfd.readouterr()
     assert "+33642424242" in out
 
 def test_handle_attachements(capfd):
@@ -224,6 +224,6 @@ def test_handle_attachements(capfd):
         print(kwargs["attachements"][0])
 
     c = Command()
-    assert c.handle_attachements(user="+33642424242", attachements=["image"]) == None
-    out, err = capfd.readouterr()
+    assert c.handle_attachements(user="+33642424242", attachements=["image"]) is None
+    out, _ = capfd.readouterr()
     assert "image" in out

@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import List
 
 from pydantic import BaseSettings
 
@@ -6,7 +7,7 @@ from pydantic import BaseSettings
 class GoogleSettings(BaseSettings):
     CLIENT_ID: str = "google_client_id"
     CLIENT_SECRET: str = "google_client_secret"
-    SCOPES: list[str] = ["https://www.googleapis.com/auth/userinfo.email", "openid"]
+    SCOPES: List[str] = ["https://www.googleapis.com/auth/userinfo.email", "openid"]
     AUTH_ANTIFORGERY_FILE: str = "signal_bot/local_db/auth_antiforgery_tokens.json"
 
     class Config: #pylint: disable=too-few-public-methods
@@ -18,7 +19,7 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Signal Bot"
     WHITELIST_FILE: str = "signal_bot/local_db/whitelist.json"
     GOOGLE: GoogleSettings = GoogleSettings()
-    PYTHON_BOT_FILE: str = "signal_bot/backend/bot/main.py"
+    PYTHON_BOT_FILE: str = "signal_bot/backend/bot/bot.py"
     SOCKET_FILE: str = "/tmp/signal_cli/socket"
     STORAGE_PROVIDER_USER_DB: str = "file"
     STORAGE_PROVIDER_STATE_DB: str = "file"
