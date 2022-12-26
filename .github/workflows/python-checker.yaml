@@ -21,7 +21,7 @@ jobs:
           pip install -r requirements-test.txt
       - name: Analysing code with pylint
         run: |
-          pylint $(git ls-files '*.py')
+          PYTHONPATH=. python -m pylint --fail-under=9.0 --recursive=y $(git ls-files '*.py')
       - name: Run test codes with pytest
         run: |
           python -m pytest .

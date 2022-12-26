@@ -4,6 +4,10 @@ from signal_bot.backend.bot.chat_client.chatter import Chatter
 from signal_bot.backend.bot.chat_client.clients.signal_chatter import SignalChatter
 from signal_bot.backend.commands.command import Command
 
+# Import all functions to add them to the command with the decorator
+from signal_bot.backend.commands.functions import basic #pylint: disable=unused-import
+from signal_bot.backend.commands.functions import openai #pylint: disable=unused-import
+
 
 def bot_loop_hole(bot_client: Chatter, command: Command):
     while True:
