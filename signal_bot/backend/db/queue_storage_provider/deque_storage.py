@@ -21,17 +21,18 @@ class DequeStorage(QueueStorage):
 
     def get_n_first(self, nb_elem: int = 1) -> any:
         res = []
-        try:
-            res = self.queue[:nb_elem]
-        except IndexError:
-            res = None
+        for i in range(nb_elem):
+            elem = self.get(i)
+            if elem is None:
+                break
+            res.append(elem)
         return res
 
     def put(self, value: any) -> None:
         self.queue.append(value)
 
     def get_all(self) -> any:
-        return self.queue
+        return list(self.queue)
 
     def put_all(self, datas: any) -> None:
         for value in datas:
