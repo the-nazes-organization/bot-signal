@@ -1,7 +1,7 @@
-
 import socket
 
 from signal_bot.backend.bot.chat_client.format_message import MessageFormater
+from signal_bot.backend.db.queue_storage import QueueStorage
 from signal_bot.backend.bot.chat_client.chatter import Chatter
 
 
@@ -9,7 +9,10 @@ CHATTER_BUFFSIZE = 4096
 
 
 class SignalChatter(Chatter):
-    def __init__(self,socket_file:str, formater: MessageFormater) -> None:
+    def __init__(
+        self, socket_file: str, formater: MessageFormater, queue: QueueStorage
+    ) -> None:
+        self.queue = queue
         self.formater = formater
         self.cached_message = b""
         self.chat_location = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -27,6 +30,9 @@ class SignalChatter(Chatter):
     def send_reaction(self, emoji: str, target_author: str, target_timestamp: int):
         data = self.formater.format_reaction(emoji, target_author, target_timestamp)
         self._send_data(data)
+
+    def get_history(self, nb_messages: int = 10) -> list:
+        return self.queue.get_n_first(nb_messages)
 
     def _get_last_message(self, message_end_marker=b"\n") -> str:
         data = self.cached_message

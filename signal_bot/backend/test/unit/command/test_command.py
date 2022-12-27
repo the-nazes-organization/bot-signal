@@ -52,7 +52,7 @@ def test_command_add_command_no_prefix():
 
     assert "Prefix is missing" in str(excinfo.value)
 
-
+@pytest.mark.skip(reason="Not sure if prefix should start with !")
 def test_command_add_command_wrong_prefix():
     with pytest.raises(ValueError) as excinfo:
 

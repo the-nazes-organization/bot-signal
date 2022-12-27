@@ -1,15 +1,17 @@
-import json
 import sys
+
 from signal_bot.backend.bot.chat_client.chatter import Chatter
-from signal_bot.backend.bot.chat_client.clients.signal_chatter import SignalChatter
 from signal_bot.backend.commands.command import Command
+from signal_bot.backend.db.queue_storage import QueueStorage
+from signal_bot.backend.core.config import get_queue_storage
+from signal_bot.backend.core.config import get_chatter
 
 # Import all functions to add them to the command with the decorator
-from signal_bot.backend.commands.functions import basic #pylint: disable=unused-import
-from signal_bot.backend.commands.functions import openai #pylint: disable=unused-import
+from signal_bot.backend.commands.functions import basic  # pylint: disable=unused-import
+from signal_bot.backend.commands.functions import openai  # pylint: disable=unused-import
 
 
-def bot_loop_hole(bot_client: Chatter, command: Command):
+def bot_loop_hole(bot_client: Chatter, command: Command, queue: QueueStorage):
     while True:
         message_dict = bot_client.read_message()
 
@@ -17,6 +19,8 @@ def bot_loop_hole(bot_client: Chatter, command: Command):
             message_dict["type"] == "message"
             and message_dict["params"].get("dataMessage") is not None
         ):
+            # save message in queue
+            queue.put(message_dict)
             command.handle_message(
                 message=message_dict["params"]["dataMessage"]["message"],
                 user=message_dict["params"]["sourceNumber"],
@@ -39,14 +43,8 @@ def bot_loop_hole(bot_client: Chatter, command: Command):
                 user=message_dict["params"]["sourceNumber"],
             )
 
-def get_properties() -> dict:
-    properties_json = sys.stdin.read()
-    return json.loads(properties_json)
-
-def get_chatter() -> Chatter:
-    properties = get_properties()
-    return SignalChatter(**properties)
 
 chatter = get_chatter()
 commander = Command()
-bot_loop_hole(chatter, commander)
+queue_storage = get_queue_storage()
+bot_loop_hole(chatter, commander, queue_storage)

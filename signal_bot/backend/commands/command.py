@@ -167,8 +167,8 @@ class Command:
                 raise ValueError("Prefix is missing")
             if not isinstance(prefix, str):
                 raise ValueError("Invalid prefix format")
-            if not prefix.startswith("!"):
-                raise ValueError("Invalid prefix format, must start with !")
+            # if not prefix.startswith("!"):
+            #     raise ValueError("Invalid prefix format, must start with !")
 
         if condition is not None:
             cls.check_condition_format(condition)
