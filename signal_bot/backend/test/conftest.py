@@ -4,9 +4,8 @@ import pytest
 from fastapi.testclient import TestClient
 
 from signal_bot.backend.db.provider.file_storage import FileStorage
-from signal_bot.backend.main import app
+from signal_bot.backend.api.main import app
 
-#pylint: disable=consider-using-with
 
 @pytest.fixture(scope="module")
 def client():

@@ -1,10 +1,8 @@
 fastapi
-ipykernel
+google-auth
+google-auth-oauthlib
+openai
+psutil
 python-dotenv
 requests
-selenium
 uvicorn[standard]
-google-auth-oauthlib
-google-auth
-psutil
-openai

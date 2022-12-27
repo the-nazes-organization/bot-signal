@@ -8,6 +8,7 @@ storage_mapping = {
     "file": FileStorage
 }
 
+
 async def check_account_number(
     account: str = Query(
         description="Number of the phone for the account", regex="^[0-9]*$"

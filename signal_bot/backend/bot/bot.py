@@ -1,18 +1,23 @@
 import json
 import sys
-from signal_bot.backend.bot.socket_chatter import SocketChatter
-from signal_bot.backend.core.command import Command
+from signal_bot.backend.bot.chat_client.chatter import Chatter
+from signal_bot.backend.bot.chat_client.clients.signal_chatter import SignalChatter
+from signal_bot.backend.commands.command import Command
+
+# Import all functions to add them to the command with the decorator
+from signal_bot.backend.commands.functions import basic #pylint: disable=unused-import
+from signal_bot.backend.commands.functions import openai #pylint: disable=unused-import
 
 
-def bot_loop_hole(chatter: SocketChatter, commander: Command):
+def bot_loop_hole(bot_client: Chatter, command: Command):
     while True:
-        message_dict = chatter.read_message()
+        message_dict = bot_client.read_message()
 
         if (
             message_dict["type"] == "message"
             and message_dict["params"].get("dataMessage") is not None
         ):
-            commander.handle_message(
+            command.handle_message(
                 message=message_dict["params"]["dataMessage"]["message"],
                 user=message_dict["params"]["sourceNumber"],
             )
@@ -29,21 +34,19 @@ def bot_loop_hole(chatter: SocketChatter, commander: Command):
                 "DEV Handling message"
                 f" {message_dict['params']['syncMessage']['sentMessage']['message']}\n"
             )
-            commander.handle_message(
+            command.handle_message(
                 message=message_dict["params"]["syncMessage"]["sentMessage"]["message"],
                 user=message_dict["params"]["sourceNumber"],
             )
-
 
 def get_properties() -> dict:
     properties_json = sys.stdin.read()
     return json.loads(properties_json)
 
-def main():
+def get_chatter() -> Chatter:
     properties = get_properties()
-    chatter = SocketChatter(**properties)
-    commander = Command()
-    bot_loop_hole(chatter, commander)
+    return SignalChatter(**properties)
 
-if __name__ == "__main__":
-    main()
+chatter = get_chatter()
+commander = Command()
+bot_loop_hole(chatter, commander)

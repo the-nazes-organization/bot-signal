@@ -1,13 +1,9 @@
 import subprocess
-
 import psutil
 
-from signal_bot.backend.core.config import get_settings
-
-settings = get_settings()
-
 class ProcessHanlder:
-    def start_process(self, cmd: list, background: bool = False) -> subprocess.Popen:
+    @staticmethod
+    def start_process(cmd: list, background: bool = False) -> subprocess.Popen:
         process = subprocess.Popen(
             args=cmd,
             stdin=subprocess.PIPE,
@@ -18,7 +14,8 @@ class ProcessHanlder:
             process.wait()
         return process
 
-    def stop_process(self, pid: int):
+    @staticmethod
+    def stop_process(pid: int):
         process = psutil.Process(pid)
         process.terminate()
         process.wait(timeout=3)
