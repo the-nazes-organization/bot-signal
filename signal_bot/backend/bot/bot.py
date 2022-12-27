@@ -8,9 +8,7 @@ from signal_bot.backend.core.config import get_chatter
 
 # Import all functions to add them to the command with the decorator
 from signal_bot.backend.commands.functions import basic  # pylint: disable=unused-import
-from signal_bot.backend.commands.functions import (
-    openai,
-)  # pylint: disable=unused-import
+from signal_bot.backend.commands.functions import openai  # pylint: disable=unused-import
 
 
 def bot_loop_hole(bot_client: Chatter, command: Command, queue: QueueStorage):

@@ -2,7 +2,7 @@ from fastapi import Query
 
 from signal_bot.backend.core.config import get_settings
 from signal_bot.backend.db.object_storage import ObjectStorage
-from signal_bot.backend.db.provider.file_storage import FileStorage
+from signal_bot.backend.db.object_storage_provider.file_storage import FileStorage
 
 storage_mapping = {
     "file": FileStorage
