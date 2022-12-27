@@ -19,7 +19,7 @@ class DequeStorage(QueueStorage):
             res = None
         return res
 
-    def get_n_first(self, nb_elem: int = 1) -> any:
+    def get_n_last(self, nb_elem: int = 1) -> any:
         res = []
         for i in range(nb_elem):
             elem = self.get(i)
@@ -29,7 +29,7 @@ class DequeStorage(QueueStorage):
         return res
 
     def put(self, value: any) -> None:
-        self.queue.append(value)
+        self.queue.appendleft(value)
 
     def get_all(self) -> any:
         return list(self.queue)

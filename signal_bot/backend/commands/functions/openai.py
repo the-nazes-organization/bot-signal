@@ -35,7 +35,7 @@ def get_openai_prediction(prompt):
 def create_prompt_context(base_prompt=""):
     history = chatter.get_history(20)
     prompt_context = base_prompt
-    for message_dict in history:
+    for message_dict in history.reverse():
         message=message_dict["params"]["dataMessage"]["message"]
         user=message_dict["params"]["sourceNumber"]
         prompt_context += f"{user}: {message}\n"
