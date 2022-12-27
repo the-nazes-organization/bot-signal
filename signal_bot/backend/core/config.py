@@ -27,7 +27,7 @@ class Settings(BaseSettings):
 
     VOLUME_PATH: str = "volume_path"
 
-    SIGNAL_CLI_CONFIG_DIR: str = "signal-cli-config"
+    SIGNAL_CLI_CONFIG_DIR: str = "signal-cli_config"
     CHATTER_CLIENT: str = "signal"
     SOCKET_FILE: str = "/tmp/signal-cli/socket"
     PYTHON_BOT_FILE: str = "signal_bot/backend/bot/bot.py"
@@ -39,7 +39,7 @@ class Settings(BaseSettings):
     DB_USER: str = "db/users.json"
     DB_STATE: str = "db/state.json"
     DB_PROCESS: str = "db/processes.json"
-    DB_NUMBER_MAP: str = "db/number_map.json"
+    DB_NUMBER_MAP: str = "db/numbers_map.json"
 
     OPENAI_BASE_PROMPT: str = """
         C'est une conversation avec une Inteligence Artificiel.
