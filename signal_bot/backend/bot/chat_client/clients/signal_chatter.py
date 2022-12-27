@@ -32,7 +32,7 @@ class SignalChatter(Chatter):
         self._send_data(data)
 
     def get_history(self, nb_messages: int = 10) -> list:
-        return self.queue.get_n_first(nb_messages)
+        return self.queue.get_n_last(nb_messages)
 
     def _get_last_message(self, message_end_marker=b"\n") -> str:
         data = self.cached_message

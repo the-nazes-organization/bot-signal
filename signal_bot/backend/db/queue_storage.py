@@ -13,7 +13,7 @@ class QueueStorage(ABC):
         pass
 
     @abstractmethod
-    def get_n_first(self, nb_elem: int = 1) -> any:
+    def get_n_last(self, nb_elem: int = 1) -> any:
         pass
 
     @abstractmethod
