@@ -2,11 +2,12 @@ from fastapi import Query
 
 from signal_bot.backend.core.config import get_settings, get_db_user_path, get_db_state_path, get_db_process_path
 from signal_bot.backend.db.object_storage import ObjectStorage
-from signal_bot.backend.db.provider.file_storage import FileStorage
+from signal_bot.backend.db.object_storage_provider.file_storage import FileStorage
 
 storage_mapping = {
     "file": FileStorage
 }
+
 
 async def check_account_number(
     account: str = Query(

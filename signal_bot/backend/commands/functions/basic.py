@@ -1,23 +1,19 @@
-from signal_bot.backend.core.command import Command
-from signal_bot.backend.bot.socket_chatter import SocketChatter
+from signal_bot.backend.bot.bot import chatter
+from signal_bot.backend.commands.command import Command
 
+#pylint: disable=unused-argument
 
 @Command.add("command", "!tiresurmondoigt")
 def the_first_joke(message, user):
-    chatter = SocketChatter()
     chatter.send_message("prout")
 
-
 @Command.add("command", "!help")
-def help(message, user):
-    chatter = SocketChatter()
+def list_command(message, user):
     chatter.send_message(
-        ", ".join([cmd["prefix"] for cmd in Command._command["command"]])
+        ", ".join([cmd["prefix"] for cmd in Command._command["command"]]) #pylint: disable=protected-access
     )
-
 
 @Command.add("message", condition={"users": ["+33627691798"]})
 def menfou(message, user):
     if len(message) > 20:
-        chatter = SocketChatter()
         chatter.send_message("MENFOU")

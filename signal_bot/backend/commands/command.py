@@ -154,7 +154,7 @@ class Command:
     ):
         """
         Parameter of the decorated function:
-            - activation_type: the type of activation ("command" or "message")
+            - activation_type: the type of activation ("command", "message", "typing", "attachements")
             - prefix: the prefix of the command (ex: "hello" => "!hello")
             - condition: dict of condition to check before executing the command
         """
@@ -167,8 +167,8 @@ class Command:
                 raise ValueError("Prefix is missing")
             if not isinstance(prefix, str):
                 raise ValueError("Invalid prefix format")
-            if not prefix.startswith("!"):
-                raise ValueError("Invalid prefix format, must start with !")
+            # if not prefix.startswith("!"):
+            #     raise ValueError("Invalid prefix format, must start with !")
 
         if condition is not None:
             cls.check_condition_format(condition)

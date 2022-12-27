@@ -5,7 +5,7 @@ from signal_bot.backend import schemas
 from signal_bot.backend.core.config import get_settings, get_signal_cli_config_path
 from signal_bot.backend.core.process_handler import ProcessHanlder
 from signal_bot.backend.db.object_storage import ObjectStorage
-from signal_bot.backend.dependencies import check_account_number, get_process_db
+from signal_bot.backend.api.dependencies import check_account_number, get_process_db
 
 settings = get_settings()
 
@@ -54,7 +54,7 @@ async def stop_signal_cli(
         db.delete("cli")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Process found not alive"
-        )
+        ) from exc
     db.delete("cli")
 
 
