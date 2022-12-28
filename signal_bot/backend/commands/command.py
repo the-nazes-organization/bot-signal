@@ -31,7 +31,7 @@ class Command:
     def __init__(self):
         pass
 
-    def _start_a_function(self, commands, user, *args, **kwargs):
+    def _start_a_function(self, commands, user, **kwargs):
         """
         This function is used to start a function
         All the function are launched if the condition is true
@@ -46,12 +46,10 @@ class Command:
                 if command["prefix"] != kwargs.get("prefix"):
                     continue
 
-            if self.is_condition_true(
-                command.get("condition"), kwargs.get("message"), user
-            ):
+            if self.is_condition_true(command.get("condition"), kwargs.get("message"), user):
                 try:
                     command["function"](user=user, message=kwargs.get("message"))
-                except Exception as exc: # pylint: disable=broad-except
+                except Exception as exc:  # pylint: disable=broad-except
                     logging.exception(
                         "Error while handling function: %s: %s",
                         command["function"].__name__,
@@ -70,9 +68,7 @@ class Command:
         return:
             None
         """
-        self._start_a_function(
-            self._command["attachements"], user, attachements=attachements
-        )
+        self._start_a_function(self._command["attachements"], user, attachements=attachements)
 
     def handle_typing(self, user: str) -> None:
         """
@@ -104,9 +100,7 @@ class Command:
         message = message.split(" ")
         prefix = message[0]
         message = " ".join(message[1:])
-        self._start_a_function(
-            self._command["command"], user, message=message, prefix=prefix
-        )
+        self._start_a_function(self._command["command"], user, message=message, prefix=prefix)
 
     @staticmethod
     def is_condition_true(condition, message, user):
@@ -139,8 +133,7 @@ class Command:
             condition["timerange"][0], condition["timerange"][1]
         )
         check_regex = (
-            condition.get("regex") is None
-            or re.search(condition["regex"], message) is not None
+            condition.get("regex") is None or re.search(condition["regex"], message) is not None
         )
 
         return check_user and check_date and check_regex
@@ -154,7 +147,8 @@ class Command:
     ):
         """
         Parameter of the decorated function:
-            - activation_type: the type of activation ("command", "message", "typing", "attachements")
+            - activation_type: the type of activation
+                ("command", "message", "typing", "attachements")
             - prefix: the prefix of the command (ex: "hello" => "!hello")
             - condition: dict of condition to check before executing the command
         """
@@ -223,9 +217,7 @@ class Command:
 
         if "timerange" in condition:
             if len(condition["timerange"]) != 2:
-                raise ValueError(
-                    "Invalid timerange format, start and end date are required"
-                )
+                raise ValueError("Invalid timerange format, start and end date are required")
             for time_range in condition["timerange"]:
                 try:
                     datetime.strptime(time_range, "%H:%M")

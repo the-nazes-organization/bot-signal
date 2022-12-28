@@ -17,7 +17,7 @@ from signal_bot.backend.bot.chat_client.format_message import JsonRpcFormater
 class GoogleSettings(BaseSettings):
     CLIENT_ID: str = "google_client_id"
     CLIENT_SECRET: str = "google_client_secret"
-    SCOPES: list[str] = ["https://www.googleapis.com/auth/userinfo.email", "openid"]
+    SCOPES: List[str] = ["https://www.googleapis.com/auth/userinfo.email", "openid"]
 
     class Config:  # pylint: disable=too-few-public-methods
         env_prefix = "GOOGLE_"
@@ -120,7 +120,6 @@ def get_queue_storage() -> QueueStorage:
 
 
 def get_formater(properties) -> MessageFormater:
-    settings = get_settings()
     return JsonRpcFormater(**properties)
 
 
