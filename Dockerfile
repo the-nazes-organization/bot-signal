@@ -21,6 +21,9 @@ RUN mkdir /app
 WORKDIR /app
 COPY . .
 
+# Create data directory to asses rights
+RUN mkdir /data
+
 
 # Create user and chown /app /data
 RUN groupadd -g 10001 signal-bot && \

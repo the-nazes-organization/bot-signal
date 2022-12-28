@@ -1,6 +1,6 @@
 from collections import deque
 
-from backend.db.queue_storage import QueueStorage
+from signal_bot.backend.db.queue_storage import QueueStorage
 
 
 class DequeStorage(QueueStorage):

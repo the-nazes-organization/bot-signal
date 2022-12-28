@@ -1,9 +1,16 @@
 {
-	"name": "Python 3",
-  	"dockerComposeFile": "../docker-compose.yml",
-  	"service": "app",
-  	"shutdownAction": "stopCompose",
-	"workspaceFolder": "/app/",
+	"name": "Signal-bot",
+	"build": {
+		"dockerfile": "../Dockerfile",
+		"context": ".."
+	},
+
+	"workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind,consistency=cached",
+	"workspaceFolder": "/app",
+
+	"mounts": [
+		"source=${localWorkspaceFolder}/.data,target=/data,type=bind,consistency=cached"
+	],
 
 	// Configure tool-specific properties.
 	"customizations": {
