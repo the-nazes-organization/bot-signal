@@ -50,7 +50,7 @@ class Command:
                 command.get("condition"), kwargs.get("message"), user
             ):
                 try:
-                    command["function"](user=user, *args, **kwargs)
+                    command["function"](user=user, message=kwargs.get("message"))
                 except Exception as exc: # pylint: disable=broad-except
                     logging.exception(
                         "Error while handling function: %s: %s",
