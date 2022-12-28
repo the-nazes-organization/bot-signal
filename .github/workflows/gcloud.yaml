@@ -37,7 +37,7 @@ jobs:
       id: 'auth'
       uses: 'google-github-actions/auth@v1'
       with:
-        workload_identity_provider: "projects/417901482483/locations/global/workloadIdentityPools/my-pool/providers/my-provider"
+        workload_identity_provider: "projects/417901482483/locations/global/workloadIdentityPools/signal-bot-main-pool/providers/github-action-provider"
         service_account: 'github-action-sa@signal-bot-368420.iam.gserviceaccount.com'
 
     - name: 'Set up Cloud SDK'

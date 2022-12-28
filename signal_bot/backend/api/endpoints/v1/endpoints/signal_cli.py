@@ -2,7 +2,7 @@ import psutil
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from signal_bot.backend import schemas
-from signal_bot.backend.core.config import get_settings
+from signal_bot.backend.core.config import get_settings, get_signal_cli_config_path
 from signal_bot.backend.core.process_handler import ProcessHanlder
 from signal_bot.backend.db.object_storage import ObjectStorage
 from signal_bot.backend.api.dependencies import check_account_number, get_process_db
@@ -24,6 +24,8 @@ async def put_signal_cli(
     process = handler.start_process(
         [
             "signal-cli",
+            "--config",
+            get_signal_cli_config_path(),
             "daemon",
             "--socket",
             settings.SOCKET_FILE,
@@ -63,7 +65,16 @@ async def register_account_signal(
     handler: ProcessHanlder = Depends(),
 ):
     process = handler.start_process(
-        ["signal-cli", "-a", account, "register", "--captcha", register.captcha_token]
+        [
+            "signal-cli",
+            "--config",
+            get_signal_cli_config_path(),
+            "-a",
+            account,
+            "register",
+            "--captcha",
+            register.captcha_token
+        ]
     )
     output = process.stdout.read()
     return schemas.SignalCliRegisterResponse(
@@ -78,7 +89,15 @@ async def verify_account_signal(
     handler: ProcessHanlder = Depends(),
 ):
     process = handler.start_process(
-        ["signal-cli", "-a", account, "verify", verify.code]
+        [
+            "signal-cli",
+            "--config",
+            get_signal_cli_config_path(),
+            "-a",
+            account,
+            "verify",
+            verify.code
+        ]
     )
     output = process.stdout.read()
     return schemas.SignalCliRegisterResponse(

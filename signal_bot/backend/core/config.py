@@ -14,8 +14,7 @@ from signal_bot.backend.db.queue_storage_provider.deque_storage import DequeStor
 class GoogleSettings(BaseSettings):
     CLIENT_ID: str = "google_client_id"
     CLIENT_SECRET: str = "google_client_secret"
-    SCOPES: List[str] = ["https://www.googleapis.com/auth/userinfo.email", "openid"]
-    AUTH_ANTIFORGERY_FILE: str = "signal_bot/local_db/auth_antiforgery_tokens.json"
+    SCOPES: list[str] = ["https://www.googleapis.com/auth/userinfo.email", "openid"]
 
     class Config:  # pylint: disable=too-few-public-methods
         env_prefix = "GOOGLE_"
@@ -24,16 +23,24 @@ class GoogleSettings(BaseSettings):
 class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "Signal Bot"
-    WHITELIST_FILE: str = "signal_bot/local_db/whitelist.json"
     GOOGLE: GoogleSettings = GoogleSettings()
+
+    VOLUME_PATH: str = "volume_path"
+
+    SIGNAL_CLI_CONFIG_DIR: str = "signal-cli_config"
+    CHATTER_CLIENT: str = "signal"
+    SOCKET_FILE: str = "/tmp/signal-cli/socket"
     PYTHON_BOT_FILE: str = "signal_bot/backend/bot/bot.py"
-    SOCKET_FILE: str = "/tmp/signal_cli/socket"
+
     STORAGE_PROVIDER_USER_DB: str = "file"
     STORAGE_PROVIDER_STATE_DB: str = "file"
     STORAGE_PROVIDER_PROCESS_DB: str = "file"
-    DB_USER: str = "signal_bot/local_db/users.json"
-    DB_STATE: str = "signal_bot/local_db/state.json"
-    DB_PROCESS: str = "signal_bot/local_db/processes.json"
+    STORAGE_PROVIDER_NUMBER_MAP_DB: str = "file"
+    DB_USER: str = "db/users.json"
+    DB_STATE: str = "db/state.json"
+    DB_PROCESS: str = "db/processes.json"
+    DB_NUMBER_MAP: str = "db/numbers_map.json"
+
     OPENAI_BASE_PROMPT: str = """
         C'est une conversation avec une Inteligence Artificiel.
         Elle est capable de comprendre les émotions et de les exprimer.
@@ -49,6 +56,7 @@ class Settings(BaseSettings):
     """
     OPENAI_API_KEY: str = "openai_api_key"
     OPENAI_COMPLETION_MAX_TOKEN = "openai_completion_max_token"
+
     QUEUE_STORAGE_PROVIDER: str = "deque"
     QUEUE_STORAGE_MAXLEN: int = 50
 
@@ -73,9 +81,33 @@ def get_google_config():
         }
     }
 
+@lru_cache()
+def get_signal_cli_config_path():
+    settings = get_settings()
+    return settings.VOLUME_PATH + "/" + settings.SIGNAL_CLI_CONFIG_DIR
+
+@lru_cache()
+def get_db_user_path():
+    settings = get_settings()
+    return settings.VOLUME_PATH + "/" + settings.DB_USER
+
+@lru_cache()
+def get_db_state_path():
+    settings = get_settings()
+    return settings.VOLUME_PATH + "/" + settings.DB_STATE
+
+@lru_cache()
+def get_db_process_path():
+    settings = get_settings()
+    return settings.VOLUME_PATH + "/" + settings.DB_PROCESS
+
+@lru_cache()
+def get_db_number_map_path():
+    settings = get_settings()
+    return settings.VOLUME_PATH + "/" + settings.DB_NUMBER_MAP
 
 def get_queue_storage() -> QueueStorage:
-    settings = get_settings
+    settings = get_settings()
     mapping = {
         "deque": DequeStorage,
     }
@@ -89,7 +121,7 @@ def get_properties() -> dict:
 
 def get_chatter() -> Chatter:
     properties = get_properties()
-    settings = get_settings
+    settings = get_settings()
     mapping = {
         "signal": SignalChatter,
     }
