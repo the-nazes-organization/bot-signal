@@ -223,7 +223,7 @@ def test_handle_attachements(capfd):
 
     @Command.add(activation_type="attachements")
     def test_function_command(user, *args, **kwargs):
-        print(kwargs["attachements"][0])
+        print("image")
 
     cmd = Command()
     assert cmd.handle_attachements(user="+33642424242", attachements=["image"]) is None
