@@ -7,7 +7,7 @@ from fastapi.encoders import jsonable_encoder
 
 from signal_bot.backend import schemas
 from signal_bot.backend.core.config import get_settings
-from signal_bot.backend.core.process_handler import ProcessHanlder
+from signal_bot.backend.core.process_handler import ProcessHandler
 from signal_bot.backend.db.object_storage import ObjectStorage
 from signal_bot.backend.api.dependencies import get_process_db
 
@@ -19,7 +19,7 @@ router = APIRouter()
 @router.put("/", status_code=status.HTTP_201_CREATED)
 async def start_bot(
     properties: schemas.BotProperties,
-    handler: ProcessHanlder = Depends(),
+    handler: ProcessHandler = Depends(),
     db: ObjectStorage = Depends(get_process_db),
 ):
     if db.get("bot") is not None:
@@ -36,7 +36,7 @@ async def start_bot(
 
 @router.delete("/")
 async def stop_bot(
-    handler: ProcessHanlder = Depends(), db: ObjectStorage = Depends(get_process_db)
+    handler: ProcessHandler = Depends(), db: ObjectStorage = Depends(get_process_db)
 ):
     pid = db.get("bot")
     if pid is None:

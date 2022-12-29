@@ -5,6 +5,7 @@ from signal_bot.backend.core.config import (
     get_db_user_path,
     get_db_state_path,
     get_db_process_path,
+    get_db_number_map_path
 )
 from signal_bot.backend.db.object_storage import ObjectStorage
 from signal_bot.backend.db.object_storage_provider.file_storage import FileStorage
@@ -13,7 +14,7 @@ storage_mapping = {"file": FileStorage}
 
 
 async def check_account_number(
-    account: str = Query(description="Number of the phone for the account", regex="^[0-9]*$")
+    account: str = Query(description="Number of the phone for the account", regex=r"^[0-9]{7,15}$")
 ):
     return "+" + account
 
@@ -31,3 +32,8 @@ async def get_state_db() -> ObjectStorage:
 async def get_process_db() -> ObjectStorage:
     settings = get_settings()
     return storage_mapping[settings.STORAGE_PROVIDER_PROCESS_DB](get_db_process_path())
+
+
+async def get_number_map_db() -> ObjectStorage:
+    settings = get_settings()
+    return storage_mapping[settings.STORAGE_PROVIDER_NUMBER_MAP_DB](get_db_number_map_path())

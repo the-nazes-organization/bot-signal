@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from signal_bot.backend import schemas
 from signal_bot.backend.core.config import get_settings, get_signal_cli_config_path
-from signal_bot.backend.core.process_handler import ProcessHanlder
+from signal_bot.backend.core.process_handler import ProcessHandler
 from signal_bot.backend.db.object_storage import ObjectStorage
 from signal_bot.backend.api.dependencies import check_account_number, get_process_db
 
@@ -14,7 +14,7 @@ router = APIRouter()
 
 @router.put("/", status_code=status.HTTP_201_CREATED)
 async def put_signal_cli(
-    handler: ProcessHanlder = Depends(), db: ObjectStorage = Depends(get_process_db)
+    handler: ProcessHandler = Depends(), db: ObjectStorage = Depends(get_process_db)
 ):
     if db.get("cli") is not None:
         raise HTTPException(
@@ -41,7 +41,7 @@ async def put_signal_cli(
 
 @router.delete("/")
 async def stop_signal_cli(
-    handler: ProcessHanlder = Depends(), db: ObjectStorage = Depends(get_process_db)
+    handler: ProcessHandler = Depends(), db: ObjectStorage = Depends(get_process_db)
 ):
     pid = db.get("cli")
     if pid is None:
@@ -62,7 +62,7 @@ async def stop_signal_cli(
 async def register_account_signal(
     register: schemas.SignalRegister,
     account: str = Depends(check_account_number),
-    handler: ProcessHanlder = Depends(),
+    handler: ProcessHandler = Depends(),
 ):
     process = handler.start_process(
         [
@@ -86,7 +86,7 @@ async def register_account_signal(
 async def verify_account_signal(
     verify: schemas.SignalRegisterVerify,
     account: str = Depends(check_account_number),
-    handler: ProcessHanlder = Depends(),
+    handler: ProcessHandler = Depends(),
 ):
     process = handler.start_process(
         [

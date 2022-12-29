@@ -123,6 +123,7 @@ def get_formater(properties) -> MessageFormater:
 
 def get_properties() -> dict:
     properties_json = sys.stdin.read()
+    sys.stdout.write(properties_json)
     return json.loads(properties_json)
 
 
