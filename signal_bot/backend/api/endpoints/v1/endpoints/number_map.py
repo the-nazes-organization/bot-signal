@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
+
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from signal_bot.backend import schemas
 from signal_bot.backend.db.object_storage import ObjectStorage

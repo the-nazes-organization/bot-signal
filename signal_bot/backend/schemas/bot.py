@@ -1,9 +1,10 @@
-from pydantic import BaseModel, Field
 from enum import Enum
 
+from pydantic import BaseModel, Field
+
 class ReceiverType(str, Enum):
-    recipient = "recipient"
-    group_id = "group_id"
+    RECIPIENT = "recipient"
+    GROUP_ID = "group_id"
 
 class BotProperties(BaseModel):
     account: str = Field(
