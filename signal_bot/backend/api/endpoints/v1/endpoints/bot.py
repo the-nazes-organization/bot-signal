@@ -30,7 +30,6 @@ async def start_bot(
     process = handler.start_process([sys.executable, settings.PYTHON_BOT_FILE], True)
     db.put("bot", process.pid)
     properties = jsonable_encoder(properties)
-    properties["socket_file"] = settings.SOCKET_FILE
     process.stdin.write(json.dumps(properties).encode("utf-8"))
     process.stdin.close()
 

@@ -1,7 +1,7 @@
 import openai
 
 from signal_bot.backend.commands.command import Command
-from signal_bot.backend.bot.bot import chatter
+from signal_bot.backend.bot import bot
 from signal_bot.backend.core.config import get_settings
 
 #pylint: disable=unused-argument
@@ -12,15 +12,15 @@ def ignorant_ai(message, user):
     base_prompt = settings.OPENAI_BASE_PROMPT
     prompt = create_prompt_context(base_prompt=base_prompt)
     response = get_openai_prediction(prompt=prompt)
-    chatter.send_message(f'"{response.choices[0].text}"')
+    bot.chatter.send_message(f'"{response.choices[0].text}"')
 
-@Command.add("command", "🤖😈")
+@Command.add("command", "🤖👿")
 def evil_ai(message, user):
     settings = get_settings()
     base_prompt = settings.OPENAI_BASE_PROMPT_EVIL
     prompt = create_prompt_context(base_prompt=base_prompt)
     response = get_openai_prediction(prompt=prompt)
-    chatter.send_message(f'"{response.choices[0].text}"')
+    bot.chatter.send_message(f'"{response.choices[0].text}"')
 
 def get_openai_prediction(prompt):
     settings = get_settings()
@@ -33,9 +33,10 @@ def get_openai_prediction(prompt):
     return response
 
 def create_prompt_context(base_prompt=""):
-    history = chatter.get_history(20)
+    history = bot.chatter.get_history(20)
+    history.reverse()
     prompt_context = base_prompt
-    for message_dict in history.reverse():
+    for message_dict in history:
         message=message_dict["params"]["dataMessage"]["message"]
         user=message_dict["params"]["sourceNumber"]
         prompt_context += f"{user}: {message}\n"

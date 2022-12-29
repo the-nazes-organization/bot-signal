@@ -8,13 +8,16 @@ from pydantic import BaseSettings
 from signal_bot.backend.db.queue_storage import QueueStorage
 from signal_bot.backend.bot.chat_client.chatter import Chatter
 from signal_bot.backend.bot.chat_client.clients.signal_chatter import SignalChatter
+from signal_bot.backend.bot.chat_client.clients.facebook_chatter import FacebookChatter
 from signal_bot.backend.db.queue_storage_provider.deque_storage import DequeStorage
+from signal_bot.backend.bot.chat_client.format_message import MessageFormater
+from signal_bot.backend.bot.chat_client.format_message import JsonRpcFormater
 
 
 class GoogleSettings(BaseSettings):
     CLIENT_ID: str = "google_client_id"
     CLIENT_SECRET: str = "google_client_secret"
-    SCOPES: list[str] = ["https://www.googleapis.com/auth/userinfo.email", "openid"]
+    SCOPES: List[str] = ["https://www.googleapis.com/auth/userinfo.email", "openid"]
 
     class Config:  # pylint: disable=too-few-public-methods
         env_prefix = "GOOGLE_"
@@ -42,21 +45,22 @@ class Settings(BaseSettings):
     DB_NUMBER_MAP: str = "db/numbers_map.json"
 
     OPENAI_BASE_PROMPT: str = """
-        C'est une conversation avec une Inteligence Artificiel.
-        Elle est capable de comprendre les émotions et de les exprimer.
-        Elle est ici pour vous écouter et vous conseiller. 
-        Elle est tres intelligente et gentille. 
-        Ci-dessous voici l´historique de la conversation.\n
+C'est une conversation avec une Inteligence Artificiel.\n
+Elle est capable de comprendre les émotions et de les exprimer.\n
+Elle est ici pour vous écouter et vous conseiller.\n
+Elle est tres intelligente et gentille.\n 
+Ci-dessous voici l´historique de la conversation.\n
+La reponse est seulement le texte de la reponse de l´IA. Pas de prompt.\n
     """
     OPENAI_BASE_PROMPT_EVIL: str = """
-        C'est une conversation avec une Inteligence Artificiel.
-        Elle est extremement intelligente et tres malveillante.
-        Elle repond de facon tres sarcastique
-        Ci-dessous voici l´historique de la conversation.\n
+C'est une conversation avec une Inteligence Artificiel.\n
+Elle est extremement intelligente et tres malveillante.\n
+Elle repond de facon tres sarcastique\n
+Ci-dessous voici l´historique de la conversation.\n
+La reponse est seulement le texte de la reponse de l´IA. Pas de prompt.\n
     """
     OPENAI_API_KEY: str = "openai_api_key"
     OPENAI_COMPLETION_MAX_TOKEN = "openai_completion_max_token"
-
     QUEUE_STORAGE_PROVIDER: str = "deque"
     QUEUE_STORAGE_MAXLEN: int = 50
 
@@ -66,7 +70,6 @@ def get_settings():
     return Settings()
 
 
-@lru_cache()
 def get_google_config():
     settings = get_settings()
     return {
@@ -114,15 +117,23 @@ def get_queue_storage() -> QueueStorage:
     return mapping[settings.QUEUE_STORAGE_PROVIDER](settings.QUEUE_STORAGE_MAXLEN)
 
 
+def get_formater(properties) -> MessageFormater:
+    return JsonRpcFormater(**properties)
+
+
 def get_properties() -> dict:
     properties_json = sys.stdin.read()
     return json.loads(properties_json)
 
 
-def get_chatter() -> Chatter:
+def get_chatter(queue) -> Chatter:
     properties = get_properties()
     settings = get_settings()
     mapping = {
         "signal": SignalChatter,
+        "facebook": FacebookChatter,
     }
-    return mapping[settings.CHATTER_CLIENT](**properties)
+    formater = get_formater(properties)
+    return mapping[settings.CHATTER_CLIENT](
+        queue=queue, formater=formater, socket_file=settings.SOCKET_FILE
+    )

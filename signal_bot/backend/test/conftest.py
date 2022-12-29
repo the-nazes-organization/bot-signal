@@ -18,11 +18,13 @@ def client():
 def object_storage(file_json, request):
     if request.param == "file_json":
         return FileStorage(file_json.name)
+    return None
 
 @pytest.fixture(scope="function", params=["deque"])
 def queue_storage(request):
     if request.param == "deque":
         return DequeStorage(5)
+    return None
 
 @pytest.fixture(scope="module", name="file_json")
 def fixture_file_json():

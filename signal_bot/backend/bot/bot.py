@@ -10,7 +10,6 @@ from signal_bot.backend.core.config import get_chatter
 from signal_bot.backend.commands.functions import basic  # pylint: disable=unused-import
 from signal_bot.backend.commands.functions import openai  # pylint: disable=unused-import
 
-
 def bot_loop_hole(bot_client: Chatter, command: Command, queue: QueueStorage):
     while True:
         message_dict = bot_client.read_message()
@@ -19,7 +18,6 @@ def bot_loop_hole(bot_client: Chatter, command: Command, queue: QueueStorage):
             message_dict["type"] == "message"
             and message_dict["params"].get("dataMessage") is not None
         ):
-            # save message in queue
             queue.put(message_dict)
             command.handle_message(
                 message=message_dict["params"]["dataMessage"]["message"],
@@ -44,7 +42,7 @@ def bot_loop_hole(bot_client: Chatter, command: Command, queue: QueueStorage):
             )
 
 
-chatter = get_chatter()
 commander = Command()
 queue_storage = get_queue_storage()
+chatter = get_chatter(queue=queue_storage)
 bot_loop_hole(chatter, commander, queue_storage)
