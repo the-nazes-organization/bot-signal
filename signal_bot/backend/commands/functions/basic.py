@@ -13,7 +13,7 @@ def list_command(message, user):
         ", ".join([cmd["prefix"] for cmd in Command._command["command"]]) #pylint: disable=protected-access
     )
 
-@Command.add("message", condition={"users": ["+33627691798"]})
+@Command.add("message", condition={"users": ["valentin"]})
 def menfou(message, user):
     if len(message) > 20:
         bot.chatter.send_message("MENFOU")
