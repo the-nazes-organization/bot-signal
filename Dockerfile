@@ -29,7 +29,7 @@ RUN groupadd -g 10001 signal-bot && \
 	useradd --no-log-init -u 10000 -g signal-bot signal-bot && \
 	chown -R signal-bot:signal-bot /app /data
 
-USER signal-bot:signal-bot
+# USER signal-bot:signal-bot
 
 
 CMD ["uvicorn", "signal_bot.backend.api.main:app", "--host=0.0.0.0", "--port=80"]
