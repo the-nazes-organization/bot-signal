@@ -1,6 +1,5 @@
 FROM python:bullseye
 
-EXPOSE 80
 USER 0
 
 # Install signal-cli
