@@ -80,7 +80,7 @@ def get_google_config():
             "token_uri": "https://oauth2.googleapis.com/token",
             "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
             "client_secret": settings.GOOGLE.CLIENT_SECRET,
-            "redirect_uris": ["http://127.0.0.1:8000"],
+            "redirect_uris": ["http://127.0.0.1:8000/api/v1/auth/callback","http://signal-bot.nazes.fr/api/v1/auth/callback"],
         }
     }
 
