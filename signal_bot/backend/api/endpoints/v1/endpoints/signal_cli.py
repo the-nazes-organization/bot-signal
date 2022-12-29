@@ -12,7 +12,7 @@ settings = get_settings()
 router = APIRouter()
 
 
-@router.put("/", status_code=status.HTTP_201_CREATED)
+@router.post("/", status_code=status.HTTP_201_CREATED)
 async def put_signal_cli(
     handler: ProcessHandler = Depends(), db: ObjectStorage = Depends(get_process_db)
 ):
