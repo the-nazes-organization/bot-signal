@@ -11,9 +11,19 @@ from signal_bot.backend.core.process_handler import ProcessHandler
 from signal_bot.backend.db.object_storage import ObjectStorage
 from signal_bot.backend.api.dependencies import get_process_db
 
+from signal_bot.backend.core.security import get_auth_user
+from signal_bot.backend.api.endpoints.v1.endpoints.bot import number_map
+
 settings = get_settings()
 
 router = APIRouter()
+
+router.include_router(
+    number_map.router,
+    prefix="/numbermap",
+    tags=["/numbermap"],
+    dependencies=[Depends(get_auth_user)]
+)
 
 
 @router.put("/", status_code=status.HTTP_201_CREATED)

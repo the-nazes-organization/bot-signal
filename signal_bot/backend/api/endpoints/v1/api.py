@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends
 
 from signal_bot.backend.api.endpoints.v1.endpoints import (
-    auth, bot,
-    signal_cli,
-    number_map
+    auth, signal_cli
+)
+from signal_bot.backend.api.endpoints.v1.endpoints.bot import (
+    bot
 )
 
 from signal_bot.backend.core.security import get_auth_user
@@ -22,12 +23,5 @@ api_router.include_router(
     bot.router,
     prefix="/bot",
     tags=["bot"],
-    dependencies=[Depends(get_auth_user)]
-)
-
-api_router.include_router(
-    number_map.router,
-    prefix="/numbermap",
-    tags=["/numbermap"],
     dependencies=[Depends(get_auth_user)]
 )
