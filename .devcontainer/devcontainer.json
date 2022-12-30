@@ -5,8 +5,8 @@
 		"context": ".."
 	},
 
-	"workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind",
-	"workspaceFolder": "/app",
+	// "workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind",
+	// "workspaceFolder": "/app",
 
 	"mounts": [
 		"source=${localWorkspaceFolder}/.data,target=/data,type=bind,consistency=cached"
@@ -39,6 +39,7 @@
 			]
 		}
 	},
+	"remoteUser": "signal-bot"
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
