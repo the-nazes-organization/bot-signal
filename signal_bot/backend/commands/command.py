@@ -2,8 +2,6 @@ import logging
 import re
 from datetime import datetime, time
 
-from signal_bot.backend.db.getter import get_number_by_name
-
 logger = logging.getLogger(__name__)
 
 
@@ -130,10 +128,7 @@ class Command:
         if condition is None:
             return True
 
-        check_user = (
-            condition.get("users") is None
-            or user in [get_number_by_name(name) for name in condition["users"]]
-        )
+        check_user = condition.get("users") is None or user in condition["users"]
         check_date = condition.get("timerange") is None or is_time_between(
             condition["timerange"][0], condition["timerange"][1]
         )
