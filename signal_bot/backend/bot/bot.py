@@ -1,4 +1,5 @@
 import sys
+import argparse
 import logging
 import logging.config
 
@@ -9,6 +10,7 @@ from signal_bot.backend.core.config import get_queue_storage
 from signal_bot.backend.core.config import get_chatter
 from signal_bot.backend.db.getter import get_number_by_name
 from signal_bot.backend.core.logger_conf import LOGGING
+from signal_bot.backend.schemas.bot import BotProperties
 
 # Import all functions to add them to the command with the decorator
 from signal_bot.backend.commands.functions import basic  # pylint: disable=unused-import
@@ -17,6 +19,19 @@ from signal_bot.backend.commands.functions import openai  # pylint: disable=unus
 
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger(__name__)
+
+
+parser = argparse.ArgumentParser(description="Signal bot")
+parser.add_argument(
+    "-a", "--account", help="Account to use if format +33642424242", type=str, default="+33642424242"
+)
+parser.add_argument(
+    "-rt", "--receiver_type", help="Type of receiver", type=str, choices=['group_id', 'recipient'], default="group_id"
+)
+parser.add_argument(
+    "-r", "--receiver", help="Receiver to use", type=str, default="group_id"
+)
+args = parser.parse_args()
 
 
 def bot_loop_hole(bot_client: Chatter, command: Command, queue: QueueStorage):
@@ -53,7 +68,12 @@ def bot_loop_hole(bot_client: Chatter, command: Command, queue: QueueStorage):
             )
 
 
+properties = BotProperties(
+    account=args.account,
+    receiver_type=args.receiver_type,
+    receiver=args.receiver
+)
 commander = Command()
 queue_storage = get_queue_storage()
-chatter = get_chatter(queue=queue_storage)
+chatter = get_chatter(queue=queue_storage, properties=properties)
 bot_loop_hole(chatter, commander, queue_storage)
