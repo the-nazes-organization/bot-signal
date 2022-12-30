@@ -24,6 +24,7 @@ class GoogleSettings(BaseSettings):
 
 
 class Settings(BaseSettings):
+    VERSION: str = "0.0.1"
     API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "Signal Bot"
     GOOGLE: GoogleSettings = GoogleSettings()
@@ -63,6 +64,10 @@ La reponse est seulement le texte de la reponse de l´IA. Pas de prompt.\n
     OPENAI_COMPLETION_MAX_TOKEN = "openai_completion_max_token"
     QUEUE_STORAGE_PROVIDER: str = "deque"
     QUEUE_STORAGE_MAXLEN: int = 50
+    LOG_LEVEL_CLI: str = "INFO"
+    LOG_LEVEL_BOT: str = "INFO"
+    LOG_LEVEL_CONSOLE: str = "DEBUG"
+    LOG_LEVEL_UVICORN: str = "INFO"
 
 
 @lru_cache()
@@ -87,30 +92,36 @@ def get_google_config():
         }
     }
 
+
 @lru_cache()
 def get_signal_cli_config_path():
     settings = get_settings()
     return settings.VOLUME_PATH + "/" + settings.SIGNAL_CLI_CONFIG_DIR
+
 
 @lru_cache()
 def get_db_user_path():
     settings = get_settings()
     return settings.VOLUME_PATH + "/" + settings.DB_USER
 
+
 @lru_cache()
 def get_db_state_path():
     settings = get_settings()
     return settings.VOLUME_PATH + "/" + settings.DB_STATE
+
 
 @lru_cache()
 def get_db_process_path():
     settings = get_settings()
     return settings.VOLUME_PATH + "/" + settings.DB_PROCESS
 
+
 @lru_cache()
 def get_db_number_map_path():
     settings = get_settings()
     return settings.VOLUME_PATH + "/" + settings.DB_NUMBER_MAP
+
 
 def get_queue_storage() -> QueueStorage:
     settings = get_settings()

@@ -26,7 +26,7 @@ RUN mkdir /data
 
 # Create user and chown /app /data
 RUN groupadd -g 10001 signal-bot && \
-	useradd --no-log-init -u 10000 -g signal-bot signal-bot && \
+	useradd --no-log-init -d /app -u 10000 -g signal-bot signal-bot && \
 	chown -R signal-bot:signal-bot /app /data
 
 # USER signal-bot:signal-bot
