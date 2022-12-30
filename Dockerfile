@@ -21,8 +21,7 @@ WORKDIR /app
 COPY . .
 
 # Create data directory to asses rights
-RUN mkdir /data && \
-	mkdir /data/logs
+RUN mkdir /data
 
 
 # Create user and chown /app /data
