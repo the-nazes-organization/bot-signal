@@ -1,4 +1,6 @@
 import sys
+import logging
+import logging.config
 
 from signal_bot.backend.bot.chat_client.chatter import Chatter
 from signal_bot.backend.commands.command import Command
@@ -6,14 +8,21 @@ from signal_bot.backend.db.queue_storage import QueueStorage
 from signal_bot.backend.core.config import get_queue_storage
 from signal_bot.backend.core.config import get_chatter
 from signal_bot.backend.db.getter import get_number_by_name
+from signal_bot.backend.core.logger_conf import LOGGING
 
 # Import all functions to add them to the command with the decorator
 from signal_bot.backend.commands.functions import basic  # pylint: disable=unused-import
 from signal_bot.backend.commands.functions import openai  # pylint: disable=unused-import
 
+
+logging.config.dictConfig(LOGGING)
+logger = logging.getLogger(__name__)
+
+
 def bot_loop_hole(bot_client: Chatter, command: Command, queue: QueueStorage):
     while True:
         message_dict = bot_client.read_message()
+        logger.info(msg=f"Received message: {message_dict}")
 
         if (
             message_dict["type"] == "message"
@@ -33,6 +42,7 @@ def bot_loop_hole(bot_client: Chatter, command: Command, queue: QueueStorage):
             and message_dict["params"]["syncMessage"]["sentMessage"].get("message")
             is not None
         ):
+
             sys.stdout.write(
                 "DEV Handling message"
                 f" {message_dict['params']['syncMessage']['sentMessage']['message']}\n"

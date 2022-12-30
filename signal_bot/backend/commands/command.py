@@ -2,8 +2,8 @@ import logging
 import re
 from datetime import datetime, time
 
-logger = logging.getLogger(__name__)
 
+logger = logging.getLogger(__name__)
 
 class Command:
     """
@@ -50,7 +50,7 @@ class Command:
                 try:
                     command["function"](user=user, message=kwargs.get("message"))
                 except Exception as exc:  # pylint: disable=broad-except
-                    logging.exception(
+                    logger.error(
                         "Error while handling function: %s: %s",
                         command["function"].__name__,
                         exc,
