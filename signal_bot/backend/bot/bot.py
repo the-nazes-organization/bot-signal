@@ -5,6 +5,7 @@ from signal_bot.backend.commands.command import Command
 from signal_bot.backend.db.queue_storage import QueueStorage
 from signal_bot.backend.core.config import get_queue_storage
 from signal_bot.backend.core.config import get_chatter
+from signal_bot.backend.db.getter import get_number_by_name
 
 # Import all functions to add them to the command with the decorator
 from signal_bot.backend.commands.functions import basic  # pylint: disable=unused-import
@@ -21,7 +22,7 @@ def bot_loop_hole(bot_client: Chatter, command: Command, queue: QueueStorage):
             queue.put(message_dict)
             command.handle_message(
                 message=message_dict["params"]["dataMessage"]["message"],
-                user=message_dict["params"]["sourceNumber"],
+                user=get_number_by_name(message_dict["params"]["sourceNumber"]),
             )
 
         # DEV self sending
