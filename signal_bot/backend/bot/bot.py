@@ -23,13 +23,19 @@ logger = logging.getLogger(__name__)
 
 parser = argparse.ArgumentParser(description="Signal bot")
 parser.add_argument(
-    "-a", "--account", help="Account to use if format +33642424242", type=str, default="+33642424242"
+    "-a", "--account",
+    help="Account to use if format +33642424242",
+    type=str
 )
 parser.add_argument(
-    "-rt", "--receiver_type", help="Type of receiver", type=str, choices=['group_id', 'recipient'], default="group_id"
+    "-rt", "--receiver_type",
+    help="Type of receiver",
+    choices=['group_id', 'recipient']
 )
 parser.add_argument(
-    "-r", "--receiver", help="Receiver to use", type=str, default="group_id"
+    "-r", "--receiver",
+    help="Receiver to use",
+    type=str
 )
 args = parser.parse_args()
 

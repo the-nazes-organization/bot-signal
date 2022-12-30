@@ -1,10 +1,8 @@
 from typing import List
-import json
 import sys
 
 import psutil
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.encoders import jsonable_encoder
 
 from signal_bot.backend import schemas
 from signal_bot.backend.core.config import get_settings
@@ -30,9 +28,8 @@ async def start_bot(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="No duplicate process allowed",
             )
-        else:
-            print("Process not found, starting new one")
-            db.delete("bot")
+        print("Process not found, starting new one")
+        db.delete("bot")
     process = handler.start_process(
         [
             sys.executable,

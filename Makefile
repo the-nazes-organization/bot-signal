@@ -7,4 +7,4 @@ autoformat:  ## Run the autoformatter.
 
 l: lint  ## Alias for `lint`
 lint:  ## Run the linter.
-	PYTHONPATH=. pylint --rcfile=.pylintrc  signal_bot
+	PYTHONPATH=. python -m pylint --rcfile=.pylintrc  signal_bot
