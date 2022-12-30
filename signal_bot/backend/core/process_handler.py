@@ -8,7 +8,7 @@ import psutil
 
 logger = logging.getLogger(__name__)
 
-class ProcessHanlder:
+class ProcessHandler:
     @staticmethod
     def start_process(cmd: list, background: bool = False) -> subprocess.Popen:
         process = subprocess.Popen(
