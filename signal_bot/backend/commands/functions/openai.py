@@ -60,9 +60,8 @@ def create_prompt_context(name_mapping, base_prompt=""):
     history.reverse()
     chat = ""
     for message_dict in history:
-        message=message_dict["params"]["syncMessage"]["sentMessage"]["message"]
-        # message=message_dict["params"]["dataMessage"]["message"]
-        user_phone=message_dict["params"]["sourceNumber"]
+        message = get_message_from_dict(message_dict)
+        user_phone = get_user_from_dict(message_dict)
         user_name=find_name_by_number(user_phone, name_mapping)
         chat += f"{user_name}: {message}\n"
     prompt_context = base_prompt.replace("INSERT_CHAT_HERE", chat)
@@ -73,3 +72,23 @@ def find_name_by_number(number, name_mapping):
         if value == number:
             return key
     return number
+
+def get_message_from_dict(message_dict):
+    if "syncMessage" in message_dict["params"]:
+        message = message_dict["params"]["syncMessage"]["sentMessage"]["message"]
+    elif "dataMessage" in message_dict["params"]:
+        message = message_dict["params"]["dataMessage"]["message"]
+    elif "message" in message_dict["params"]:
+        message = message_dict["params"]["message"]
+    else:
+        message = ""
+    return message
+
+def get_user_from_dict(message_dict):
+    if "source" in message_dict["params"]:
+        user = message_dict["params"]["source"]
+    elif "account" in message_dict["params"]:
+        user = message_dict["params"]["account"]
+    else:
+        user = ""
+    return user
