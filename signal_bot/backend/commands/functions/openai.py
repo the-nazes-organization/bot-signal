@@ -6,7 +6,7 @@ import openai
 from signal_bot.backend.commands.command import Command
 from signal_bot.backend.bot import bot
 from signal_bot.backend.core.config import get_settings
-from signal_bot.backend.db.getter import get_number_map_db
+from signal_bot.backend.core.config import get_number_map_db
 
 #pylint: disable=unused-argument
 logger = logging.getLogger(__name__)
@@ -75,16 +75,10 @@ def create_prompt_context(name_mapping, base_prompt=""):
     for message_dict in history:
         message = get_message_from_dict(message_dict)
         user_phone = get_user_from_dict(message_dict)
-        user_name=find_name_by_number(user_phone, name_mapping)
+        user_name=name_mapping[user_phone]
         chat += f"{user_name}: {message}\n"
     prompt_context = base_prompt.replace("INSERT_CHAT_HERE", chat)
     return prompt_context
-
-def find_name_by_number(number, name_mapping):
-    for key, value in name_mapping.items():
-        if value == number:
-            return key
-    return number
 
 def get_message_from_dict(message_dict):
     if "dataMessage" in message_dict["params"]:
