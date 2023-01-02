@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 @Command.add("command", "🤖")
 def ignorant_ai(message, user):
+    bot.chatter.send_typing()
     db_obj = get_number_map_db()
     base_prompt = load_base_prompt("ignorant_ai_prompt")
     name_mapping = db_obj.get_all()
@@ -22,6 +23,7 @@ def ignorant_ai(message, user):
 
 @Command.add("command", "🤖👿")
 def evil_ai(message, user):
+    bot.chatter.send_typing()
     db_obj = get_number_map_db()
     name_mapping = db_obj.get_all()
     base_prompt = load_base_prompt("evil_ai_prompt")
@@ -31,6 +33,7 @@ def evil_ai(message, user):
 
 @Command.add("command", "🖌️")
 def create_img_from_text(message, user):
+    bot.chatter.send_typing()
     settings = get_settings()
     openai.api_key = settings.OPENAI_API_KEY
     response = openai.Image.create(
