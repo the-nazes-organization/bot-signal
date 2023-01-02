@@ -2,10 +2,10 @@ import psutil
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from signal_bot.backend import schemas
+from signal_bot.backend.api.dependencies import check_account_number, get_process_db
 from signal_bot.backend.core.config import get_settings, get_signal_cli_config_path
 from signal_bot.backend.core.process_handler import ProcessHandler
 from signal_bot.backend.db.object_storage import ObjectStorage
-from signal_bot.backend.api.dependencies import check_account_number, get_process_db
 
 settings = get_settings()
 
@@ -77,7 +77,7 @@ async def register_account_signal(
             account,
             "register",
             "--captcha",
-            register.captcha_token
+            register.captcha_token,
         ]
     )
     output = process.stdout.read()
@@ -100,7 +100,7 @@ async def verify_account_signal(
             "-a",
             account,
             "verify",
-            verify.code
+            verify.code,
         ]
     )
     output = process.stdout.read()

@@ -12,9 +12,7 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "standard": {
-            "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
-        },
+        "standard": {"format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"},
     },
     "handlers": {
         "console": {
@@ -70,6 +68,6 @@ LOGGING = {
             "handlers": ["console", "file_uvicorn"],
             "level": "DEBUG",
             "propagate": True,
-        }
+        },
     },
 }

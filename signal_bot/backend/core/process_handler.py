@@ -1,12 +1,12 @@
+import logging
 import subprocess
 import threading
-import logging
-
 from time import sleep
 
 import psutil
 
 logger = logging.getLogger(__name__)
+
 
 class ProcessHandler:
     @staticmethod
@@ -33,11 +33,13 @@ class ProcessHandler:
             logger.info("Logging process pid: %s", process.pid)
             while True:
                 output = process.stdout.readline()
-                if output == b'' and process.poll() is not None:
+                if output == b"" and process.poll() is not None:
                     logger.info("Process finished: %s", process.pid)
                     break
-                if output != b'':
-                    logger.info('%s - %s', process.pid, output.rstrip().decode("utf-8"))
+                if output != b"":
+                    logger.info(
+                        "%s - %s", process.pid, output.rstrip().decode("utf-8")
+                    )
                 else:
                     sleep(1)
 

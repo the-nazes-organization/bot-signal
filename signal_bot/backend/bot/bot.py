@@ -1,21 +1,26 @@
-import sys
 import argparse
 import logging
 import logging.config
+import sys
 
 from signal_bot.backend.bot.chat_client.chatter import Chatter
 from signal_bot.backend.commands.command import Command
-from signal_bot.backend.db.queue_storage import QueueStorage
-from signal_bot.backend.core.config import get_queue_storage
-from signal_bot.backend.core.config import get_chatter
-from signal_bot.backend.core.config import get_number_map_db
-from signal_bot.backend.core.logger_conf import LOGGING
-from signal_bot.backend.schemas.bot import BotProperties
 
 # Import all functions to add them to the command with the decorator
-from signal_bot.backend.commands.functions import basic  # pylint: disable=unused-import
-from signal_bot.backend.commands.functions import openai  # pylint: disable=unused-import
-
+from signal_bot.backend.commands.functions import (
+    openai,  # pylint: disable=unused-import
+)
+from signal_bot.backend.commands.functions import (
+    basic,
+)  # pylint: disable=unused-import
+from signal_bot.backend.core.config import (
+    get_chatter,
+    get_number_map_db,
+    get_queue_storage,
+)
+from signal_bot.backend.core.logger_conf import LOGGING
+from signal_bot.backend.db.queue_storage import QueueStorage
+from signal_bot.backend.schemas.bot import BotProperties
 
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger(__name__)
@@ -23,32 +28,29 @@ logger = logging.getLogger(__name__)
 
 parser = argparse.ArgumentParser(description="Signal bot")
 parser.add_argument(
-    "-a", "--account",
-    help="Account to use if format +33642424242",
-    type=str
+    "-a", "--account", help="Account to use if format +33642424242", type=str
 )
 parser.add_argument(
-    "-rt", "--receiver_type",
+    "-rt",
+    "--receiver_type",
     help="Type of receiver",
-    choices=['group_id', 'recipient']
+    choices=["group_id", "recipient"],
 )
-parser.add_argument(
-    "-r", "--receiver",
-    help="Receiver to use",
-    type=str
-)
+parser.add_argument("-r", "--receiver", help="Receiver to use", type=str)
 args = parser.parse_args()
+
 
 def get_name_by_number(number: str):
     db = get_number_map_db()
     return db.get(number)
+
 
 def bot_loop_hole(bot_client: Chatter, command: Command, queue: QueueStorage):
     while True:
         message_dict = bot_client.read_message()
         logger.info(msg=f"Received event: {message_dict}")
 
-        if (message_dict["type"] == "message"):
+        if message_dict["type"] == "message":
 
             queue.put(message_dict)
             command.handle_message(
@@ -59,19 +61,19 @@ def bot_loop_hole(bot_client: Chatter, command: Command, queue: QueueStorage):
             if message_dict["params"]["dataMessage"].get("attachments") is not None:
                 command.handle_attachements(
                     user=get_name_by_number(message_dict["params"]["sourceNumber"]),
-                    attachements=message_dict["params"]["dataMessage"]["attachments"]
+                    attachements=message_dict["params"]["dataMessage"][
+                        "attachments"
+                    ],
                 )
 
-        elif (message_dict["type"] == "typing"):
+        elif message_dict["type"] == "typing":
             command.handle_typing(
                 user=get_name_by_number(message_dict["params"]["sourceNumber"])
             )
 
 
 properties = BotProperties(
-    account=args.account,
-    receiver_type=args.receiver_type,
-    receiver=args.receiver
+    account=args.account, receiver_type=args.receiver_type, receiver=args.receiver
 )
 commander = Command()
 queue_storage = get_queue_storage()
