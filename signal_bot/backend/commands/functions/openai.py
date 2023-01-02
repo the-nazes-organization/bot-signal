@@ -29,6 +29,18 @@ def evil_ai(message, user):
     response = get_openai_prediction(prompt=prompt)
     bot.chatter.send_message(response)
 
+@Command.add("command", "🖌️")
+def create_img_from_text(message, user):
+    settings = get_settings()
+    openai.api_key = settings.OPENAI_API_KEY
+    response = openai.Image.create(
+        prompt=message,
+        n=4,
+        response_format="b64_json"
+    )
+    attachments = ["data:image/png;base64," + data["b64_json"] for data in response.data]
+    bot.chatter.send_message(message="", attachments=attachments)
+
 def load_base_prompt(prompt):
     settings = get_settings()
     path_mappping = {
