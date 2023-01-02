@@ -8,7 +8,7 @@ class FacebookChatter(Chatter):
     def read_message(self):
         raise NotImplementedError
 
-    def send_message(self, message: str):
+    def send_message(self, message: str, **kwargs):
         raise NotImplementedError
 
     def send_reaction(self, emoji: str, target_author: str, target_timestamp: int):

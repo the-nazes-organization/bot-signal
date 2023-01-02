@@ -48,7 +48,7 @@ class JsonRpcFormater(MessageFormater):
             quote_author (str): who's the author to quote from
             quote_timestamp (str): timestamp of the message to quote from
             mention (dict) = {
-                mention_target (str): phone number of the person mentioned
+                target (str): phone number of the person mentioned
                 start (int): where in the string gof the message the mention starts at
                 length (int): from start var index in string to where does the mention stops
             }
@@ -103,5 +103,5 @@ class JsonRpcFormater(MessageFormater):
 
         return {"type": method_type, "params": params}
 
-    def _get_mention_string(self, mention_target: str, start: int, length: int):
-        return f"{start}:{length}:{mention_target}"
+    def _get_mention_string(self, target: str, start: int, length: int):
+        return f"{start}:{length}:{target}"
