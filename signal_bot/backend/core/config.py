@@ -33,7 +33,7 @@ class Settings(BaseSettings):
     LOG_LEVEL_CONSOLE: str = "DEBUG"
     LOG_LEVEL_UVICORN: str = "INFO"
     OPENAI_API_KEY: str = "openai_api_key"
-    OPENAI_BASE_PROMPT_EVIL: str = "prompt/evil_ai.txt"
+    OPENAI_BASE_PROMPT_EVIL_PATH: str = "prompt/evil_ai.txt"
     OPENAI_BASE_PROMPT_PATH: str = "prompt/ignorant_ai.txt"
     OPENAI_COMPLETION_MAX_TOKEN = "1000"
     OPENAI_HISTORY_LENGTH: int = "20"

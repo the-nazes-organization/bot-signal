@@ -1,3 +1,5 @@
+import json
+import logging
 import socket
 
 from signal_bot.backend.bot.chat_client.format_message import MessageFormater
@@ -17,14 +19,18 @@ class SignalChatter(Chatter):
         self.cached_message = b""
         self.chat_location = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self.chat_location.connect(socket_file)
+        self.logger = logging.getLogger(__name__)
 
     def read_message(self):
         raw_message = self._get_last_message()
+        self.logger.debug("Received message: %s", raw_message)
         message = self.formater.deformat(raw_message)
         return message
 
     def send_message(self, message: str):
         data = self.formater.format_message(message)
+        #save message in queue
+        self.queue.put(json.loads(data))
         self._send_data(data)
 
     def send_reaction(self, emoji: str, target_author: str, target_timestamp: int):
