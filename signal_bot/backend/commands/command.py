@@ -1,5 +1,6 @@
 import logging
 import re
+import traceback
 from datetime import datetime, time
 
 
@@ -53,7 +54,7 @@ class Command:
                     logger.error(
                         "Error while handling function: %s: %s",
                         command["function"].__name__,
-                        exc,
+                        traceback.format_exc(),
                     )
 
     def handle_attachements(self, user: str, attachements: list) -> None:
