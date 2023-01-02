@@ -36,7 +36,11 @@ class SignalChatter(Chatter):
     def send_reaction(self, emoji: str, target_author: str, target_timestamp: int):
         data = self.formater.format_reaction(emoji, target_author, target_timestamp)
         self._send_data(data)
-    
+
+    def send_typing(self):
+        data = self.formater.format_typing()
+        self._send_data(data)
+
     def get_history(self, nb_messages: int = 10) -> list:
         return self.queue.get_n_last(nb_messages)
 

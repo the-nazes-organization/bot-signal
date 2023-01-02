@@ -13,3 +13,7 @@ class Chatter(ABC):
     @abstractmethod
     def send_reaction(self, emoji: str, target_author: str, target_timestamp: int):
         pass
+
+    @abstractmethod
+    def send_typing(self):
+        pass
