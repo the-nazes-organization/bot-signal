@@ -1,4 +1,7 @@
 import sys
+import argparse
+import logging
+import logging.config
 
 from signal_bot.backend.bot.chat_client.chatter import Chatter
 from signal_bot.backend.commands.command import Command
@@ -6,14 +9,41 @@ from signal_bot.backend.db.queue_storage import QueueStorage
 from signal_bot.backend.core.config import get_queue_storage
 from signal_bot.backend.core.config import get_chatter
 from signal_bot.backend.db.getter import get_name_by_number
+from signal_bot.backend.core.logger_conf import LOGGING
+from signal_bot.backend.schemas.bot import BotProperties
 
 # Import all functions to add them to the command with the decorator
 from signal_bot.backend.commands.functions import basic  # pylint: disable=unused-import
 from signal_bot.backend.commands.functions import openai  # pylint: disable=unused-import
 
+
+logging.config.dictConfig(LOGGING)
+logger = logging.getLogger(__name__)
+
+
+parser = argparse.ArgumentParser(description="Signal bot")
+parser.add_argument(
+    "-a", "--account",
+    help="Account to use if format +33642424242",
+    type=str
+)
+parser.add_argument(
+    "-rt", "--receiver_type",
+    help="Type of receiver",
+    choices=['group_id', 'recipient']
+)
+parser.add_argument(
+    "-r", "--receiver",
+    help="Receiver to use",
+    type=str
+)
+args = parser.parse_args()
+
+
 def bot_loop_hole(bot_client: Chatter, command: Command, queue: QueueStorage):
     while True:
         message_dict = bot_client.read_message()
+        logger.info(msg=f"Received event: {message_dict}")
 
         if (message_dict["type"] == "message"):
 
@@ -35,7 +65,12 @@ def bot_loop_hole(bot_client: Chatter, command: Command, queue: QueueStorage):
             )
 
 
+properties = BotProperties(
+    account=args.account,
+    receiver_type=args.receiver_type,
+    receiver=args.receiver
+)
 commander = Command()
 queue_storage = get_queue_storage()
-chatter = get_chatter(queue=queue_storage)
+chatter = get_chatter(queue=queue_storage, properties=properties)
 bot_loop_hole(chatter, commander, queue_storage)

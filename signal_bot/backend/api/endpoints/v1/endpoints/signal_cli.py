@@ -16,11 +16,15 @@ router = APIRouter()
 async def put_signal_cli(
     handler: ProcessHandler = Depends(), db: ObjectStorage = Depends(get_process_db)
 ):
-    if db.get("cli") is not None:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="No duplicate process allowed",
-        )
+    pid = db.get("cli")
+    if pid is not None:
+        if handler.is_process_alive(pid):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No duplicate process allowed",
+            )
+        print("Process not found, starting new one")
+        db.delete("cli")
     process = handler.start_process(
         [
             "signal-cli",
@@ -31,10 +35,11 @@ async def put_signal_cli(
             settings.SOCKET_FILE,
             "--ignore-stories",
             "--send-read-receipts",
-            "--no-receive-stdout",
+            # "--no-receive-stdout",
         ],
         True,
     )
+    handler.log_process(process)
     db.put("cli", process.pid)
 
 

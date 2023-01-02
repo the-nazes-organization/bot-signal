@@ -1,26 +1,48 @@
+import logging
+import os
+
 import openai
 
 from signal_bot.backend.commands.command import Command
 from signal_bot.backend.bot import bot
 from signal_bot.backend.core.config import get_settings
+from signal_bot.backend.db.getter import get_number_map_db
 
 #pylint: disable=unused-argument
+logger = logging.getLogger(__name__)
 
 @Command.add("command", "🤖")
 def ignorant_ai(message, user):
-    settings = get_settings()
-    base_prompt = settings.OPENAI_BASE_PROMPT
-    prompt = create_prompt_context(base_prompt=base_prompt)
+    db_obj = get_number_map_db()
+    base_prompt = load_base_prompt("ignorant_ai_prompt")
+    name_mapping = db_obj.get_all()
+    prompt = create_prompt_context(name_mapping=name_mapping, base_prompt=base_prompt)
     response = get_openai_prediction(prompt=prompt)
-    bot.chatter.send_message(f'"{response.choices[0].text}"')
+    bot.chatter.send_message(response)
 
 @Command.add("command", "🤖👿")
 def evil_ai(message, user):
-    settings = get_settings()
-    base_prompt = settings.OPENAI_BASE_PROMPT_EVIL
-    prompt = create_prompt_context(base_prompt=base_prompt)
+    db_obj = get_number_map_db()
+    name_mapping = db_obj.get_all()
+    base_prompt = load_base_prompt("evil_ai_prompt")
+    prompt = create_prompt_context(name_mapping=name_mapping, base_prompt=base_prompt)
     response = get_openai_prediction(prompt=prompt)
-    bot.chatter.send_message(f'"{response.choices[0].text}"')
+    bot.chatter.send_message(response)
+
+def load_base_prompt(prompt):
+    settings = get_settings()
+    path_mappping = {
+        "ignorant_ai_prompt": settings.OPENAI_BASE_PROMPT_PATH,
+        "evil_ai_prompt": settings.OPENAI_BASE_PROMPT_EVIL_PATH,
+    }
+    prompt_path = os.path.join(settings.VOLUME_PATH, path_mappping[prompt])
+    try:
+        with open(prompt_path, "r", encoding="utf-8") as open_file:
+            base_prompt = open_file.read()
+    except FileNotFoundError:
+        logger.error("Couldn´t load base prompt in path : %s", prompt_path)
+        base_prompt = ""
+    return base_prompt
 
 def get_openai_prediction(prompt):
     settings = get_settings()
@@ -30,14 +52,42 @@ def get_openai_prediction(prompt):
         prompt=prompt,
         max_tokens=int(settings.OPENAI_COMPLETION_MAX_TOKEN),
     )
-    return response
+    return response.choices[0].text.strip('"')
 
-def create_prompt_context(base_prompt=""):
-    history = bot.chatter.get_history(20)
+
+def create_prompt_context(name_mapping, base_prompt=""):
+    settings = get_settings()
+    history = bot.chatter.get_history(int(settings.OPENAI_HISTORY_LENGTH))
     history.reverse()
-    prompt_context = base_prompt
+    chat = ""
     for message_dict in history:
-        message=message_dict["params"]["dataMessage"]["message"]
-        user=message_dict["params"]["sourceNumber"]
-        prompt_context += f"{user}: {message}\n"
+        message = get_message_from_dict(message_dict)
+        user_phone = get_user_from_dict(message_dict)
+        user_name=find_name_by_number(user_phone, name_mapping)
+        chat += f"{user_name}: {message}\n"
+    prompt_context = base_prompt.replace("INSERT_CHAT_HERE", chat)
     return prompt_context
+
+def find_name_by_number(number, name_mapping):
+    for key, value in name_mapping.items():
+        if value == number:
+            return key
+    return number
+
+def get_message_from_dict(message_dict):
+    if "dataMessage" in message_dict["params"]:
+        message = message_dict["params"]["dataMessage"]["message"]
+    elif "message" in message_dict["params"]:
+        message = message_dict["params"]["message"]
+    else:
+        message = ""
+    return message
+
+def get_user_from_dict(message_dict):
+    if "source" in message_dict["params"]:
+        user = message_dict["params"]["source"]
+    elif "account" in message_dict["params"]:
+        user = message_dict["params"]["account"]
+    else:
+        user = ""
+    return user
