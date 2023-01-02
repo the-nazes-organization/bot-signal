@@ -2,10 +2,9 @@ import json
 import logging
 import socket
 
+from signal_bot.backend.bot.chat_client.chatter import Chatter
 from signal_bot.backend.bot.chat_client.format_message import MessageFormater
 from signal_bot.backend.db.queue_storage import QueueStorage
-from signal_bot.backend.bot.chat_client.chatter import Chatter
-
 
 CHATTER_BUFFSIZE = 4096
 
@@ -29,7 +28,7 @@ class SignalChatter(Chatter):
 
     def send_message(self, message: str, **kwargs):
         data = self.formater.format_message(message, **kwargs)
-        #save message in queue
+        # save message in queue
         self.queue.put(json.loads(data))
         self._send_data(data)
 
@@ -60,3 +59,4 @@ class SignalChatter(Chatter):
 
     def _send_data(self, data: str):
         self.chat_location.sendall(bytes(data.encode()) + b"\n")
+        self.logger.debug("Just sent this data : %s", data)

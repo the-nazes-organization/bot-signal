@@ -6,9 +6,11 @@ from signal_bot.backend.core.config import get_settings
 
 settings = get_settings()
 
+
 class ReceiverType(str, Enum):
     RECIPIENT = "recipient"
     GROUP_ID = "group_id"
+
 
 class BotProperties(BaseModel):
     account: str = Field(
@@ -22,5 +24,8 @@ class BotProperties(BaseModel):
         ),
     )
     receiver: str = Field(
-        description="Receiver data, can be a phone number for recipient or a string of the group_id"
+        description=(
+            "Receiver data, can be a phone number for recipient or a string of the"
+            " group_id"
+        )
     )

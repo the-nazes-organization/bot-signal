@@ -1,10 +1,10 @@
 import json
+import logging
 import uuid
-
 from abc import ABC, abstractmethod
 
-class MessageFormater(ABC):
 
+class MessageFormater(ABC):
     @abstractmethod
     def format_message(self, message, **kwargs):
         pass
@@ -23,11 +23,11 @@ class MessageFormater(ABC):
 
 
 class JsonRpcFormater(MessageFormater):
-
     def __init__(self, account, receiver_type, receiver):
         self.account = account
         self.receiver_type = receiver_type
         self.receiver = receiver
+        self.logger = logging.getLogger(__name__)
 
     def _get_base_rpc_obj(self, method: str):
         rpc_obj = {
@@ -66,8 +66,9 @@ class JsonRpcFormater(MessageFormater):
         if (attachments := kwargs.get("attachments")) is not None:
             rpc_obj["params"]["attachments"] = attachments
 
-        if (quote_author := kwargs.get("quote_author")) is not None\
-        and (quote_timestamp := kwargs.get("quote_timestamp")) is not None:
+        if (quote_author := kwargs.get("quote_author")) is not None and (
+            quote_timestamp := kwargs.get("quote_timestamp")
+        ) is not None:
             rpc_obj["params"]["quoteAuthor"] = quote_author
             rpc_obj["params"]["quoteTimestamp"] = quote_timestamp
 
@@ -75,16 +76,14 @@ class JsonRpcFormater(MessageFormater):
             rpc_obj["params"]["mention"] = self._get_mention_string(**mention_obj)
 
         return json.dumps(rpc_obj)
-    
-    def format_reaction(
-        self, emoji: str, target_author: str, target_timestamp: int
-    ):
+
+    def format_reaction(self, emoji: str, target_author: str, target_timestamp: int):
         rpc_obj = self._get_base_rpc_obj("sendReaction")
         rpc_obj["params"]["emoji"] = emoji
         rpc_obj["params"]["targetAuthor"] = target_author
         rpc_obj["params"]["targetTimestamp"] = target_timestamp
         return json.dumps(rpc_obj)
-    
+
     def format_typing(self):
         rpc_obj = self._get_base_rpc_obj("sendTyping")
         return json.dumps(rpc_obj)
@@ -96,7 +95,7 @@ class JsonRpcFormater(MessageFormater):
         try:
             data_obj: dict = json.loads(data)
         except ValueError as exc:
-            error = exc
+            self.logger.error(msg=f"Receiving invalid json from json rpc : {exc}")
 
         if (
             data_obj.get("method") is not None
@@ -104,9 +103,13 @@ class JsonRpcFormater(MessageFormater):
             and data_obj["params"].get("envelope") is not None
         ):
             params = data_obj["params"]["envelope"]
-            if data_obj.get("method") == "receive" and data_obj["params"]["envelope"].get("dataMessage"):
+            if data_obj.get("method") == "receive" and data_obj["params"][
+                "envelope"
+            ].get("dataMessage"):
                 method_type = "message"
-            elif data_obj.get("method") == "receive" and data_obj["params"]["envelope"].get("typingMessage"):
+            elif data_obj.get("method") == "receive" and data_obj["params"][
+                "envelope"
+            ].get("typingMessage"):
                 method_type = "typing"
 
         return {"type": method_type, "params": params}

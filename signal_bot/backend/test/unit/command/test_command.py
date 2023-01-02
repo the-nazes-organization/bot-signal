@@ -3,9 +3,9 @@ from freezegun import freeze_time
 
 from signal_bot.backend.commands.command import Command
 
-#pylint: disable=unused-argument
-#pylint: disable=protected-access
-#pylint: disable=comparison-with-callable
+# pylint: disable=unused-argument
+# pylint: disable=protected-access
+# pylint: disable=comparison-with-callable
 
 
 def test_command_add_message():
@@ -40,6 +40,7 @@ def test_command_add_wrong_activation():
         @Command.add(activation_type="jonas_is_the_best_programmer")
         def test_function(message, user):
             pass
+
     assert "activation_type must be" in str(excinfo.value)
 
 
@@ -51,6 +52,7 @@ def test_command_add_command_no_prefix():
             pass
 
     assert "Prefix is missing" in str(excinfo.value)
+
 
 @pytest.mark.skip(reason="Not sure if prefix should start with !")
 def test_command_add_command_wrong_prefix():
@@ -160,7 +162,7 @@ def test_is_condition_true_timerange_and_regex():
 
 def test_handle_message(capfd):
     @Command.add(activation_type="message")
-    def test_function(message, user): #pylint: disable=unused-argument
+    def test_function(message, user):  # pylint: disable=unused-argument
         print("Test1")
 
     cmd = Command()
@@ -171,7 +173,7 @@ def test_handle_message(capfd):
 
 def test_handle_message_function_exception(caplog):
     @Command.add(activation_type="message")
-    def test_function(message, user): #pylint: disable=unused-argument
+    def test_function(message, user):  # pylint: disable=unused-argument
         raise ValueError("test")
 
     cmd = Command()
@@ -187,9 +189,10 @@ def test_handle_message_command(capfd):
         print(message)
 
     cmd = Command()
-    assert cmd.handle_message(
-        message="!test_command hello", user="+33642424242"
-    ) is None
+    assert (
+        cmd.handle_message(message="!test_command hello", user="+33642424242")
+        is None
+    )
     out, _ = capfd.readouterr()
     assert "hello\n" in out
 
@@ -202,12 +205,20 @@ def test_handle_message_command_no_prefix(capfd):
         print(message)
 
     cmd = Command()
-    assert cmd.handle_message(message="!test_commandhello", user="+33642424242") is None
+    assert (
+        cmd.handle_message(message="!test_commandhello", user="+33642424242") is None
+    )
     out, _ = capfd.readouterr()
     assert "hello\n" not in out
 
+
 def test_handle_typing(capfd):
-    Command._command = {"command": [], "message": [], "typing": [], "attachements": []}
+    Command._command = {
+        "command": [],
+        "message": [],
+        "typing": [],
+        "attachements": [],
+    }
 
     @Command.add(activation_type="typing")
     def test_function_command(user, *args, **kwargs):
@@ -218,14 +229,22 @@ def test_handle_typing(capfd):
     out, _ = capfd.readouterr()
     assert "+33642424242" in out
 
+
 def test_handle_attachements(capfd):
-    Command._command = {"command": [], "message": [], "typing": [], "attachements": []}
+    Command._command = {
+        "command": [],
+        "message": [],
+        "typing": [],
+        "attachements": [],
+    }
 
     @Command.add(activation_type="attachements")
     def test_function_command(user, *args, **kwargs):
         print("image")
 
     cmd = Command()
-    assert cmd.handle_attachements(user="+33642424242", attachements=["image"]) is None
+    assert (
+        cmd.handle_attachements(user="+33642424242", attachements=["image"]) is None
+    )
     out, _ = capfd.readouterr()
     assert "image" in out
