@@ -14,6 +14,10 @@ class MessageFormater(ABC):
         pass
 
     @abstractmethod
+    def format_typing(self):
+        pass
+
+    @abstractmethod
     def deformat(self, data):
         pass
 
@@ -79,6 +83,10 @@ class JsonRpcFormater(MessageFormater):
         rpc_obj["params"]["emoji"] = emoji
         rpc_obj["params"]["targetAuthor"] = target_author
         rpc_obj["params"]["targetTimestamp"] = target_timestamp
+        return json.dumps(rpc_obj)
+    
+    def format_typing(self):
+        rpc_obj = self._get_base_rpc_obj("sendTyping")
         return json.dumps(rpc_obj)
 
     def deformat(self, data: str) -> dict:
