@@ -32,6 +32,7 @@ class Settings(BaseSettings):
     LOG_LEVEL_CLI: str = "INFO"
     LOG_LEVEL_CONSOLE: str = "DEBUG"
     LOG_LEVEL_UVICORN: str = "INFO"
+    NUMBER_FORMAT_REGEX: str = r"^\+[0-9]{7,15}$"
     OPENAI_API_KEY: str = "openai_api_key"
     OPENAI_BASE_PROMPT_EVIL_PATH: str = "prompt/evil_ai.txt"
     OPENAI_BASE_PROMPT_PATH: str = "prompt/ignorant_ai.txt"
@@ -102,6 +103,11 @@ def get_db_process_path():
 def get_db_number_map_path():
     settings = get_settings()
     return settings.VOLUME_PATH + "/" + settings.DB_NUMBER_MAP
+
+@lru_cache
+def get_attachments_path():
+    settings = get_settings()
+    return settings.VOLUME_PATH + "/" + settings.SIGNAL_CLI_CONFIG_DIR + "/attachments"
 
 
 def get_queue_storage() -> QueueStorage:

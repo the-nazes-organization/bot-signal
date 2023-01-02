@@ -12,10 +12,18 @@ def get_number_map_db() -> ObjectStorage:
         get_db_number_map_path()
     )
 
-def get_number_by_name(name: str) -> str:
-    db_obj = get_number_map_db()
-    return db_obj.get(name)
+def get_name_by_number(number: str):
+    db = get_number_map_db()
+    return db.get(number)
+
+def get_number_by_name(name: str):
+    db = get_number_map_db()
+    content = db.get_all()
+    for key, value in content.items():
+        if value == name:
+            return key
+    return ""
 
 def get_all_numbers() -> list:
-    db_obj = get_number_map_db()
-    return list(db_obj.get_all().values())
+    db = get_number_map_db()
+    return list(db.get_all().values())

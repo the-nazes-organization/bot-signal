@@ -2,6 +2,10 @@ from enum import Enum
 
 from pydantic import BaseModel, Field
 
+from signal_bot.backend.core.config import get_settings
+
+settings = get_settings()
+
 class ReceiverType(str, Enum):
     RECIPIENT = "recipient"
     GROUP_ID = "group_id"
@@ -9,7 +13,7 @@ class ReceiverType(str, Enum):
 class BotProperties(BaseModel):
     account: str = Field(
         description="Number of the phone for the account to apply properties on",
-        regex=r"^\+[0-9]{7,15}$",
+        regex=settings.NUMBER_FORMAT_REGEX,
     )
     receiver_type: ReceiverType = Field(
         description=(

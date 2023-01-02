@@ -33,7 +33,6 @@ async def put_signal_cli(
             "daemon",
             "--socket",
             settings.SOCKET_FILE,
-            "--ignore-attachments",
             "--ignore-stories",
             "--send-read-receipts",
             # "--no-receive-stdout",

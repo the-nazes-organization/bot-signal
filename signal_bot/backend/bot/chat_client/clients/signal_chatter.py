@@ -27,8 +27,8 @@ class SignalChatter(Chatter):
         message = self.formater.deformat(raw_message)
         return message
 
-    def send_message(self, message: str):
-        data = self.formater.format_message(message)
+    def send_message(self, message: str, **kwargs):
+        data = self.formater.format_message(message, kwargs)
         #save message in queue
         self.queue.put(json.loads(data))
         self._send_data(data)
@@ -36,7 +36,7 @@ class SignalChatter(Chatter):
     def send_reaction(self, emoji: str, target_author: str, target_timestamp: int):
         data = self.formater.format_reaction(emoji, target_author, target_timestamp)
         self._send_data(data)
-
+    
     def get_history(self, nb_messages: int = 10) -> list:
         return self.queue.get_n_last(nb_messages)
 
