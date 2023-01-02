@@ -93,8 +93,8 @@ def get_message_from_dict(message_dict):
     return message
 
 def get_user_from_dict(message_dict):
-    if "source" in message_dict["params"]:
-        user = message_dict["params"]["source"]
+    if "sourceNumber" in message_dict["params"]:
+        user = message_dict["params"]["sourceNumber"]
     elif "account" in message_dict["params"]:
         user = message_dict["params"]["account"]
     else:

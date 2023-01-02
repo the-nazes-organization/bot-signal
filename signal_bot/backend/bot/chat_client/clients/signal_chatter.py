@@ -60,3 +60,4 @@ class SignalChatter(Chatter):
 
     def _send_data(self, data: str):
         self.chat_location.sendall(bytes(data.encode()) + b"\n")
+        self.logger.debug(f"Just sent this data : {data}")

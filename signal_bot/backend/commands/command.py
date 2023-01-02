@@ -1,5 +1,6 @@
 import logging
 import re
+import time
 import traceback
 from datetime import datetime, time
 
@@ -49,7 +50,11 @@ class Command:
 
             if self.is_condition_true(command.get("condition"), kwargs.get("message"), user):
                 try:
+                    logger.debug(msg=f"Start function {command['function'].__name__}")
+                    start_time = time.time()
                     command["function"](user=user, message=kwargs.get("message"))
+                    end_time = time.time()
+                    logger.debug(msg=f"End function executed in {end_time - start_time}")
                 except Exception as exc:  # pylint: disable=broad-except
                     logger.error(
                         "Error while handling function: %s: %s",
