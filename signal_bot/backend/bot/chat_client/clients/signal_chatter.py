@@ -28,7 +28,7 @@ class SignalChatter(Chatter):
         return message
 
     def send_message(self, message: str, **kwargs):
-        data = self.formater.format_message(message, kwargs)
+        data = self.formater.format_message(message, **kwargs)
         #save message in queue
         self.queue.put(json.loads(data))
         self._send_data(data)
