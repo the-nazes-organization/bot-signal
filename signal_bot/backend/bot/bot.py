@@ -5,11 +5,6 @@ import logging.config
 from signal_bot.backend.bot.chat_client.chatter import Chatter
 from signal_bot.backend.commands.command import Command
 
-# Import all functions to add them to the command with the decorator
-from signal_bot.backend.commands.functions import (
-    openai,
-    basic
-) # pylint: disable=unused-import
 from signal_bot.backend.core.config import (
     get_chatter,
     get_number_map_db,
@@ -22,6 +17,8 @@ from signal_bot.backend.schemas.bot import BotProperties
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger(__name__)
 
+# Import all functions to add them to the command with the decorator
+from signal_bot.backend.commands import functions
 
 parser = argparse.ArgumentParser(description="Signal bot")
 parser.add_argument(
@@ -45,7 +42,6 @@ def get_name_by_number(number: str):
 def bot_loop_hole(bot_client: Chatter, command: Command, queue: QueueStorage):
     while True:
         message_dict = bot_client.read_message()
-        logger.info(msg=f"Received event: {message_dict}")
 
         if message_dict["type"] == "message":
 
@@ -75,4 +71,6 @@ properties = BotProperties(
 commander = Command()
 queue_storage = get_queue_storage()
 chatter = get_chatter(queue=queue_storage, properties=properties)
-bot_loop_hole(chatter, commander, queue_storage)
+
+if __name__ == "__main__":
+    bot_loop_hole(chatter, commander, queue_storage)
