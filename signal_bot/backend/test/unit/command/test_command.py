@@ -76,7 +76,7 @@ def test_command_check_condition_format():
 
 def test_command_check_condition_format_wrong_user():
     condition = {
-        "users": ["33633633633"],
+        "users": [11233],
         "timerange": ["23:00", "02:00"],
         "regex": "test",
     }
