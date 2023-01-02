@@ -169,7 +169,7 @@ class Command:
             - prefix: the prefix of the command (ex: "hello" => "!hello")
             - condition: dict of condition to check before executing the command
         """
-        # logger.info(msg=f"Adding Command : {activation_type}-{prefix}")
+        logger.info(msg=f"Adding Command : {activation_type}-{prefix}")
         activation_list = ["command", "message", "typing", "attachements"]
         if activation_type not in activation_list:
             raise ValueError(f"activation_type must be in {activation_list}")
