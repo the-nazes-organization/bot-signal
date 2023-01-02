@@ -14,7 +14,7 @@ class ProcessHandler:
         process = subprocess.Popen(
             args=cmd,
             stdin=subprocess.PIPE,
-            # stdout=subprocess.PIPE,
+            stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
         )
         if background is False:

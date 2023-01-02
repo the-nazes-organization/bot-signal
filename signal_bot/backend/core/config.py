@@ -1,6 +1,3 @@
-import json
-import sys
-
 from functools import lru_cache
 from typing import List
 from pydantic import BaseSettings
@@ -24,50 +21,34 @@ class GoogleSettings(BaseSettings):
 
 
 class Settings(BaseSettings):
-    VERSION: str = "0.0.1"
     API_V1_STR: str = "/api/v1"
-    PROJECT_NAME: str = "Signal Bot"
-    GOOGLE: GoogleSettings = GoogleSettings()
-
-    VOLUME_PATH: str = "volume_path"
-
-    SIGNAL_CLI_CONFIG_DIR: str = "signal-cli_config"
     CHATTER_CLIENT: str = "signal"
-    SOCKET_FILE: str = "/tmp/signal-cli/socket"
-    PYTHON_BOT_FILE: str = "signal_bot/backend/bot/bot.py"
-
-    STORAGE_PROVIDER_USER_DB: str = "file"
-    STORAGE_PROVIDER_STATE_DB: str = "file"
-    STORAGE_PROVIDER_PROCESS_DB: str = "file"
-    STORAGE_PROVIDER_NUMBER_MAP_DB: str = "file"
-    DB_USER: str = "db/users.json"
-    DB_STATE: str = "db/state.json"
-    DB_PROCESS: str = "db/processes.json"
     DB_NUMBER_MAP: str = "db/numbers_map.json"
-
-    OPENAI_BASE_PROMPT: str = """
-C'est une conversation avec une Inteligence Artificiel.\n
-Elle est capable de comprendre les émotions et de les exprimer.\n
-Elle est ici pour vous écouter et vous conseiller.\n
-Elle est tres intelligente et gentille.\n 
-Ci-dessous voici l´historique de la conversation.\n
-La reponse est seulement le texte de la reponse de l´IA. Pas de prompt.\n
-    """
-    OPENAI_BASE_PROMPT_EVIL: str = """
-C'est une conversation avec une Inteligence Artificiel.\n
-Elle est extremement intelligente et tres malveillante.\n
-Elle repond de facon tres sarcastique\n
-Ci-dessous voici l´historique de la conversation.\n
-La reponse est seulement le texte de la reponse de l´IA. Pas de prompt.\n
-    """
-    OPENAI_API_KEY: str = "openai_api_key"
-    OPENAI_COMPLETION_MAX_TOKEN = "openai_completion_max_token"
-    QUEUE_STORAGE_PROVIDER: str = "deque"
-    QUEUE_STORAGE_MAXLEN: int = 50
-    LOG_LEVEL_CLI: str = "INFO"
+    DB_PROCESS: str = "db/processes.json"
+    DB_STATE: str = "db/state.json"
+    DB_USER: str = "db/users.json"
+    GOOGLE: GoogleSettings = GoogleSettings()
     LOG_LEVEL_BOT: str = "INFO"
+    LOG_LEVEL_CLI: str = "INFO"
     LOG_LEVEL_CONSOLE: str = "DEBUG"
     LOG_LEVEL_UVICORN: str = "INFO"
+    OPENAI_API_KEY: str = "openai_api_key"
+    OPENAI_BASE_PROMPT_EVIL: str = "prompt/evil_ai.txt"
+    OPENAI_BASE_PROMPT_PATH: str = "prompt/ignorant_ai.txt"
+    OPENAI_COMPLETION_MAX_TOKEN = "1000"
+    OPENAI_HISTORY_LENGTH: int = "20"
+    PROJECT_NAME: str = "Signal Bot"
+    PYTHON_BOT_FILE: str = "signal_bot/backend/bot/bot.py"
+    QUEUE_STORAGE_MAXLEN: int = 50
+    QUEUE_STORAGE_PROVIDER: str = "deque"
+    SIGNAL_CLI_CONFIG_DIR: str = "signal-cli_config"
+    SOCKET_FILE: str = "/tmp/signal-cli/socket"
+    STORAGE_PROVIDER_NUMBER_MAP_DB: str = "file"
+    STORAGE_PROVIDER_PROCESS_DB: str = "file"
+    STORAGE_PROVIDER_STATE_DB: str = "file"
+    STORAGE_PROVIDER_USER_DB: str = "file"
+    VERSION: str = "0.0.1"
+    VOLUME_PATH: str = "volume_path"
 
 
 @lru_cache()
@@ -130,19 +111,14 @@ def get_queue_storage() -> QueueStorage:
     }
     return mapping[settings.QUEUE_STORAGE_PROVIDER](settings.QUEUE_STORAGE_MAXLEN)
 
-
 def get_formater(properties) -> MessageFormater:
-    return JsonRpcFormater(**properties)
+    return JsonRpcFormater(
+        account=properties.account,
+        receiver_type=properties.receiver_type,
+        receiver=properties.receiver,
+    )
 
-
-def get_properties() -> dict:
-    properties_json = sys.stdin.read()
-    sys.stdout.write(properties_json)
-    return json.loads(properties_json)
-
-
-def get_chatter(queue) -> Chatter:
-    properties = get_properties()
+def get_chatter(queue, properties) -> Chatter:
     settings = get_settings()
     mapping = {
         "signal": SignalChatter,
