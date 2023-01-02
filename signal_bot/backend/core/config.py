@@ -63,6 +63,7 @@ La reponse est seulement le texte de la reponse de l´IA. Pas de prompt.\n
     OPENAI_COMPLETION_MAX_TOKEN = "openai_completion_max_token"
     QUEUE_STORAGE_PROVIDER: str = "deque"
     QUEUE_STORAGE_MAXLEN: int = 50
+    NUMBER_FORMAT_REGEX: str = r"^\+[0-9]{7,15}$"
 
 
 @lru_cache()

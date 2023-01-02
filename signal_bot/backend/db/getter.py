@@ -12,9 +12,9 @@ def get_number_map_db() -> ObjectStorage:
         get_db_number_map_path()
     )
 
-def get_number_by_name(name: str) -> str:
+def get_name_by_number(number: str):
     db_obj = get_number_map_db()
-    return db_obj.get(name)
+    return db_obj.get(number)
 
 def get_all_numbers() -> list:
     db_obj = get_number_map_db()
