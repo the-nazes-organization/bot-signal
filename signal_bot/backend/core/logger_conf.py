@@ -64,6 +64,11 @@ LOGGING = {
             "level": "DEBUG",
             "propagate": True,
         },
+        "signal_bot.backend.commands":{
+            "handlers": ["file_bot"],
+            "level": "DEBUG",
+            "propagate": True
+        },
         "uvicorn": {
             "handlers": ["console", "file_uvicorn"],
             "level": "DEBUG",

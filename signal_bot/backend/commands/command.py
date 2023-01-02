@@ -1,6 +1,6 @@
 import logging
 import re
-import time
+import time as check_timestamp
 import traceback
 from datetime import datetime, time
 
@@ -55,9 +55,9 @@ class Command:
                     logger.debug(
                         msg=f"Start function {command['function'].__name__}"
                     )
-                    start_time = time.time()
+                    start_time = check_timestamp.time()
                     command["function"](user=user, message=kwargs.get("message"))
-                    end_time = time.time()
+                    end_time = check_timestamp.time()
                     logger.debug(
                         msg=f"End function executed in {end_time - start_time}"
                     )
@@ -169,7 +169,7 @@ class Command:
             - prefix: the prefix of the command (ex: "hello" => "!hello")
             - condition: dict of condition to check before executing the command
         """
-        logger.info(msg=f"Adding Command : {activation_type}-{prefix}")
+        # logger.info(msg=f"Adding Command : {activation_type}-{prefix}")
         activation_list = ["command", "message", "typing", "attachements"]
         if activation_type not in activation_list:
             raise ValueError(f"activation_type must be in {activation_list}")
