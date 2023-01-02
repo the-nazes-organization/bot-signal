@@ -7,7 +7,7 @@ class Chatter(ABC):
         pass
 
     @abstractmethod
-    def send_message(self, message: str):
+    def send_message(self, message: str, **kwargs):
         pass
 
     @abstractmethod

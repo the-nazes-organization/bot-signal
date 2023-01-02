@@ -113,6 +113,12 @@ def get_db_number_map_path():
     settings = get_settings()
     return settings.VOLUME_PATH + "/" + settings.DB_NUMBER_MAP
 
+@lru_cache
+def get_attachments_path():
+    settings = get_settings()
+    return settings.VOLUME_PATH + "/" + settings.SIGNAL_CLI_CONFIG_DIR + "/attachments"
+
+
 def get_queue_storage() -> QueueStorage:
     settings = get_settings()
     mapping = {
