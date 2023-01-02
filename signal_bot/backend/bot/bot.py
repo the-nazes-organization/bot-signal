@@ -1,18 +1,15 @@
 import argparse
 import logging
 import logging.config
-import sys
 
 from signal_bot.backend.bot.chat_client.chatter import Chatter
 from signal_bot.backend.commands.command import Command
 
 # Import all functions to add them to the command with the decorator
 from signal_bot.backend.commands.functions import (
-    openai,  # pylint: disable=unused-import
-)
-from signal_bot.backend.commands.functions import (
-    basic,
-)  # pylint: disable=unused-import
+    openai,
+    basic
+) # pylint: disable=unused-import
 from signal_bot.backend.core.config import (
     get_chatter,
     get_number_map_db,
