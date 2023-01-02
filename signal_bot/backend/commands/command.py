@@ -232,7 +232,7 @@ class Command:
 
         if "users" in condition:
             for user in condition["users"]:
-                if not re.match(r"^\+[0-9]{11}$", user):
+                if not (type(user) == str):
                     raise ValueError("Invalid user format")
 
         if "timerange" in condition:
