@@ -1,6 +1,7 @@
-import openai
 import logging
 import os
+
+import openai
 
 from signal_bot.backend.commands.command import Command
 from signal_bot.backend.bot import bot
@@ -36,9 +37,9 @@ def load_base_prompt(prompt):
     }
     prompt_path = os.path.join(settings.VOLUME_PATH, path_mappping[prompt])
     try:
-        with open(prompt_path, "r") as open_file:
+        with open(prompt_path, "r", encoding="utf-8") as open_file:
             base_prompt = open_file.read()
-    except:
+    except FileNotFoundError:
         logger.error("Couldn´t load base prompt in path : %s", prompt_path)
         base_prompt = ""
     return base_prompt
@@ -74,9 +75,7 @@ def find_name_by_number(number, name_mapping):
     return number
 
 def get_message_from_dict(message_dict):
-    if "syncMessage" in message_dict["params"]:
-        message = message_dict["params"]["syncMessage"]["sentMessage"]["message"]
-    elif "dataMessage" in message_dict["params"]:
+    if "dataMessage" in message_dict["params"]:
         message = message_dict["params"]["dataMessage"]["message"]
     elif "message" in message_dict["params"]:
         message = message_dict["params"]["message"]
