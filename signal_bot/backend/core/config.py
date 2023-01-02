@@ -9,6 +9,8 @@ from signal_bot.backend.bot.chat_client.clients.facebook_chatter import Facebook
 from signal_bot.backend.db.queue_storage_provider.deque_storage import DequeStorage
 from signal_bot.backend.bot.chat_client.format_message import MessageFormater
 from signal_bot.backend.bot.chat_client.format_message import JsonRpcFormater
+from signal_bot.backend.db.object_storage import ObjectStorage
+from signal_bot.backend.db.object_storage_provider.file_storage import FileStorage
 
 
 class GoogleSettings(BaseSettings):
@@ -133,4 +135,13 @@ def get_chatter(queue, properties) -> Chatter:
     formater = get_formater(properties)
     return mapping[settings.CHATTER_CLIENT](
         queue=queue, formater=formater, socket_file=settings.SOCKET_FILE
+    )
+
+def get_number_map_db() -> ObjectStorage:
+    settings = get_settings()
+    mapping = {
+        "file": FileStorage
+    }
+    return mapping[settings.STORAGE_PROVIDER_PROCESS_DB](
+        get_db_number_map_path()
     )

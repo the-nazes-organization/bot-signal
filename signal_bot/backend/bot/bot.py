@@ -8,7 +8,7 @@ from signal_bot.backend.commands.command import Command
 from signal_bot.backend.db.queue_storage import QueueStorage
 from signal_bot.backend.core.config import get_queue_storage
 from signal_bot.backend.core.config import get_chatter
-from signal_bot.backend.db.getter import get_name_by_number
+from signal_bot.backend.core.config import get_number_map_db
 from signal_bot.backend.core.logger_conf import LOGGING
 from signal_bot.backend.schemas.bot import BotProperties
 
@@ -39,6 +39,9 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
+def get_name_by_number(number: str):
+    db = get_number_map_db()
+    return db.get(number)
 
 def bot_loop_hole(bot_client: Chatter, command: Command, queue: QueueStorage):
     while True:
