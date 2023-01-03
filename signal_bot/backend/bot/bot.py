@@ -77,5 +77,5 @@ if __name__ == "__main__":
     queue_storage = get_queue_storage()
     chatter = get_chatter(queue=queue_storage, properties=properties)
 
-    holder = ChatterHolder(chatter)
+    ChatterHolder(chatter)
     bot_loop_hole(chatter, commander, queue_storage)
