@@ -16,7 +16,8 @@ class Command:
         - on typing. This is used to send a message when the user start typing
         - on attachements
 
-    A message can be added to the command (ex: !hello world => "world" is the message)
+    A message can be added to the command
+    (ex: !hello world => "world" is the message)
     if the command is not found, the message is not handled
 
     To add a command, you need to create a function and decorate it with @Command.add
@@ -232,7 +233,7 @@ class Command:
 
         if "users" in condition:
             for user in condition["users"]:
-                if not (type(user) == str):
+                if not isinstance(user) == str:
                     raise ValueError("Invalid user format")
 
         if "timerange" in condition:

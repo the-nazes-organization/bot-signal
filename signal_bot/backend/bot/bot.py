@@ -13,6 +13,7 @@ from signal_bot.backend.core.config import (
 from signal_bot.backend.core.logger_conf import LOGGING
 from signal_bot.backend.db.queue_storage import QueueStorage
 from signal_bot.backend.schemas.bot import BotProperties
+from signal_bot.backend.bot.chat_client.chatter_holder import ChatterHolder
 
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger(__name__)
@@ -45,11 +46,12 @@ def bot_loop_hole(bot_client: Chatter, command: Command, queue: QueueStorage):
 
         if message_dict["type"] == "message":
 
-            queue.put(message_dict)
-            command.handle_message(
-                message=message_dict["params"]["dataMessage"]["message"],
-                user=get_name_by_number(message_dict["params"]["sourceNumber"]),
-            )
+            if message_dict["params"]["dataMessage"]["message"] is not None:
+                queue.put(message_dict)
+                command.handle_message(
+                    message=message_dict["params"]["dataMessage"]["message"],
+                    user=get_name_by_number(message_dict["params"]["sourceNumber"]),
+                )
 
             if message_dict["params"]["dataMessage"].get("attachments") is not None:
                 command.handle_attachements(
@@ -65,12 +67,15 @@ def bot_loop_hole(bot_client: Chatter, command: Command, queue: QueueStorage):
             )
 
 
-properties = BotProperties(
-    account=args.account, receiver_type=args.receiver_type, receiver=args.receiver
-)
-commander = Command()
-queue_storage = get_queue_storage()
-chatter = get_chatter(queue=queue_storage, properties=properties)
-
 if __name__ == "__main__":
+    properties = BotProperties(
+        account=args.account,
+        receiver_type=args.receiver_type,
+        receiver=args.receiver
+    )
+    commander = Command()
+    queue_storage = get_queue_storage()
+    chatter = get_chatter(queue=queue_storage, properties=properties)
+
+    holder = ChatterHolder(chatter)
     bot_loop_hole(chatter, commander, queue_storage)
