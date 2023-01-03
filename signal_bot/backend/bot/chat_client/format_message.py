@@ -103,9 +103,10 @@ class JsonRpcFormater(MessageFormater):
             and data_obj["params"].get("envelope") is not None
         ):
             params = data_obj["params"]["envelope"]
-            if data_obj.get("method") == "receive" and data_obj["params"][
-                "envelope"
-            ].get("dataMessage"):
+            if (
+                data_obj.get("method") == "receive" and
+                data_obj["params"]["envelope"].get("dataMessage")
+            ):
                 method_type = "message"
             elif data_obj.get("method") == "receive" and data_obj["params"][
                 "envelope"
