@@ -233,7 +233,7 @@ class Command:
 
         if "users" in condition:
             for user in condition["users"]:
-                if not isinstance(user) == str:
+                if not isinstance(user, str):
                     raise ValueError("Invalid user format")
 
         if "timerange" in condition:
