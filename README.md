@@ -27,7 +27,7 @@ The command decorator take 3 arguments:
 
 ```python
 
-@Command.add(activation_type="command", prefix="!tiresurmondoigt", condition={"users": ["+33642424242"]})
+@Command.add(activation_type="command", prefix="!tiresurmondoigt", condition={"users": ["jeanluc"]})
 def my_command(message, user):
 	"""This is the docstring of the command"""
     chatter.send_message("prout")
@@ -55,14 +55,14 @@ prefix = "!tiresurmondoigt"
 
 Condition are used to check if the command can be executed or not. It is a dict with the
 following keys:
-    - users: list of users that triggers the command, format is phone number
-    - timerange: list of 2 datetimes, the command is only triggered between the 2 dates
-    - regex: regex to match the message
+- users: list of users that triggers the command, format is name based on the number map file
+- timerange: list of 2 datetimes, the command is only triggered between the 2 dates
+- regex: regex to match the message
 
 example:
 ```python
 condition = {
-    "users": ["+33642424242", "+33624242424"],
+    "users": ["+", "michel"],
     "timerange": [datetime(2021, 1, 1), datetime(2021, 1, 31)],
     "regex": "hello"
 }
@@ -79,7 +79,8 @@ It has the following methods:
 example:
 ```python
 #to import the chatter
-from signal_bot.backend.bot.bot import chatter
+from signal_bot.backend.chat_client.chatter_holder import ChatterHolder
+chatter = ChatterHolder.get_chatter()
 
 #to send a message
 chatter.send_message("prout")
@@ -99,7 +100,8 @@ history can be access with the chatter object.
 example:
 ```python
 #to import the chatter
-from signal_bot.backend.bot.bot import chatter
+from signal_bot.backend.chat_client.chatter_holder import ChatterHolder
+chatter = ChatterHolder.get_chatter()
 
 #to get the last 50 messages
 messages = chatter.get_messages(last=50)
