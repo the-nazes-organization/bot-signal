@@ -17,13 +17,15 @@ The bot is deploy on GCP and use the [signal-cli](https://github.com/AsamK/signa
 
 To add a command you need to add a python function in the command folder. 
 The function must be decorated with the `@command` decorator and must take 2 arguments:
-	- message: the message that trigger the command. The prefix of the command is removed
-	- user: the user that send the message
+
+- message: the message that trigger the command. The prefix of the command is removed
+- user: the user that send the message
 
 The command decorator take 3 arguments:
-	- activation_type: the type of activation ("command", "message", "typing", "attachements")
-	- prefix: the prefix of the command, example "!tiresurmondoigt"
-	- condition: dict of condition to check before executing the command
+
+- activation_type: the type of activation ("command", "message", "typing", "attachements")
+- prefix: the prefix of the command, example "!tiresurmondoigt"
+- condition: dict of condition to check before executing the command
 
 ```python
 
@@ -43,7 +45,7 @@ basic example are available in the command folder, inside function.py [here](sig
 - typing: the command will be activated when the user start typing
 - attachements: the command will be activated when the user send an attachement
 
-If the activation_type is "command" or "message", the prefix is required. A prefix must start with a "!".
+If the activation_type is "command", the prefix is required. It is preferable that the prefix start with a "!".
 
 example:
 ```python
@@ -55,6 +57,7 @@ prefix = "!tiresurmondoigt"
 
 Condition are used to check if the command can be executed or not. It is a dict with the
 following keys:
+
 - users: list of users that triggers the command, format is name based on the number map file
 - timerange: list of 2 datetimes, the command is only triggered between the 2 dates
 - regex: regex to match the message
@@ -62,7 +65,7 @@ following keys:
 example:
 ```python
 condition = {
-    "users": ["+", "michel"],
+    "users": ["michel"],
     "timerange": [datetime(2021, 1, 1), datetime(2021, 1, 31)],
     "regex": "hello"
 }
@@ -72,9 +75,10 @@ condition = {
 
 The chatter is the object that will be used to send message. It is a wrapper around the signal-cli.
 It has the following methods:
-	- send_message: send a message to the user
-	- send_reaction: send a reaction to the user
-	- send_typing: send a typing notification to the user
+
+- send_message: send a message to the user
+- send_reaction: send a reaction to the user
+- send_typing: send a typing notification to the user
 
 example:
 ```python
@@ -104,17 +108,12 @@ from signal_bot.backend.chat_client.chatter_holder import ChatterHolder
 chatter = ChatterHolder.get_chatter()
 
 #to get the last 50 messages
-messages = chatter.get_messages(last=50)
+messages = chatter.get_history(nb_messages=50)
 ```
 
 ## Roadmap
 
 - Add more method to the chatter:
-	- send_image
-	- send_video
-	- send_audio
-	- send_file
-
 - Add possibility to add command from the api
 - Add possibility to add command in an other language than python
 
