@@ -3,9 +3,6 @@ from freezegun import freeze_time
 
 from signal_bot.backend.commands.command import Command
 
-# pylint: disable=unused-argument
-# pylint: disable=protected-access
-# pylint: disable=comparison-with-callable
 
 
 def test_command_add_message():
@@ -162,7 +159,7 @@ def test_is_condition_true_timerange_and_regex():
 
 def test_handle_message(capfd):
     @Command.add(activation_type="message")
-    def test_function(message, user):  # pylint: disable=unused-argument
+    def test_function(message, user):
         print("Test1")
 
     cmd = Command()
@@ -173,7 +170,7 @@ def test_handle_message(capfd):
 
 def test_handle_message_function_exception(caplog):
     @Command.add(activation_type="message")
-    def test_function(message, user):  # pylint: disable=unused-argument
+    def test_function(message, user):
         raise ValueError("test")
 
     cmd = Command()

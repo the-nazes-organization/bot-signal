@@ -7,7 +7,6 @@ from signal_bot.backend.bot.chat_client.chatter_holder import ChatterHolder
 from signal_bot.backend.commands.command import Command
 from signal_bot.backend.core.config import get_number_map_db, get_settings
 
-# pylint: disable=unused-argument
 logger = logging.getLogger(__name__)
 
 

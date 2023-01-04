@@ -60,7 +60,7 @@ class Command:
                     logger.debug(
                         msg=f"End function executed in {end_time - start_time}"
                     )
-                except Exception:  # pylint: disable=broad-except
+                except Exception:
                     logger.error(
                         "Error while handling function: %s: %s",
                         command["function"].__name__,

@@ -1,8 +1,6 @@
 from signal_bot.backend.bot.chat_client.chatter_holder import ChatterHolder
 from signal_bot.backend.commands.command import Command
 
-# pylint: disable=unused-argument
-
 
 @Command.add("command", "!tiresurmondoigt")
 def the_first_joke(message, user):
@@ -16,7 +14,7 @@ def list_command(message, user):
     chatter.send_message(
         ", ".join(
             [cmd["prefix"] for cmd in Command._command["command"]]
-        )  # pylint: disable=protected-access
+        )
     )
 
 

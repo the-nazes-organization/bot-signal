@@ -21,7 +21,7 @@ class GoogleSettings(BaseSettings):
     CLIENT_SECRET: str = "google_client_secret"
     SCOPES: List[str] = ["https://www.googleapis.com/auth/userinfo.email", "openid"]
 
-    class Config:  # pylint: disable=too-few-public-methods
+    class Config:
         env_prefix = "GOOGLE_"
 
 
