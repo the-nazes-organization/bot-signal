@@ -74,10 +74,7 @@ async def stop_bot(
 async def read_numbers_map(
     db: ObjectStorage = Depends(get_number_map_db),
 ) -> schemas.NumberMap:
-    return [
-        schemas.NumberMap(number=key, name=value)
-        for key, value in db.get_all().items()
-    ]
+    return [schemas.NumberMap(number=key, name=value) for key, value in db.get_all().items()]
 
 
 @router.post("/numbermap", response_model=schemas.NumberMap)

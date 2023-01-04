@@ -37,9 +37,7 @@ class ProcessHandler:
                     logger.info("Process finished: %s", process.pid)
                     break
                 if output != b"":
-                    logger.info(
-                        "%s - %s", process.pid, output.rstrip().decode("utf-8")
-                    )
+                    logger.info("%s - %s", process.pid, output.rstrip().decode("utf-8"))
                 else:
                     sleep(1)
 

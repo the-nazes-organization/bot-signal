@@ -42,9 +42,7 @@ async def get_state_db() -> ObjectStorage:
 
 
 async def get_process_db() -> ObjectStorage:
-    return storage_mapping[settings.STORAGE_PROVIDER_PROCESS_DB](
-        get_db_process_path()
-    )
+    return storage_mapping[settings.STORAGE_PROVIDER_PROCESS_DB](get_db_process_path())
 
 
 async def get_number_map_db() -> ObjectStorage:

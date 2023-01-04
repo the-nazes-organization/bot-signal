@@ -190,8 +190,7 @@ def test_handle_message_command(capfd):
 
     cmd = Command()
     assert (
-        cmd.handle_message(message="!test_command hello", user="+33642424242")
-        is None
+        cmd.handle_message(message="!test_command hello", user="+33642424242") is None
     )
     out, _ = capfd.readouterr()
     assert "hello\n" in out
@@ -205,9 +204,7 @@ def test_handle_message_command_no_prefix(capfd):
         print(message)
 
     cmd = Command()
-    assert (
-        cmd.handle_message(message="!test_commandhello", user="+33642424242") is None
-    )
+    assert cmd.handle_message(message="!test_commandhello", user="+33642424242") is None
     out, _ = capfd.readouterr()
     assert "hello\n" not in out
 
@@ -243,8 +240,6 @@ def test_handle_attachements(capfd):
         print("image")
 
     cmd = Command()
-    assert (
-        cmd.handle_attachements(user="+33642424242", attachements=["image"]) is None
-    )
+    assert cmd.handle_attachements(user="+33642424242", attachements=["image"]) is None
     out, _ = capfd.readouterr()
     assert "image" in out

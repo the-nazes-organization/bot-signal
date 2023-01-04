@@ -1,5 +1,6 @@
 from signal_bot.backend.bot.chat_client.chatter import Chatter
 
+
 class ChatterHolder:
     _instance = None
 
