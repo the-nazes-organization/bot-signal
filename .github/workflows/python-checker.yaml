@@ -19,9 +19,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -r requirements-test.txt
-      - name: Analysing code with pylint
+      - name: Analysing code with ruff
         run: |
-          PYTHONPATH=. python -m pylint --fail-under=9.0 --recursive=y $(git ls-files '*.py')
+          make l
       - name: Run test codes with pytest
         run: |
           python -m pytest .

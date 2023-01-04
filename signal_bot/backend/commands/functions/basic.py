@@ -1,5 +1,5 @@
-from signal_bot.backend.commands.command import Command
 from signal_bot.backend.bot.chat_client.chatter_holder import ChatterHolder
+from signal_bot.backend.commands.command import Command
 
 # pylint: disable=unused-argument
 

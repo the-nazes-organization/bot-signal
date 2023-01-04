@@ -19,9 +19,7 @@ def ignorant_ai(message, user):
     base_prompt = load_base_prompt("ignorant_ai_prompt")
     name_mapping = db_obj.get_all()
     prompt = create_prompt_context(
-        chatter=chatter,
-        name_mapping=name_mapping,
-        base_prompt=base_prompt
+        chatter=chatter, name_mapping=name_mapping, base_prompt=base_prompt
     )
     response = get_openai_prediction(prompt=prompt)
     chatter.send_message(response)
@@ -35,9 +33,7 @@ def evil_ai(message, user):
     name_mapping = db_obj.get_all()
     base_prompt = load_base_prompt("evil_ai_prompt")
     prompt = create_prompt_context(
-        chatter=chatter,
-        name_mapping=name_mapping,
-        base_prompt=base_prompt
+        chatter=chatter, name_mapping=name_mapping, base_prompt=base_prompt
     )
     response = get_openai_prediction(prompt=prompt)
     chatter.send_message(response)

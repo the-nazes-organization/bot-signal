@@ -75,8 +75,7 @@ async def read_numbers_map(
     db: ObjectStorage = Depends(get_number_map_db),
 ) -> schemas.NumberMap:
     return [
-        schemas.NumberMap(number=key, name=value)
-        for key, value in db.get_all().items()
+        schemas.NumberMap(number=key, name=value) for key, value in db.get_all().items()
     ]
 
 

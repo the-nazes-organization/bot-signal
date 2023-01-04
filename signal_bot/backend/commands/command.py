@@ -53,9 +53,7 @@ class Command:
                 command.get("condition"), kwargs.get("message"), user
             ):
                 try:
-                    logger.debug(
-                        msg=f"Start function {command['function'].__name__}"
-                    )
+                    logger.debug(msg=f"Start function {command['function'].__name__}")
                     start_time = check_timestamp.time()
                     command["function"](user=user, message=kwargs.get("message"))
                     end_time = check_timestamp.time()
@@ -226,9 +224,7 @@ class Command:
         }
 
         """
-        if not all(
-            key in ["users", "timerange", "regex"] for key in condition.keys()
-        ):
+        if not all(key in ["users", "timerange", "regex"] for key in condition.keys()):
             raise ValueError("Invalid condition")
 
         if "users" in condition:
@@ -245,9 +241,7 @@ class Command:
                 try:
                     datetime.strptime(time_range, "%H:%M")
                 except ValueError as exc:
-                    raise ValueError(
-                        "Invalid timerange format, must be HH:MM"
-                    ) from exc
+                    raise ValueError("Invalid timerange format, must be HH:MM") from exc
 
         if "regex" in condition:
             if not isinstance(condition["regex"], str):

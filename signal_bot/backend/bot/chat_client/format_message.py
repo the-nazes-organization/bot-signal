@@ -54,7 +54,7 @@ class JsonRpcFormater(MessageFormater):
             mention (dict) = {
                 target (str): phone number of the person mentioned
                 start (int): where in the string gof the message the mention starts at
-                length (int): from start var index in string to where does the mention stops
+                length (int): from start var index to where does the mention stops
             }
 
         Returns:
