@@ -3,6 +3,9 @@ import re
 import time as check_timestamp
 import traceback
 from datetime import datetime, time
+from typing import List
+
+from signal_bot.backend import schemas
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +18,7 @@ class Command:
         - on all message (ex: "Hello")
         - on typing. This is used to send a message when the user start typing
         - on attachements
+        - on reaction
 
     A message can be added to the command
     (ex: !hello world => "world" is the message)
@@ -29,12 +33,13 @@ class Command:
         "command": [],
         "typing": [],
         "attachements": [],
+        "reaction": []
     }
 
     def __init__(self):
         pass
 
-    def _start_a_function(self, commands, user, **kwargs):
+    def _start_functions(self, commands, data: schemas.DataFormated):
         """
         This function is used to start a function
         All the function are launched if the condition is true
@@ -45,17 +50,15 @@ class Command:
         """
         for command in commands:
 
-            if command.get("prefix") is not None:
-                if command["prefix"] != kwargs.get("prefix"):
-                    continue
-
             if self.is_condition_true(
-                command.get("condition"), kwargs.get("message"), user
+                command.get("condition"), data
             ):
                 try:
                     logger.debug(msg=f"Start function {command['function'].__name__}")
                     start_time = check_timestamp.time()
-                    command["function"](user=user, message=kwargs.get("message"))
+
+                    command["function"](data)
+
                     end_time = check_timestamp.time()
                     logger.debug(
                         msg=f"End function executed in {end_time - start_time}"
@@ -67,65 +70,79 @@ class Command:
                         traceback.format_exc(),
                     )
 
-    def handle_attachements(self, user: str, attachements: list) -> None:
+    def handle_reaction(self, data: schemas.DataFormated) -> None:
         """
-        This function take a list of attachements and a user and call
-        the function associated to the command
+        This function takes the data formated and call
+        the functions associated with a reaction event
 
         parameters:
-            - attachements: the attachements to handle
-            - user: the user who send the message
+            - data: the formated data
 
         return:
             None
         """
-        self._start_a_function(
-            self._command["attachements"], user, attachements=attachements
-        )
+        self._start_functions(self._command["reaction"], data)
 
-    def handle_typing(self, user: str) -> None:
+    def handle_attachements(self, data: schemas.DataFormated) -> None:
         """
-        user is typing, call the function associated to the command
+        This function takes the data formated and call
+        the functions associated with a attachment event
+
         parameters:
-            - user: the user who is typing
+            - data: the formated data
 
         return:
             None
         """
-        self._start_a_function(self._command["typing"], user)
+        self._start_functions(self._command["attachements"], data)
 
-    def handle_message(self, user: str, message: str) -> None:
+    def handle_typing(self, data: schemas.DataFormated) -> None:
         """
-        This function take a message and a user and call the function
-        associated to the command
+        This function takes the data formated and call
+        the functions associated with a typing event
 
         parameters:
-            - message: the message to handle
-            - user: the user who send the message
+            - data: the formated data
+
+        return:
+            None
+        """
+        self._start_functions(self._command["typing"], data)
+
+    def handle_message(self, data: schemas.DataFormated) -> None:
+        """
+        This function takes the data formated and call
+        the functions associated with a message event and
+        call the functions associated to the command event
+
+        parameters:
+            - data: the formated data
 
         return:
             None
         """
         # Start for all messages
-        self._start_a_function(self._command["message"], user, message=message)
+        self._start_functions(self._command["message"], data)
 
         # Start for command
-        message = message.split(" ")
-        prefix = message[0]
-        message = " ".join(message[1:])
-        self._start_a_function(
-            self._command["command"], user, message=message, prefix=prefix
-        )
+        message_split = data.message.text.split(" ")
+        prefix = message_split[0]
+        data.message.text = " ".join(message_split[1:])
+        commands = List()
+        for command in self._command["command"]:
+            if command["prefix"] == prefix:
+                commands.append(command)
+        self._start_functions(commands, data)
 
     @staticmethod
-    def is_condition_true(condition, message, user):
+    def is_condition_true(condition, data: schemas.DataFormated):
         """
         This function check if the condition is true
 
         parameters:
             - condition: the condition to check
-            - message: the message to handle
-            - user: the user who send the message
+            - data: formated data with user info and additional
+            data about the event
 
         return:
             True if the condition is true, False otherwise
@@ -142,14 +159,17 @@ class Command:
 
         if condition is None:
             return True
+        
+        user = data.user.db_name
+        message = data.message.text if data.message is not None else None
 
         check_user = condition.get("users") is None or user in condition["users"]
         check_date = condition.get("timerange") is None or is_time_between(
             condition["timerange"][0], condition["timerange"][1]
         )
         check_regex = (
-            condition.get("regex") is None
-            or re.search(condition["regex"], message) is not None
+            condition.get("regex") is None or
+            (message is not None and re.search(condition["regex"], message) is not None)
         )
 
         return check_user and check_date and check_regex
@@ -164,12 +184,12 @@ class Command:
         """
         Parameter of the decorated function:
             - activation_type: the type of activation
-                ("command", "message", "typing", "attachements")
+                ("command", "message", "typing", "attachements", "reaction")
             - prefix: the prefix of the command (ex: "hello" => "!hello")
             - condition: dict of condition to check before executing the command
         """
         logger.info(msg=f"Adding Command : {activation_type}-{prefix}")
-        activation_list = ["command", "message", "typing", "attachements"]
+        activation_list = ["command", "message", "typing", "attachements", "reaction"]
         if activation_type not in activation_list:
             raise ValueError(f"activation_type must be in {activation_list}")
 
@@ -218,7 +238,7 @@ class Command:
 
         example:
         {
-            "users": ["+33612345678", "+33612345679"],
+            "users": ["sofredo", "miguelange"],
             "timerange": [datetime(2021, 1, 1), datetime(2021, 1, 31)],
             "regex": "hello"
         }

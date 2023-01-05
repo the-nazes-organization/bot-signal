@@ -1,6 +1,8 @@
 import argparse
 import logging
 import logging.config
+from typing import List
+from json import JSONDecodeError
 
 from signal_bot.backend.bot.chat_client.chatter import Chatter
 from signal_bot.backend.bot.chat_client.chatter_holder import ChatterHolder
@@ -10,6 +12,7 @@ from signal_bot.backend.core.config import (
     get_number_map_db,
     get_queue_storage,
 )
+from signal_bot.backend import schemas
 from signal_bot.backend.core.logger_conf import LOGGING
 from signal_bot.backend.db.queue_storage import QueueStorage
 from signal_bot.backend.schemas.bot import BotProperties
@@ -34,34 +37,59 @@ parser.add_argument("-r", "--receiver", help="Receiver to use", type=str)
 args = parser.parse_args()
 
 
-def get_name_by_number(number: str):
+###################
+###### Utils ######
+def _add_db_name_to_user(user: schemas.User):
     db = get_number_map_db()
-    return db.get(number)
+    user.db_name = db.get(user.phone)
+
+def _get_users_from_mentions_data(mentions: List[schemas.Mention] | None) -> List:
+    users = List()
+    if mentions is not None:
+        for mention in mentions:
+            users.append(mention.user)
+    return users
+
+def _enrich_user_data(data: schemas.DataFormated):
+    users = List()
+    users.append(data.user)
+    if data.message is not None:
+        if data.message.quote is not None:
+            users.append(data.message.quote.author)
+            users += _get_users_from_mentions_data(data.message.quote.mentions)
+
+        users += _get_users_from_mentions_data(data.message.mentions)
+    if data.reaction is not None:
+        users.append(data.reaction.target_author)
+    map(_add_db_name_to_user, users)
+#### End Utils ####
+###################
 
 
 def bot_loop_hole(bot_client: Chatter, command: Command, queue: QueueStorage):
     while True:
-        message_dict = bot_client.read_message()
+        try:
+            data = bot_client.read_message()
+        except ValueError:
+            logger.info("Improper Value read", exc_info=1)
+            continue
+        if data is None:
+            continue
 
-        if message_dict["type"] == "message":
+        _enrich_user_data(data)
 
-            if message_dict["params"]["dataMessage"]["message"] is not None:
-                queue.put(message_dict)
-                command.handle_message(
-                    message=message_dict["params"]["dataMessage"]["message"],
-                    user=get_name_by_number(message_dict["params"]["sourceNumber"]),
-                )
+        if data.message is not None:
+            queue.put(data)
+            command.handle_message(data)
 
-            if message_dict["params"]["dataMessage"].get("attachments") is not None:
-                command.handle_attachements(
-                    user=get_name_by_number(message_dict["params"]["sourceNumber"]),
-                    attachements=message_dict["params"]["dataMessage"]["attachments"],
-                )
-
-        elif message_dict["type"] == "typing":
-            command.handle_typing(
-                user=get_name_by_number(message_dict["params"]["sourceNumber"])
-            )
+        if data.typing is not None:
+            command.handle_typing(data)
+        
+        if data.reaction is not None:
+            command.handle_reaction(data)
+        
+        if data.attachments is not None:
+            command.handle_attachements(data)
 
 
 if __name__ == "__main__":

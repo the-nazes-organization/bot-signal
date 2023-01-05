@@ -26,6 +26,7 @@ class GoogleSettings(BaseSettings):
 
 
 class Settings(BaseSettings):
+    ALLOW_EXECUTE_SELF_SEND: str = "n"
     API_V1_STR: str = "/api/v1"
     CHATTER_CLIENT: str = "signal"
     DB_NUMBER_MAP: str = "db/numbers_map.json"
@@ -79,6 +80,11 @@ def get_google_config():
         }
     }
 
+
+@lru_cache()
+def is_allow_to_execute_self_send():
+    settings = get_settings()
+    return settings.ALLOW_EXECUTE_SELF_SEND == "y"
 
 @lru_cache()
 def get_signal_cli_config_path():
