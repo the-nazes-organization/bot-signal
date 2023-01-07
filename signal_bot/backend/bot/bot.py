@@ -1,20 +1,22 @@
 import argparse
 import logging
 import logging.config
-from typing import List
-from json import JSONDecodeError
 
-from signal_bot.backend.bot.chat_client.chatter import Chatter
-from signal_bot.backend.bot.chat_client.chatter_holder import ChatterHolder
-from signal_bot.backend.commands.command import Command
-from signal_bot.backend.core.config import (
-    get_chatter,
-    get_number_map_db,
+from signal_bot.backend.bot.config import (
     get_queue_storage,
+    get_chatter
 )
-from signal_bot.backend import schemas
+from signal_bot.backend.bot.chat_client.chatter_holder import ChatterHolder
+from signal_bot.backend.bot.chat_client.chatter import Chatter
+
+from signal_bot.backend.bot.data_utils import enrich_user_data_with_db_name
+
+from signal_bot.backend.commands.command import Command
 from signal_bot.backend.core.logger_conf import LOGGING
+
 from signal_bot.backend.db.queue_storage import QueueStorage
+
+from signal_bot.backend.schemas.data_formated import DataFormated
 from signal_bot.backend.schemas.bot import BotProperties
 
 logging.config.dictConfig(LOGGING)
@@ -37,46 +39,17 @@ parser.add_argument("-r", "--receiver", help="Receiver to use", type=str)
 args = parser.parse_args()
 
 
-###################
-###### Utils ######
-def _add_db_name_to_user(user: schemas.User):
-    db = get_number_map_db()
-    user.db_name = db.get(user.phone)
-
-def _get_users_from_mentions_data(mentions: List[schemas.Mention] | None) -> List:
-    users = List()
-    if mentions is not None:
-        for mention in mentions:
-            users.append(mention.user)
-    return users
-
-def _enrich_user_data(data: schemas.DataFormated):
-    users = List()
-    users.append(data.user)
-    if data.message is not None:
-        if data.message.quote is not None:
-            users.append(data.message.quote.author)
-            users += _get_users_from_mentions_data(data.message.quote.mentions)
-
-        users += _get_users_from_mentions_data(data.message.mentions)
-    if data.reaction is not None:
-        users.append(data.reaction.target_author)
-    map(_add_db_name_to_user, users)
-#### End Utils ####
-###################
-
-
 def bot_loop_hole(bot_client: Chatter, command: Command, queue: QueueStorage):
     while True:
         try:
-            data = bot_client.read_message()
+            data: DataFormated = bot_client.read_message()
         except ValueError:
             logger.info("Improper Value read", exc_info=1)
             continue
         if data is None:
             continue
 
-        _enrich_user_data(data)
+        data = enrich_user_data_with_db_name(data)
 
         if data.message is not None:
             queue.put(data)

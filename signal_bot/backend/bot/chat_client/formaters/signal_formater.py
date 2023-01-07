@@ -1,40 +1,26 @@
+from datetime import datetime
 import json
 import logging
 import re
-from datetime import datetime
-from uuid import uuid4
 from typing import List
-from abc import ABC, abstractmethod
-
-from signal_bot.backend import schemas
+from uuid import uuid4
 
 from signal_bot.backend.core.config import (
     get_number_map_db,
     is_allow_to_execute_self_send
 )
 
-
-class MessageFormater(ABC):
-    @abstractmethod
-    def format_message(self,
-        message: str | None=None,
-        attachments: List(str) | None=None,
-        quote_author: str | None=None,
-        quote_sent_at: datetime | None=None
-    ):
-        pass
-
-    @abstractmethod
-    def format_reaction(self, emoji, target_author, target_timestamp):
-        pass
-
-    @abstractmethod
-    def format_typing(self):
-        pass
-
-    @abstractmethod
-    def deformat(self, data) -> schemas.DataFormated | None:
-        pass
+from signal_bot.backend.bot.chat_client.formater import MessageFormater
+from signal_bot.backend.schemas.data_formated import (
+    DataFormated,
+    User,
+    Message,
+    QuotedMessage,
+    Mention,
+    Typing,
+    Reaction,
+    AttachmentData
+)
 
 
 class JsonRpcFormater(MessageFormater):
@@ -58,7 +44,7 @@ class JsonRpcFormater(MessageFormater):
         return rpc_obj
 
     def format_message(self, message: str | None=None,
-        attachments: List(str) | None=None,
+        attachments: List[str] | None=None,
         quote_author: str | None=None,
         quote_sent_at: datetime | None=None
     ):
@@ -69,7 +55,9 @@ class JsonRpcFormater(MessageFormater):
 
         if quote_author is not None and quote_sent_at is not None:
             rpc_obj["params"]["quoteAuthor"] = quote_author
-            rpc_obj["params"]["quoteTimestamp"] = quote_sent_at
+            rpc_obj["params"]["quoteTimestamp"] = self._get_timestamp_from_datetime(
+                quote_sent_at
+            )
 
         if (
             message is not None and
@@ -79,6 +67,7 @@ class JsonRpcFormater(MessageFormater):
 
         rpc_obj["params"]["message"] = message
         return json.dumps(rpc_obj)
+
 
     def _create_mentions_from_message(self, message: str) -> str | None:
         mention = ""
@@ -99,19 +88,28 @@ class JsonRpcFormater(MessageFormater):
             mention += f"{start}:{length}:{mention_target}"
         return mention if mention != "" else None
 
-    def format_reaction(self, emoji: str, target_author: str, target_timestamp: int):
+
+
+    def format_reaction(
+        self, emoji: str, target_author: str, target_sent_at: datetime
+    ):
         rpc_obj = self._get_base_rpc_obj("sendReaction")
         rpc_obj["params"]["emoji"] = emoji
         rpc_obj["params"]["targetAuthor"] = target_author
-        rpc_obj["params"]["targetTimestamp"] = target_timestamp
+        rpc_obj["params"]["targetTimestamp"] = self._get_timestamp_from_datetime(
+            target_sent_at
+        )
         return json.dumps(rpc_obj)
+
+
 
     def format_typing(self):
         rpc_obj = self._get_base_rpc_obj("sendTyping")
         return json.dumps(rpc_obj)
 
 
-    def deformat(self, data: str) -> schemas.DataFormated | None:
+
+    def deformat(self, data: str) -> DataFormated | None:
         try:
             raw = self._get_raw_data_from_json(data)
         except json.JSONDecodeError:
@@ -123,18 +121,19 @@ class JsonRpcFormater(MessageFormater):
     def _get_raw_data_from_json(self, data: str) -> dict:
         return json.loads(data)
 
-    def _deformat_into_data_formated(self, data: dict) -> schemas.DataFormated | None:
+
+    def _deformat_into_data_formated(self, data: dict) -> DataFormated | None:
         formated = None
-        if (envelope := self._get_envelope_data(data)) is not None:
-            formated = self._get_basic_formated_data(
-                envelope
-            )
+
+        if (envelope := self._get_envelope_and_check_validity(data)) is not None:
+
+            formated = self._get_basic_formated_data(envelope)
 
             # Used for testing in local with your own phone
-            envelope = self._get_sync_message_envelope_if_allowed(envelope)
+            data_message = self._get_data_message_from_envelope(envelope)
 
             formated.message = self._get_message_formated_data(
-                envelope.get("dataMessage")
+                data_message
             )
 
             formated.typing = self._get_typing_formated_data(
@@ -142,16 +141,16 @@ class JsonRpcFormater(MessageFormater):
             )
 
             formated.reaction = self._get_reaction_formated_data(
-                envelope.get("dataMessage")
+                data_message
             )
 
             formated.attachments = self._get_attachments_formated_data(
-                envelope.get("dataMessage")
+                data_message
             )     
         return formated
 
 
-    def _get_envelope_data(self, data: dict) -> dict:
+    def _get_envelope_and_check_validity(self, data: dict) -> dict | None:
         envelope = None
         if (
             data.get("method") is not None and
@@ -160,41 +159,62 @@ class JsonRpcFormater(MessageFormater):
             data["params"].get("envelope") is not None
         ):
             envelope = data["params"]["envelope"]
-        return envelope
 
-    def _get_basic_formated_data(self, data: dict) -> schemas.DataFormated:
-        return schemas.DataFormated(
+            # Check if data is according to formater receiver presets
+            if ((
+                    self.receiver_type == "recipient" and
+                    envelope.get("sourceNumber") != self.receiver)
+                or (
+                    self.receiver_type == "group_id" and
+                    self._get_group_id_from_envelope(envelope) != self.receiver
+                )
+            ):
+                envelope = None
+
+        return envelope
+    
+    def _get_group_id_from_envelope(self, envelope: dict) -> str | None:
+        group_spot = {}
+        data_message = self._get_data_message_from_envelope(envelope)
+        if envelope.get("typingMessage") is not None:
+            group_spot = envelope["typingMessage"]
+        elif data_message is not None and data_message.get("groupInfo") is not None:
+            group_spot = data_message["groupInfo"]
+        return group_spot.get("groupId")
+
+    def _get_basic_formated_data(self, data: dict) -> DataFormated:
+        return DataFormated(
             id=str(uuid4()),
-            user=schemas.User(
+            user=User(
                 nickname=data.get("sourceName"),
                 phone=data.get("sourceNumber")
             ),
-            sent_at=data.get("timestamp")
+            sent_at=self._get_datetime_from_timestamp(data.get("timestamp"))
         )
 
-    def _get_sync_message_envelope_if_allowed(self, envelope) -> dict:
+    def _get_data_message_from_envelope(self, envelope: dict) -> dict | None:
         if (
             envelope.get("syncMessage") is not None and
             envelope["syncMessage"].get("sentMessage") is not None and
             is_allow_to_execute_self_send()
         ):
             return envelope["syncMessage"]["sentMessage"]
-        return envelope
+        return envelope.get("dataMessage")
 
-    def _get_message_formated_data(self, data: dict) -> schemas.Message | None:
+    def _get_message_formated_data(self, data: dict) -> Message | None:
         if data is not None and data.get("message") is not None:
-            return schemas.Message(
+            return Message(
                 text=data.get("message"),
                 quote=self._get_quote_formated_data(data.get("quote")),
                 mentions=self._get_mentions_formated_data(data.get("mentions"))
             )
         return None
 
-    def _get_quote_formated_data(self, data: dict) -> schemas.QuotedMessage | None:
+    def _get_quote_formated_data(self, data: dict) -> QuotedMessage | None:
         if data is not None:
-            return schemas.QuotedMessage(
+            return QuotedMessage(
                 text=data.get("text"),
-                author=schemas.User(
+                author=User(
                     nickname=data.get("author"),
                     phone=data.get("authorNumber")
                 ),
@@ -202,14 +222,14 @@ class JsonRpcFormater(MessageFormater):
             )
         return None
 
-    def _get_mentions_formated_data(self, data: dict) -> List[schemas.Mention] | None:
+    def _get_mentions_formated_data(self, data: dict) -> List[Mention] | None:
         mentions = None
         if data is not None and len(data) > 0:
-            mentions = List()
+            mentions = list()
             for item in data:
                 mentions.append(
-                    schemas.Mention(
-                        user=schemas.User(
+                    Mention(
+                        user=User(
                             nickname=item.get("name"),
                             phone=data.get("number")
                         ),
@@ -218,36 +238,51 @@ class JsonRpcFormater(MessageFormater):
                     )
                 )
         return mentions
+    
+    def _get_typing_formated_data(self, data: dict) -> Typing | None:
+        if data is not None:
+            return Typing(
+                status=data.get("action")
+            )
+        return None
 
-    def _get_reaction_formated_data(self, data: dict) -> schemas.Reaction | None:
+    def _get_reaction_formated_data(self, data: dict) -> Reaction | None:
         if data is not None and data.get("reaction") is not None:
             data = data.get("reaction")
-            return schemas.Reaction(
+            return Reaction(
                 reaction=data.get("emoji"),
-                target_author=schemas.User(
+                target_author=User(
                     nickname=data.get("targetAuthor"),
                     phone=data.get("targetAuthorNumber")
                 ),
-                target_sent_at=data.get("targetSentTimestamp")
+                target_sent_at=self._get_datetime_from_timestamp(data.get("targetSentTimestamp"))
             )
         return None
 
     def _get_attachments_formated_data(
         self, data: dict
-    ) -> List[schemas.AttachmentData] | None:
+    ) -> List[AttachmentData] | None:
 
         attachments = None
         if (
             data is not None and data.get("attachments") is not None and 
             len(data.get("attachments")) > 0
         ):
-            attachments = List()
+            attachments = list()
             for item in data.get("attachments"):
                 attachments.append(
-                    schemas.AttachmentData(
+                    AttachmentData(
                         content_type=item.get("contentType"),
                         filename=item.get("filename"),
                         size=item.get("size")
                     )
                 )
         return attachments
+
+    def _get_datetime_from_timestamp(self, timestamp: float) -> datetime:
+        # Receiving timestamp in millisec transform to sec
+        return datetime.fromtimestamp(timestamp/1000.0)
+
+    def _get_timestamp_from_datetime(self, time: datetime) -> float:
+        # Transform timestamp back to millisec
+        return time.timestamp() * 1000

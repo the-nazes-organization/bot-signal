@@ -2,27 +2,25 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import List
 
-class Chatter(ABC):
-    @abstractmethod
-    def read_message(self):
-        pass
 
+class MessageFormater(ABC):
     @abstractmethod
-    def send_message(self,
+    def format_message(self,
         message: str | None=None,
         attachments: List[str] | None=None,
-        quote_id : str | None=None
+        quote_author: str | None=None,
+        quote_sent_at: datetime | None=None
     ):
         pass
 
     @abstractmethod
-    def send_reaction(self, emoji: str, target_author: str, target_sent_at: datetime):
+    def format_reaction(self, emoji, target_author, target_sent_at):
         pass
 
     @abstractmethod
-    def send_typing(self):
+    def format_typing(self):
         pass
 
     @abstractmethod
-    def get_history(self, nb_messages: int=10):
+    def deformat(self, data):
         pass

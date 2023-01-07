@@ -2,7 +2,7 @@ from enum import Enum
 from datetime import datetime
 from typing import List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from signal_bot.backend.core.config import get_settings
 
@@ -10,7 +10,7 @@ settings = get_settings()
 
 class User(BaseModel):
     nickname: str | None = None
-    phone: settings.NUMBER_FORMAT_REGEX
+    phone: str = Field(regex=settings.NUMBER_FORMAT_REGEX)
     db_name: str | None = None
 
 class AttachmentData(BaseModel):

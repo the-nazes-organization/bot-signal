@@ -3,7 +3,6 @@ import re
 import time as check_timestamp
 import traceback
 from datetime import datetime, time
-from typing import List
 
 from signal_bot.backend import schemas
 
@@ -17,7 +16,7 @@ class Command:
         - a command that was register (ex: !hello)
         - on all message (ex: "Hello")
         - on typing. This is used to send a message when the user start typing
-        - on attachements
+        - on attachments
         - on reaction
 
     A message can be added to the command
@@ -32,7 +31,7 @@ class Command:
         "message": [],
         "command": [],
         "typing": [],
-        "attachements": [],
+        "attachments": [],
         "reaction": []
     }
 
@@ -94,7 +93,7 @@ class Command:
         return:
             None
         """
-        self._start_functions(self._command["attachements"], data)
+        self._start_functions(self._command["attachments"], data)
 
     def handle_typing(self, data: schemas.DataFormated) -> None:
         """
@@ -128,7 +127,7 @@ class Command:
         message_split = data.message.text.split(" ")
         prefix = message_split[0]
         data.message.text = " ".join(message_split[1:])
-        commands = List()
+        commands = list()
         for command in self._command["command"]:
             if command["prefix"] == prefix:
                 commands.append(command)
@@ -159,7 +158,7 @@ class Command:
 
         if condition is None:
             return True
-        
+
         user = data.user.db_name
         message = data.message.text if data.message is not None else None
 
@@ -184,12 +183,11 @@ class Command:
         """
         Parameter of the decorated function:
             - activation_type: the type of activation
-                ("command", "message", "typing", "attachements", "reaction")
+                ("command", "message", "typing", "attachments", "reaction")
             - prefix: the prefix of the command (ex: "hello" => "!hello")
             - condition: dict of condition to check before executing the command
         """
-        logger.info(msg=f"Adding Command : {activation_type}-{prefix}")
-        activation_list = ["command", "message", "typing", "attachements", "reaction"]
+        activation_list = ["command", "message", "typing", "attachments", "reaction"]
         if activation_type not in activation_list:
             raise ValueError(f"activation_type must be in {activation_list}")
 
@@ -224,10 +222,10 @@ class Command:
             - condition: dict of condition to check
 
         condition keys:
-        - users: list of users that triggers the command, format if phone number
-            - timerange: list of 2 datetime, the command is only triggered
-            between the 2 dates
-            - regex: regex to match the message
+        - users: list of users that triggers the command, format name in db number_map
+        - timerange: list of 2 datetime, the command is only triggered
+        between the 2 dates
+        - regex: regex to match the message
 
         Error:
             - if the condition is not valid

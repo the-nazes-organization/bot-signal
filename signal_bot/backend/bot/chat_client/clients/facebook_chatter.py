@@ -1,5 +1,7 @@
+from datetime import datetime
+
 from signal_bot.backend.bot.chat_client.chatter import Chatter
-from signal_bot.backend.bot.chat_client.format_message import MessageFormater
+from signal_bot.backend.bot.chat_client.formater import MessageFormater
 
 
 class FacebookChatter(Chatter):
@@ -12,5 +14,5 @@ class FacebookChatter(Chatter):
     def send_message(self, message: str, **kwargs):
         raise NotImplementedError
 
-    def send_reaction(self, emoji: str, target_author: str, target_timestamp: int):
+    def send_reaction(self, emoji: str, target_author: str, target_sent_at: datetime):
         raise NotImplementedError
