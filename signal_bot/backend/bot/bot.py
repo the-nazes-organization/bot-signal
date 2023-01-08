@@ -62,7 +62,7 @@ def bot_loop_hole(bot_client: Chatter, command: Command, queue: QueueStorage):
             command.handle_reaction(data)
         
         if data.attachments is not None:
-            command.handle_attachements(data)
+            command.handle_attachments(data)
 
 
 if __name__ == "__main__":

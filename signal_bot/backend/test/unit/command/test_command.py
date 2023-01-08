@@ -252,7 +252,7 @@ def test_handle_attachments(capfd, bdata_formated):
         )
     ]
     cmd = Command()
-    assert cmd.handle_attachements(bdata_formated) is None
+    assert cmd.handle_attachments(bdata_formated) is None
     out, _ = capfd.readouterr()
     assert "romfib_passwords\n" == out
 

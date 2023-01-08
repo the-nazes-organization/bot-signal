@@ -82,7 +82,7 @@ class Command:
         """
         self._start_functions(self._command["reaction"], data)
 
-    def handle_attachements(self, data: schemas.DataFormated) -> None:
+    def handle_attachments(self, data: schemas.DataFormated) -> None:
         """
         This function takes the data formated and call
         the functions associated with a attachment event
