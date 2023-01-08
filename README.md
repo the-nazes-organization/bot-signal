@@ -79,7 +79,7 @@ It has the following methods:
 example:
 ```python
 #to import the chatter
-from signal_bot.backend.bot.bot import chatter
+from app.bot.bot import chatter
 
 #to send a message
 chatter.send_message("prout")
@@ -99,7 +99,7 @@ history can be access with the chatter object.
 example:
 ```python
 #to import the chatter
-from signal_bot.backend.bot.bot import chatter
+from app.bot.bot import chatter
 
 #to get the last 50 messages
 messages = chatter.get_messages(last=50)
