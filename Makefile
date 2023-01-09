@@ -7,4 +7,4 @@ autoformat:  ## Run the autoformatter.
 
 l: lint  ## Alias for `lint`
 lint:  ## Run the linter.
-	PYTHONPATH=. ruff --config ruff.toml signal_bot
+	PYTHONPATH=. ruff --config ruff.toml app
