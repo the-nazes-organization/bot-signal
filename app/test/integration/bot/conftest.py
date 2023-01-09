@@ -5,7 +5,7 @@ from random import randrange
 import uuid
 import time
 
-from signal_bot.backend.schemas.data_formated import (
+from app.bot.schema.data_formated import (
     DataFormated,
     User,
     Message,

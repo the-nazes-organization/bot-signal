@@ -57,7 +57,7 @@ def bot_loop_hole(bot_client: Chatter, command: Command, queue: QueueStorage):
             command.handle_reaction(data)
         
         if data.attachments:
-            command.handle_attachements(data)
+            command.handle_attachments(data)
 
 def main():
     properties = BotProperties(

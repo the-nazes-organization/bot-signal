@@ -4,23 +4,16 @@ from typing import List
 
 import openai
 
-from app.backend import schemas
+from app.bot.schema.data_formated import DataFormated
 from app.bot.chat_client.chatter import ChatterHolder
 from app.bot.command import Command
 from app.config import get_settings
 
 logger = logging.getLogger(__name__)
 
-@Command.add("message")
-def caca():
-    chatter = ChatterHolderg.get_chatter()
-    chatter.send_message(message="caca")
-    
-
-
 
 @Command.add("command", "🤖")
-def ignorant_ai(data: schemas.DataFormated):
+def ignorant_ai(data: DataFormated):
     chatter = ChatterHolder.get_chatter()
     chatter.send_typing()
 
@@ -33,7 +26,7 @@ def ignorant_ai(data: schemas.DataFormated):
 
 
 @Command.add("command", "🤖👿")
-def evil_ai(data: schemas.DataFormated):
+def evil_ai(data: DataFormated):
     chatter = ChatterHolder.get_chatter()
     chatter.send_typing()
     #si message start new_personality: 
@@ -48,7 +41,7 @@ def evil_ai(data: schemas.DataFormated):
 
 
 @Command.add("command", "🖌️")
-def create_img_from_text(data: schemas.DataFormated):
+def create_img_from_text(data: DataFormated):
     chatter = ChatterHolder.get_chatter()
     chatter.send_typing()
     settings = get_settings()
@@ -91,7 +84,7 @@ def get_openai_prediction(prompt):
 
 def create_prompt_context(chatter, base_prompt=""):
     settings = get_settings()
-    history: List[schemas.DataFormated] = chatter.get_history(
+    history: List[DataFormated] = chatter.get_history(
         int(settings.OPENAI_HISTORY_LENGTH)
     )
     history.reverse()

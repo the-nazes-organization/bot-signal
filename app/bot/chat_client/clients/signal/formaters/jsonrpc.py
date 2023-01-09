@@ -6,10 +6,16 @@ from typing import List
 from uuid import uuid4
 
 from app.bot.chat_client.clients.signal.formater import MessageFormater
-from app.bot.schema.data_formated import (AttachmentData,
-                                                      DataFormated, Mention,
-                                                      Message, QuotedMessage,
-                                                      Reaction, Typing, User)
+from app.bot.schema.data_formated import (
+    AttachmentData,
+    DataFormated, 
+    Mention,
+    Message,
+    QuotedMessage,
+    Reaction,
+    Typing,
+    User
+)
 
 
 class JsonRpcFormater(MessageFormater):

@@ -3,9 +3,13 @@ from datetime import datetime
 
 import pytest
 
-from app.bot.schema.data_formated import (DataFormated, Mention,
-                                                      Message, QuotedMessage,
-                                                      User)
+from app.bot.schema.data_formated import (
+    DataFormated,
+    Mention,
+    Message,
+    QuotedMessage,
+    User
+)
 
 
 @pytest.fixture(scope="module")
@@ -15,6 +19,7 @@ def user_map_storage(object_storage):
     object_storage.put("+12345678", "pouf")
     object_storage.put("+01234567", "plop")
     return object_storage
+
 
 @pytest.fixture(
     scope="function",

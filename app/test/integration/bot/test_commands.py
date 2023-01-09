@@ -1,13 +1,15 @@
 from typing import List
 from datetime import datetime
 
-from signal_bot.backend.bot.chat_client.chatter_holder import ChatterHolder
-from signal_bot.backend.bot.chat_client.chatter import Chatter
+from app.bot.chat_client.chatter import (
+    Chatter,
+    ChatterHolder
+)
 
-from signal_bot.backend.commands.command import Command
+from app.bot.command import Command
 
 # Import all functions to add them to the command with the decorator
-from signal_bot.backend.commands import functions
+from app import commands
 
 
 class TestChatter(Chatter):
@@ -62,7 +64,7 @@ def test_commands_with_message(queue_storage, basic_message_data_formated):
     queue_storage.put(data)
     cmd.handle_message(data)
 
-    print(chatter.results)
+    return chatter.results
 
 
 def test_commands_with_typing(queue_storage, typing_data_formated):
@@ -73,7 +75,7 @@ def test_commands_with_typing(queue_storage, typing_data_formated):
 
     cmd.handle_typing(data)
 
-    print(chatter.results)
+    return chatter.results
 
 
 def test_commands_with_reaction(queue_storage, reaction_data_formated):
@@ -84,7 +86,7 @@ def test_commands_with_reaction(queue_storage, reaction_data_formated):
 
     cmd.handle_reaction(data)
 
-    print(chatter.results)
+    return chatter.results
 
 
 def test_commands_with_attachments(queue_storage, attachments_data_formated):
@@ -95,4 +97,4 @@ def test_commands_with_attachments(queue_storage, attachments_data_formated):
 
     cmd.handle_attachments(data)
 
-    print(chatter.results)
+    return chatter.results

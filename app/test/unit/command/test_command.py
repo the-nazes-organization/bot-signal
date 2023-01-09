@@ -2,11 +2,26 @@ import pytest
 from freezegun import freeze_time
 
 from app.bot.command import Command
-from app.bot.schema.data_formated import (AttachmentData, Message,
-                                                      Reaction, Typing)
+from app.bot.schema.data_formated import (
+    AttachmentData,
+    Message,
+    Reaction,
+    Typing
+)
+
+
+def reset_command_func_dict():
+    Command._command = {
+        "message": [],
+        "command": [],
+        "typing": [],
+        "attachments": [],
+        "reaction": []
+    }
 
 
 def test_command_add_message():
+    reset_command_func_dict()
     @Command.add(activation_type="message")
     def test_function(data):
         pass
@@ -17,6 +32,7 @@ def test_command_add_message():
 
 
 def test_command_add_two_command():
+    reset_command_func_dict()
     @Command.add(activation_type="command", prefix="!test")
     def test_function_0(data):
         pass
@@ -201,16 +217,6 @@ def test_start_functions_exception(caplog, bdata_formated):
     cmd = Command()
     assert cmd._start_functions(commands, bdata_formated) is None
     assert "Error while handling function: test_function" in caplog.text
-
-
-def reset_command_func_dict():
-    Command._command = {
-        "message": [],
-        "command": [],
-        "typing": [],
-        "attachments": [],
-        "reaction": []
-    }
 
 
 def test_handle_reaction(capfd, bdata_formated):
