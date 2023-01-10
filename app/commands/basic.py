@@ -3,7 +3,6 @@ from random import randrange
 from app.bot.chat_client.chatter import ChatterHolder
 from app.bot.command import Command
 from app.bot.schema.data_formated import DataFormated
-from app.config import get_attachment_format_from_files, get_attachments_path
 
 
 @Command.add("command", "!tiresurmondoigt")
