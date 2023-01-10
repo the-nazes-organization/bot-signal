@@ -7,9 +7,9 @@ chat on signal.
 ## How does it work?
 
 Bot signal is compose of 3 main parts:
-- api	: the api that will be used to start and stop the bot
-- bot	: the bot that will be used to send and receive messages 
-- command: the command that will be used to add command to the bot
+- api : the api that will be used to start and stop the bot and the signal-cli
+- bot : the bot that will be used to send and receive messages 
+- commands : the command that will be used to add command to the bot
 
 The bot is deploy on GCP and use the [signal-cli](https://github.com/AsamK/signal-cli) to send and receive messages.
 
@@ -18,32 +18,32 @@ The bot is deploy on GCP and use the [signal-cli](https://github.com/AsamK/signa
 To add a command you need to add a python function in the command folder. 
 The function must be decorated with the `@command` decorator and must take 2 arguments:
 
-- message: the message that trigger the command. The prefix of the command is removed
-- user: the user that send the message
+- data -> DataFormated: the data based on the activation type [here](app/bot/schema/data_formated.py)
 
 The command decorator take 3 arguments:
 
-- activation_type: the type of activation ("command", "message", "typing", "attachements")
+- activation_type: the type of activation ("command", "message", "typing", "reaction", "attachments")
 - prefix: the prefix of the command, example "!tiresurmondoigt"
 - condition: dict of condition to check before executing the command
 
 ```python
 
 @Command.add(activation_type="command", prefix="!tiresurmondoigt", condition={"users": ["jeanluc"]})
-def my_command(message, user):
+def my_command(data: DataFormated):
 	"""This is the docstring of the command"""
     chatter.send_message("prout")
 
 ```
 
-basic example are available in the command folder, inside function.py [here](signal_bot/backend/commands/functions/basic.py)
+basic example are available in the command folder, inside function.py [here](app/commands/basic.py)
 
 ### Detail of the activation_type
 
 - command: the command will be activated when the message start with the prefix
 - message: the command will be activated for every message
+- reaction: the command will be activated for every reaction
 - typing: the command will be activated when the user start typing
-- attachments: the command will be activated when the user send an attachement
+- attachments: the command will be activated when the user send an attachment
 
 If the activation_type is "command", the prefix is required. It is preferable that the prefix start with a "!".
 
@@ -76,9 +76,12 @@ condition = {
 The chatter is the object that will be used to send message. It is a wrapper around the signal-cli.
 It has the following methods:
 
-- send_message: send a message to the user
-- send_reaction: send a reaction to the user
-- send_typing: send a typing notification to the user
+- send_message: send a message with options:
+    - attachments : files to send with
+    - quote : a message to quote
+    - mention : a link to the use ryou are referencing
+- send_reaction: send a reaction to a user message
+- send_typing: send a typing notification
 
 example:
 ```python
@@ -90,7 +93,9 @@ chatter = ChatterHolder.get_chatter()
 chatter.send_message("prout")
 
 #to send a reaction
-chatter.send_reaction(emoji="💨", target_author="+33642424242", target_timestamp="1611234567890)
+data : DataFormated
+
+chatter.send_reaction(emoji="💨", target_author=data.user.phone, target_timestamp=data.sent_at)
 
 #to send a typing notification
 chatter.send_typing()
@@ -116,5 +121,3 @@ messages = chatter.get_history(nb_messages=50)
 - Add more method to the chatter:
 - Add possibility to add command from the api
 - Add possibility to add command in an other language than python
-
-
