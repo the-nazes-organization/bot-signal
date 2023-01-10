@@ -164,7 +164,7 @@ def get_queue_storage() -> QueueStorage:
 def get_user_db() -> ObjectStorage:
     settings = get_settings()
     mapping = {"file": FileStorage}
-    return mapping[settings.STORAGE_PROVIDER_USER_DB](get_db_user_path())
+    return mapping[settings.STORAGE_PROVIDER_NUMBER_MAP_DB](get_db_number_map_path())
 
 
 def get_attachment_format_from_files(files_path: List[str]) -> List[str]:
