@@ -1,7 +1,7 @@
 line-length = 88
 
 # Enable Pyflakes and pycodestyle rules.
-select = ["E", "F"]
+select = ["E", "F", "Q"]
 
 # Never enforce `E501` (line length violations).
 # ignore = ["E501"]
@@ -13,3 +13,4 @@ select = ["E", "F"]
 [per-file-ignores]
 "__init__.py" = ["F401"]
 "bot.py" = ["E402", "F401"]
+"test_commands.py" = ["E402", "F401"]

@@ -21,7 +21,7 @@ The function must be decorated with the `@command` decorator and must take 2 arg
 	- user: the user that send the message
 
 The command decorator take 3 arguments:
-	- activation_type: the type of activation ("command", "message", "typing", "attachements")
+	- activation_type: the type of activation ("command", "message", "typing", "attachments")
 	- prefix: the prefix of the command, example "!tiresurmondoigt"
 	- condition: dict of condition to check before executing the command
 
@@ -41,7 +41,7 @@ basic example are available in the command folder, inside function.py [here](sig
 - command: the command will be activated when the message start with the prefix
 - message: the command will be activated for every message
 - typing: the command will be activated when the user start typing
-- attachements: the command will be activated when the user send an attachement
+- attachments: the command will be activated when the user send an attachement
 
 If the activation_type is "command" or "message", the prefix is required. A prefix must start with a "!".
 
@@ -79,7 +79,7 @@ It has the following methods:
 example:
 ```python
 #to import the chatter
-from signal_bot.backend.bot.bot import chatter
+from app.bot.bot import chatter
 
 #to send a message
 chatter.send_message("prout")
@@ -99,7 +99,7 @@ history can be access with the chatter object.
 example:
 ```python
 #to import the chatter
-from signal_bot.backend.bot.bot import chatter
+from app.bot.bot import chatter
 
 #to get the last 50 messages
 messages = chatter.get_messages(last=50)

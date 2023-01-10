@@ -1,0 +1,28 @@
+{
+    "jsonrpc": "2.0",
+    "method": "receive",
+    "params": {
+        "envelope": {
+            "source": "xxxxxxx",
+            "sourceNumber": "+03294832",
+            "sourceUuid": "xxxxxx-xxxxx-xxx",
+            "sourceName": "Jack",
+            "sourceDevice": 1,
+            "timestamp": 1670222444666,
+            "syncMessage": {
+                "sentMessage": {
+                    "timestamp": 1670222444666,
+                    "message": "Test",
+                    "expiresInSeconds": 0,
+                    "viewOnce": false,
+                    "groupInfo": {
+                        "groupId": "dhwq98hwqoud1092u",
+                        "type": "DELIVER"
+                    }
+                }
+            }
+        },
+        "account": "+23819239",
+        "subscription": 2
+    }
+}

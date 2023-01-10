@@ -32,4 +32,4 @@ RUN groupadd -g 10001 signal-bot && \
 # USER signal-bot:signal-bot
 
 
-CMD ["uvicorn", "signal_bot.backend.api.main:app", "--host=0.0.0.0", "--port=80"]
+CMD ["uvicorn", "app.api.main:app", "--host=0.0.0.0", "--port=80"]

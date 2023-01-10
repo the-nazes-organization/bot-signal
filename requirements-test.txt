@@ -2,3 +2,4 @@ pytest
 ruff
 freezegun
 httpx
+pytest-mock

@@ -1,0 +1,52 @@
+{
+    "jsonrpc": "2.0",
+    "method": "receive",
+    "params": {
+        "envelope": {
+            "source": "xxxxxxx",
+            "sourceNumber": "+03294832",
+            "sourceUuid": "xxxxxx-xxxxx-xxx",
+            "sourceName": "Jack",
+            "sourceDevice": 1,
+            "timestamp": 1670222444666,
+            "dataMessage": {
+                "timestamp": 1670222444666,
+                "message": "Test",
+                "expiresInSeconds": 0,
+                "viewOnce": false,
+                "groupInfo": {
+                    "groupId": "dhwq98hwqoud1092u",
+                    "type": "DELIVER"
+                },
+                "mentions": [
+                    {
+                        "name": "Jack",
+                        "number": "+03294832",
+                        "uuid": "xxxxxx-xxxxx-xxx",
+                        "start": 0,
+                        "length": 1
+                    }
+                ],
+                "quote": {
+                    "id": 1209323,
+                    "author": "Jack",
+                    "authorNumber": "+03294832",
+                    "authorUuid": "xxxxxx-xxxxx-xxx",
+                    "text": "Quote Test",
+                    "attachments": [],
+                    "mentions": [
+                        {
+                            "name": "Jack",
+                            "number": "+03294832",
+                            "uuid": "xxxxxx-xxxxx-xxx",
+                            "start": 0,
+                            "length": 1
+                        }
+                    ]
+                }
+            }
+        },
+        "account": "+23819239",
+        "subscription": 2
+    }
+}
