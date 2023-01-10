@@ -32,7 +32,7 @@ class Command:
         "command": [],
         "typing": [],
         "attachments": [],
-        "reaction": []
+        "reaction": [],
     }
 
     def __init__(self):
@@ -49,9 +49,7 @@ class Command:
         """
         for command in commands:
 
-            if self.is_condition_true(
-                command.get("condition"), data
-            ):
+            if self.is_condition_true(command.get("condition"), data):
                 try:
                     logger.debug(msg=f"Start function {command['function'].__name__}")
                     start_time = check_timestamp.time()
@@ -160,15 +158,14 @@ class Command:
             return True
 
         user = data.user.db_name
-        message = data.message.text if data.message is not None else None
+        message = data.message.text if data.message else None
 
         check_user = condition.get("users") is None or user in condition["users"]
         check_date = condition.get("timerange") is None or is_time_between(
             condition["timerange"][0], condition["timerange"][1]
         )
-        check_regex = (
-            condition.get("regex") is None or
-            (message is not None and re.search(condition["regex"], message) is not None)
+        check_regex = condition.get("regex") is None or (
+            message is not None and re.search(condition["regex"], message) is not None
         )
 
         return check_user and check_date and check_regex

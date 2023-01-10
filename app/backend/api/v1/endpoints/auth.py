@@ -4,10 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import RedirectResponse
 from google_auth_oauthlib.flow import Flow
 
+from app.backend.core.security import Auth
 from app.backend.schemas.auth import AuthToken
 from app.config import get_google_config, get_settings
-from app.backend.core.security import Auth
-
 
 settings = get_settings()
 logger = logging.getLogger(__name__)

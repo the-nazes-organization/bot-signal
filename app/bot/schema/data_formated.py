@@ -10,37 +10,45 @@ class User(BaseModel):
     phone: str = Field(regex=r"^\+[0-9]{7,15}$")
     db_name: str | None = None
 
+
 class AttachmentData(BaseModel):
     content_type: str
     filename: str
     size: int
 
+
 class TypingStatus(str, Enum):
     STARTED = "STARTED"
     STOPPED = "STOPPED"
 
+
 class Typing(BaseModel):
     status: TypingStatus
+
 
 class Mention(BaseModel):
     user: User
     start: int
     length: int
 
+
 class QuotedMessage(BaseModel):
     text: str
     author: User
     mentions: List[Mention] | None = None
+
 
 class Message(BaseModel):
     text: str
     quote: QuotedMessage | None = None
     mentions: List[Mention] | None = None
 
+
 class Reaction(BaseModel):
     reaction: str
     target_author: User
     sent_at: datetime
+
 
 class DataFormated(BaseModel):
     id: str

@@ -1,12 +1,15 @@
 import psutil
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.backend.schemas.signal_cli import SignalCliRegisterResponse, SignalRegister, SignalRegisterVerify
 from app.backend.api.dependencies import check_account_number, get_process_db
 from app.backend.core.process_handler import ProcessHandler
+from app.backend.schemas.signal_cli import (
+    SignalCliRegisterResponse,
+    SignalRegister,
+    SignalRegisterVerify,
+)
 from app.config import get_settings, get_signal_cli_config_path
 from app.db.object_storage import ObjectStorage
-
 
 settings = get_settings()
 router = APIRouter()
@@ -17,7 +20,7 @@ async def put_signal_cli(
     handler: ProcessHandler = Depends(), db: ObjectStorage = Depends(get_process_db)
 ):
     pid = db.get("cli")
-    if pid is not None:
+    if pid:
         if handler.is_process_alive(pid):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,

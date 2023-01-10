@@ -4,14 +4,14 @@ from typing import List
 import psutil
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.backend.schemas.bot import BotProperties
-from app.backend.schemas.number_map import NumberMap, NumberMapUpdate
 from app.backend.api.dependencies import (
     check_path_number,
     get_number_map_db,
     get_process_db,
 )
 from app.backend.core.process_handler import ProcessHandler
+from app.backend.schemas.bot import BotProperties
+from app.backend.schemas.number_map import NumberMap, NumberMapUpdate
 from app.config import get_settings
 from app.db.object_storage import ObjectStorage
 
@@ -27,7 +27,7 @@ async def start_bot(
     db: ObjectStorage = Depends(get_process_db),
 ):
     pid = db.get("bot")
-    if pid is not None:
+    if pid:
         if handler.is_process_alive(pid):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -75,16 +75,14 @@ async def stop_bot(
 async def read_numbers_map(
     db: ObjectStorage = Depends(get_number_map_db),
 ) -> NumberMap:
-    return [
-        NumberMap(number=key, name=value) for key, value in db.get_all().items()
-    ]
+    return [NumberMap(number=key, name=value) for key, value in db.get_all().items()]
 
 
 @router.post("/numbermap", response_model=NumberMap)
 async def create_number_map(
     obj: NumberMap, db: ObjectStorage = Depends(get_number_map_db)
 ) -> NumberMap:
-    if db.get(obj.number) is not None:
+    if db.get(obj.number):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Number already in used"
         )

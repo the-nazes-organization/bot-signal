@@ -9,10 +9,11 @@ class Chatter(ABC):
         pass
 
     @abstractmethod
-    def send_message(self,
-        message: str | None=None,
-        attachments: List[str] | None=None,
-        quote_id : str | None=None
+    def send_message(
+        self,
+        message: str | None = None,
+        attachments: List[str] | None = None,
+        quote_id: str | None = None,
     ):
         pass
 
@@ -25,7 +26,7 @@ class Chatter(ABC):
         pass
 
     @abstractmethod
-    def get_history(self, nb_messages: int=10):
+    def get_history(self, nb_messages: int = 10):
         pass
 
 

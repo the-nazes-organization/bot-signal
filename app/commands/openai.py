@@ -4,9 +4,9 @@ from typing import List
 
 import openai
 
-from app.bot.schema.data_formated import DataFormated
 from app.bot.chat_client.chatter import ChatterHolder
 from app.bot.command import Command
+from app.bot.schema.data_formated import DataFormated
 from app.config import get_settings
 
 logger = logging.getLogger(__name__)
@@ -18,9 +18,7 @@ def ignorant_ai(data: DataFormated):
     chatter.send_typing()
 
     base_prompt = load_base_prompt("ignorant_ai_prompt")
-    prompt = create_prompt_context(
-        chatter=chatter, base_prompt=base_prompt
-    )
+    prompt = create_prompt_context(chatter=chatter, base_prompt=base_prompt)
     response = get_openai_prediction(prompt=prompt)
     chatter.send_message(message=response)
 
@@ -29,13 +27,10 @@ def ignorant_ai(data: DataFormated):
 def evil_ai(data: DataFormated):
     chatter = ChatterHolder.get_chatter()
     chatter.send_typing()
-    #si message start new_personality: 
-        
+    # si message start new_personality:
 
     base_prompt = load_base_prompt("evil_ai_prompt")
-    prompt = create_prompt_context(
-        chatter=chatter, base_prompt=base_prompt
-    )
+    prompt = create_prompt_context(chatter=chatter, base_prompt=base_prompt)
     response = get_openai_prediction(prompt=prompt)
     chatter.send_message(message=response)
 

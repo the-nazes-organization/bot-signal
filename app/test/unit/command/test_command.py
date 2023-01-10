@@ -2,12 +2,7 @@ import pytest
 from freezegun import freeze_time
 
 from app.bot.command import Command
-from app.bot.schema.data_formated import (
-    AttachmentData,
-    Message,
-    Reaction,
-    Typing
-)
+from app.bot.schema.data_formated import AttachmentData, Message, Reaction, Typing
 
 
 def reset_command_func_dict():
@@ -16,12 +11,13 @@ def reset_command_func_dict():
         "command": [],
         "typing": [],
         "attachments": [],
-        "reaction": []
+        "reaction": [],
     }
 
 
 def test_command_add_message():
     reset_command_func_dict()
+
     @Command.add(activation_type="message")
     def test_function(data):
         pass
@@ -33,6 +29,7 @@ def test_command_add_message():
 
 def test_command_add_two_command():
     reset_command_func_dict()
+
     @Command.add(activation_type="command", prefix="!test")
     def test_function_0(data):
         pass
@@ -142,6 +139,7 @@ def test_is_condition_false_no_user_name(bdata_formated):
     bdata_formated.user.db_name = None
     assert Command.is_condition_true(condition, bdata_formated) is False
 
+
 def test_is_condition_true_regex(bdata_formated):
     condition = {
         "regex": "test",
@@ -163,6 +161,7 @@ def test_is_condition_true_regex_no_message(bdata_formated):
         "regex": "test",
     }
     assert Command.is_condition_true(condition, bdata_formated) is False
+
 
 @freeze_time("23:00")
 def test_is_condition_true_timerange(bdata_formated):
@@ -198,8 +197,8 @@ def test_start_functions(capfd, bdata_formated):
         print("2 worked")
 
     commands = [
-        {"function":test_function_0, "condition":{"users":["test"]}},
-        {"function":test_function_1, "condition":{"regex":"test"}}
+        {"function": test_function_0, "condition": {"users": ["test"]}},
+        {"function": test_function_1, "condition": {"regex": "test"}},
     ]
     bdata_formated.message = Message(text="test")
     cmd = Command()
@@ -210,6 +209,7 @@ def test_start_functions(capfd, bdata_formated):
 
 def test_start_functions_exception(caplog, bdata_formated):
     caplog.clear()
+
     def test_function(data):
         raise ValueError("test")
 
@@ -225,11 +225,9 @@ def test_handle_reaction(capfd, bdata_formated):
     @Command.add(activation_type="reaction")
     def test_function(data):
         print(data.reaction.reaction)
-    
+
     bdata_formated.reaction = Reaction(
-        reaction="🖖",
-        target_author=bdata_formated.user,
-        sent_at=bdata_formated.sent_at
+        reaction="🖖", target_author=bdata_formated.user, sent_at=bdata_formated.sent_at
     )
     cmd = Command()
     assert cmd.handle_reaction(bdata_formated) is None
@@ -245,11 +243,7 @@ def test_handle_attachments(capfd, bdata_formated):
         print(data.attachments[0].filename)
 
     bdata_formated.attachments = [
-        AttachmentData(
-            content_type="txt",
-            filename="romfib_passwords",
-            size=999999
-        )
+        AttachmentData(content_type="txt", filename="romfib_passwords", size=999999)
     ]
     cmd = Command()
     assert cmd.handle_attachments(bdata_formated) is None

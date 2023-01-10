@@ -6,23 +6,22 @@ from uuid import uuid4
 
 from app.bot.chat_client.chatter import Chatter
 from app.bot.chat_client.clients.signal.formater import MessageFormater
+from app.bot.schema.data_formated import DataFormated, Message, User
 from app.db.object_storage import ObjectStorage
 from app.db.queue_storage import QueueStorage
-from app.bot.schema.data_formated import (DataFormated, Message,
-                                                      User)
 
 CHATTER_BUFFSIZE = 4096
 
 
 class SignalChatter(Chatter):
     def __init__(
-        self, 
+        self,
         socket_file: str,
         formater: MessageFormater,
         queue: QueueStorage,
-        annuaire: ObjectStorage
+        phonebook: ObjectStorage,
     ) -> None:
-        self.annuaire = annuaire
+        self.phonebook = phonebook
         self.queue = queue
         self.formater = formater
         self.cached_message = b""
@@ -37,9 +36,10 @@ class SignalChatter(Chatter):
         return data
 
     def send_message(
-        self, message: str | None=None,
-        attachments: List[str] | None=None,
-        quote_id : str | None=None
+        self,
+        message: str | None = None,
+        attachments: List[str] | None = None,
+        quote_id: str | None = None,
     ):
         """Send message to signal
 
@@ -56,8 +56,8 @@ class SignalChatter(Chatter):
             id of the message you want to quote,
             previous messages are found in the queue or directly in the data
             param of the commands.
-                
-        
+
+
         @mentions : to mention someone just use this syntax in the message param:
         "Hello @@fela"
         Syntax : @@{name of the person to mention} in the message str
@@ -69,14 +69,16 @@ class SignalChatter(Chatter):
         quote_params = self._get_quote_params_from_history(quote_id)
 
         # save message in queue
-        if message is not None:
+        if message:
             self._save_message_in_queue(message)
-        
-        all_names = self.annuaire.get_all()
-        data = self.formater.format_message(all_names, message, attachments, **quote_params)
+
+        all_names = self.phonebook.get_all()
+        data = self.formater.format_message(
+            all_names, message, attachments, **quote_params
+        )
 
         self._send_data(data)
-    
+
     def send_reaction(self, emoji: str, target_author: str, target_sent_at: datetime):
         data = self.formater.format_reaction(emoji, target_author, target_sent_at)
         self._send_data(data)
@@ -107,36 +109,31 @@ class SignalChatter(Chatter):
         self.logger.debug("Just sent this data : %s", data)
 
     def _get_quote_params_from_history(self, quote_id: str | None) -> dict:
-        if quote_id is not None:
+        if quote_id:
             for data in self.queue.get_all():
                 if data.id == quote_id:
                     return {
                         "quote_author": data.user.phone,
-                        "quote_sent_at": data.sent_at
+                        "quote_sent_at": data.sent_at,
                     }
             raise LookupError("Can't found specified quote_id in history")
         return {}
-    
-    def _save_message_in_queue(
-        self,
-        message: str
-    ):
+
+    def _save_message_in_queue(self, message: str):
         self.queue.put(
             DataFormated(
                 id=str(uuid4()),
                 user=User(
                     nickname="LordBot",
-                    phone=self._get_bot_phone_from_number_map(self.annuaire.get_all()),
-                    db_name="bot"
+                    phone=self._get_bot_phone_from_phonebook(self.phonebook.get_all()),
+                    db_name="bot",
                 ),
-                message=Message(
-                    text=message
-                ),
-                sent_at=datetime.today()
+                message=Message(text=message),
+                sent_at=datetime.today(),
             )
         )
-    
-    def _get_bot_phone_from_number_map(self, data: dict):
+
+    def _get_bot_phone_from_phonebook(self, data: dict):
         for phone, name in data.items():
             if name == "bot":
                 return phone

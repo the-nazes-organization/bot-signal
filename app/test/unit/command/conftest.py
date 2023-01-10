@@ -11,9 +11,5 @@ def bdata_formated():
     return DataFormated(
         id=str(uuid.uuid4()),
         sent_at=datetime.now(),
-        user=User(
-            nickname="tester",
-            phone="+21309223",
-            db_name="test"
-        )
+        user=User(nickname="tester", phone="+21309223", db_name="test"),
     )

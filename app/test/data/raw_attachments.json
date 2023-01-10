@@ -1,0 +1,32 @@
+{
+    "jsonrpc": "2.0",
+    "method": "receive",
+    "params": {
+        "envelope": {
+            "source": "xxxxxxx",
+            "sourceNumber": "+03294832",
+            "sourceUuid": "xxxxxx-xxxxx",
+            "sourceName": "Jack",
+            "sourceDevice": 1,
+            "timestamp": 1670222444666,
+            "dataMessage": {
+                "timestamp": 1670222444666,
+                "message": null,
+                "expiresInSeconds": 0,
+                "viewOnce": false,
+                "attachments": [{
+                    "contentType": "audio/aac",
+                    "filename": "test_audio.aac",
+                    "id": "test_audio.aac",
+                    "size": 11111
+                }],
+                "groupInfo": {
+                    "groupId": "dhwq98hwqoud1092u",
+                    "type": "DELIVER"
+                }
+            }
+        },
+        "account": "+23819239",
+        "subscription": 2
+    }
+}

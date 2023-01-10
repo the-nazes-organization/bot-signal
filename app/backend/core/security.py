@@ -62,7 +62,7 @@ class Auth:
                 modif = True
 
         elif flag == "delete":
-            if antiforgery_obj is not None:
+            if antiforgery_obj:
                 self.state_db.delete(state)
                 logger.info("State token deleted")
                 modif = True

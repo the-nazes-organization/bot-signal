@@ -1,5 +1,4 @@
 import mimetypes
-
 from base64 import b64encode
 from functools import lru_cache
 from typing import List
@@ -8,16 +7,14 @@ from pydantic import BaseSettings
 
 from app.bot.chat_client.chatter import Chatter
 from app.bot.chat_client.clients.facebook_chatter import FacebookChatter
-from app.bot.chat_client.clients.signal.signal_chatter import SignalChatter
 from app.bot.chat_client.clients.signal.formater import MessageFormater
 from app.bot.chat_client.clients.signal.formaters.jsonrpc import JsonRpcFormater
+from app.bot.chat_client.clients.signal.signal_chatter import SignalChatter
 from app.db.object_storage import ObjectStorage
 from app.db.object_storage_provider.file_storage import FileStorage
 from app.db.queue_storage import QueueStorage
 from app.db.queue_storage_provider.deque_storage import DequeStorage
-from app.bot.schema.data_formated import User
-from app.backend.schemas.bot import BotProperties
-from app.backend.schemas.number_map import NumberMap
+
 
 class GoogleSettings(BaseSettings):
     CLIENT_ID: str = "google_client_id"
@@ -64,6 +61,7 @@ class Settings(BaseSettings):
 def get_storage_mapping():
     storage_mapping = {"file": FileStorage}
     return storage_mapping
+
 
 @lru_cache()
 def get_settings():
@@ -131,26 +129,27 @@ def get_db_number_map_path():
     return settings.VOLUME_PATH + "/" + settings.DB_NUMBER_MAP
 
 
-def get_formater(properties) -> MessageFormater:
+def get_formater(properties, debug) -> MessageFormater:
     return JsonRpcFormater(
         account=properties.account,
         receiver_type=properties.receiver_type,
         receiver=properties.receiver,
+        debug=debug,
     )
 
 
-def get_chatter(queue, properties, annuaire) -> Chatter:
+def get_chatter(queue, properties, phonebook) -> Chatter:
     settings = get_settings()
     mapping = {
         "signal": SignalChatter,
         "facebook": FacebookChatter,
     }
-    formater = get_formater(properties)
+    formater = get_formater(properties, settings.ALLOW_EXECUTE_SELF_SEND == "y")
     return mapping[settings.CHATTER_CLIENT](
         queue=queue,
         formater=formater,
         socket_file=settings.SOCKET_FILE,
-        annuaire=annuaire
+        phonebook=phonebook,
     )
 
 
@@ -176,4 +175,3 @@ def get_attachment_format_from_files(files_path: List[str]) -> List[str]:
             data_type = mimetypes.guess_type(file_path)
             attachments.append(f"data:{data_type};base64,{encoded_string}")
     return attachments
-

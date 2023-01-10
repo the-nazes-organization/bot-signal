@@ -6,10 +6,9 @@ from app.config import (
     get_db_state_path,
     get_db_user_path,
     get_settings,
-    get_storage_mapping
+    get_storage_mapping,
 )
 from app.db.object_storage import ObjectStorage
-
 
 settings = get_settings()
 storage_mapping = get_storage_mapping()

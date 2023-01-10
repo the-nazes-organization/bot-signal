@@ -2,18 +2,16 @@ import argparse
 import logging
 import logging.config
 
-from app.bot.chat_client.chatter import Chatter, ChatterHolder
-from app.config import get_chatter, get_queue_storage, get_user_db
-from app.bot.data_utils import enrich_user_data_with_db_name
-from app.bot.command import Command
-from app.logger_conf import LOGGING
-from app.db.queue_storage import QueueStorage
-from app.backend.schemas.bot import BotProperties
-from app.bot.schema.data_formated import DataFormated
-
 # Import all functions to add them to the command with the decorator
 from app import commands
-
+from app.backend.schemas.bot import BotProperties
+from app.bot.chat_client.chatter import Chatter, ChatterHolder
+from app.bot.command import Command
+from app.bot.data_utils import enrich_user_data_with_db_name
+from app.bot.schema.data_formated import DataFormated
+from app.config import get_chatter, get_queue_storage, get_user_db
+from app.db.queue_storage import QueueStorage
+from app.logger_conf import LOGGING
 
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger(__name__)
@@ -52,12 +50,13 @@ def bot_loop_hole(bot_client: Chatter, command: Command, queue: QueueStorage):
 
         if data.typing:
             command.handle_typing(data)
-        
+
         if data.reaction:
             command.handle_reaction(data)
-        
+
         if data.attachments:
             command.handle_attachments(data)
+
 
 def main():
     properties = BotProperties(
@@ -65,11 +64,14 @@ def main():
     )
     commander = Command()
     queue_storage = get_queue_storage()
-    annuaire = get_user_db()
-    chatter = get_chatter(queue=queue_storage, properties=properties, annuaire=annuaire)
+    phonebook = get_user_db()
+    chatter = get_chatter(
+        queue=queue_storage, properties=properties, phonebook=phonebook
+    )
 
     ChatterHolder(chatter)
     bot_loop_hole(chatter, commander, queue_storage)
+
 
 if __name__ == "__main__":
     main()

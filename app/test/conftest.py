@@ -4,10 +4,8 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.backend.api.main import app
-from app.db.object_storage_provider.file_storage import \
-    FileStorage
-from app.db.queue_storage_provider.deque_storage import \
-    DequeStorage
+from app.db.object_storage_provider.file_storage import FileStorage
+from app.db.queue_storage_provider.deque_storage import DequeStorage
 
 
 @pytest.fixture(scope="module")
