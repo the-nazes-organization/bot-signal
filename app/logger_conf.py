@@ -49,12 +49,12 @@ LOGGING = {
         },
     },
     "loggers": {
-        "app.core.process_handler": {
+        "app.backend.core.process_handler": {
             "handlers": ["file_cli"],
             "level": "DEBUG",
             "propagate": True,
         },
-        "app.api": {
+        "app.backend.api": {
             "handlers": ["console"],
             "level": "DEBUG",
             "propagate": True,

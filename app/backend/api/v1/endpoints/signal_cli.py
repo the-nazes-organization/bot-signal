@@ -20,7 +20,7 @@ async def put_signal_cli(
     handler: ProcessHandler = Depends(), db: ObjectStorage = Depends(get_process_db)
 ):
     pid = db.get("cli")
-    if pid:
+    if pid is not None:
         if handler.is_process_alive(pid):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,

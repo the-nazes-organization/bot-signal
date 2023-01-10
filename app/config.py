@@ -45,7 +45,7 @@ class Settings(BaseSettings):
     OPENAI_COMPLETION_MAX_TOKEN = "1000"
     OPENAI_HISTORY_LENGTH: int = "20"
     PROJECT_NAME: str = "Signal Bot"
-    PYTHON_BOT_FILE: str = "signal_bot/backend/bot/bot.py"
+    PYTHON_BOT_FILE: str = "app/bot/bot.py"
     QUEUE_STORAGE_MAXLEN: int = 50
     QUEUE_STORAGE_PROVIDER: str = "deque"
     SIGNAL_CLI_CONFIG_DIR: str = "signal-cli_config"
