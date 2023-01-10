@@ -1,0 +1,34 @@
+{
+    "jsonrpc": "2.0",
+    "method": "receive",
+    "params": {
+        "envelope": {
+            "source": "xxxxxxx",
+            "sourceNumber": "+03294832",
+            "sourceUuid": "xxxxxx-xxxxx",
+            "sourceName": "Jack",
+            "sourceDevice": 1,
+            "timestamp": 1670222444666,
+            "dataMessage": {
+                "timestamp": 1670222444666,
+                "message": null,
+                "expiresInSeconds": 0,
+                "viewOnce": false,
+                "reaction": {
+                    "emoji": "🐉",
+                    "targetAuthor": "xxxxxxx",
+                    "targetAuthorNumber": "+21093822",
+                    "targetAuthorUuid": "xxxxxx-xxxxx",
+                    "targetSentTimestamp": 1670222333666,
+                    "isRemove": false
+                },
+                "groupInfo": {
+                    "groupId": "dhwq98hwqoud1092u",
+                    "type": "DELIVER"
+                }
+            }
+        },
+        "account": "+23819239",
+        "subscription": 2
+    }
+}

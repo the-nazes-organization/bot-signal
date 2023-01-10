@@ -1,4 +1,5 @@
 pytest
-pylint==2.15.*
+ruff
 freezegun
 httpx
+pytest-mock

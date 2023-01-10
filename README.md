@@ -43,7 +43,7 @@ basic example are available in the command folder, inside function.py [here](sig
 - command: the command will be activated when the message start with the prefix
 - message: the command will be activated for every message
 - typing: the command will be activated when the user start typing
-- attachements: the command will be activated when the user send an attachement
+- attachments: the command will be activated when the user send an attachement
 
 If the activation_type is "command", the prefix is required. It is preferable that the prefix start with a "!".
 
