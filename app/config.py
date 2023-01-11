@@ -11,7 +11,9 @@ from app.bot.chat_client.clients.signal.formater import MessageFormater
 from app.bot.chat_client.clients.signal.formaters.jsonrpc import JsonRpcFormater
 from app.bot.chat_client.clients.signal.signal_chatter import SignalChatter
 from app.db.object_storage import ObjectStorage
-from app.db.object_storage_provider.file_storage import FileStorage
+from app.db.object_storage_provider.fs_storage import FsStorage
+from app.db.object_storage_provider.json_storage import JsonStorage
+from app.db.object_storage_provider.memory_storage import MemoryStorage
 from app.db.queue_storage import QueueStorage
 from app.db.queue_storage_provider.deque_storage import DequeStorage
 
@@ -59,7 +61,11 @@ class Settings(BaseSettings):
 
 
 def get_storage_mapping():
-    storage_mapping = {"file": FileStorage}
+    storage_mapping = {
+        "file": JsonStorage,
+        "fs": FsStorage,
+        "memory": MemoryStorage,
+    }
     return storage_mapping
 
 
@@ -163,7 +169,7 @@ def get_queue_storage() -> QueueStorage:
 
 def get_user_db() -> ObjectStorage:
     settings = get_settings()
-    mapping = {"file": FileStorage}
+    mapping = {"file": JsonStorage}
     return mapping[settings.STORAGE_PROVIDER_NUMBER_MAP_DB](get_db_number_map_path())
 
 

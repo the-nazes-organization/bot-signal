@@ -3,10 +3,11 @@ import json
 from app.db.object_storage import ObjectStorage
 
 
-class FileStorage(ObjectStorage):
+class JsonStorage(ObjectStorage):
     """
-    FileStorage is a class that implements the ObjectStorage interface
-    and is used to store data in a file.
+    JsonStorage is a class that implements the ObjectStorage interface
+    and is used to store data in file.
+    In the file, the data is stored in JSON format.
     """
 
     def __init__(self, path) -> None:

@@ -1,10 +1,13 @@
+import shutil
 import tempfile
 
 import pytest
 from fastapi.testclient import TestClient
 
 from app.backend.api.main import app
-from app.db.object_storage_provider.file_storage import FileStorage
+from app.db.object_storage_provider.fs_storage import FsStorage
+from app.db.object_storage_provider.json_storage import JsonStorage
+from app.db.object_storage_provider.memory_storage import MemoryStorage
 from app.db.queue_storage_provider.deque_storage import DequeStorage
 
 
@@ -14,12 +17,20 @@ def client():
         yield clt
 
 
-# fixture to create a FileStorage object
-@pytest.fixture(scope="module", params=["file_json"])
+@pytest.fixture(scope="module", params=["file_json", "fs", "memory"])
 def object_storage(file_json, request):
     if request.param == "file_json":
-        return FileStorage(file_json.name)
-    return None
+        yield JsonStorage(file_json.name)
+    elif request.param == "fs":
+        yield FsStorage("/tmp/signal_bot")
+        try:
+            shutil.rmtree("/tmp/signal_bot")
+        except FileNotFoundError:
+            pass
+    elif request.param == "memory":
+        yield MemoryStorage()
+    else:
+        raise ValueError("Invalid object storage type")
 
 
 @pytest.fixture(scope="function", params=["deque"])

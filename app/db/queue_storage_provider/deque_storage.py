@@ -5,7 +5,7 @@ from app.db.queue_storage import QueueStorage
 
 class DequeStorage(QueueStorage):
     """
-    FileStorage is a class that implements the ObjectStorage interface
+    DequeuStorage is a class that implements the ObjectStorage interface
     and is used to store data in a deque collection.
     """
 

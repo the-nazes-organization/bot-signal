@@ -1,59 +1,59 @@
 {
-	"name": "Signal-bot",
-	"build": {
-		"dockerfile": "../Dockerfile",
-		"context": ".."
-	},
+    "name": "Signal-bot",
+    "build": {
+        "dockerfile": "../Dockerfile",
+        "context": ".."
+    },
 
-	// "workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind",
-	// "workspaceFolder": "/app",
+    // "workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind",
+    // "workspaceFolder": "/app",
 
-	"mounts": [
-		"source=${localWorkspaceFolder}/.data,target=/data,type=bind,consistency=cached"
-	],
+    "mounts": [
+        "source=${localWorkspaceFolder}/.data,target=/data,type=bind,consistency=cached"
+    ],
 
-	// Configure tool-specific properties
-	"customizations": {
-		// Configure properties specific to VS Code.
-		"vscode": {
-			// Set *default* container specific settings.json values on container create.
-			"settings": { 
-				"terminal.integrated.defaultProfile.linux": "bash",
-				"python.defaultInterpreterPath": "/usr/local/bin/python",
-				"python.linting.enabled": true,
-				"python.linting.pylintEnabled": true,
-				"python.formatting.autopep8Path": "/app/.local/bin/autopep8",
-				"python.formatting.blackPath": "/app/.local/bin/black",
-				"python.formatting.yapfPath": "/app/.local/bin/yapf",
-				"python.linting.banditPath": "/app/.local/bin/bandit",
-				"python.linting.flake8Path": "/app/.local/bin/flake8",
-				"python.linting.mypyPath": "/app/.local/bin/mypy",
-				"python.linting.pycodestylePath": "/app/.local/bin/pycodestyle",
-				"python.linting.pydocstylePath": "/app/.local/bin/pydocstyle",
-				"python.linting.pylintPath": "/app/.local/bin/pylint"
-			},
-			
-			// Add the IDs of extensions you want installed when the container is created.
-			"extensions": [
-				"ms-python.python",
-				"ms-python.vscode-pylance",
-				"GitHub.copilot",
-				"charliermarsh.ruff"
-			]
-		}
-	},
-	"remoteUser": "signal-bot",
-	"remoteEnv": {
-		"PATH": "${containerEnv:PATH}:/app/.local/bin",
-		"PYTHONDONTWRITEBYTECODE": "1"
+    // Configure tool-specific properties
+    "customizations": {
+        // Configure properties specific to VS Code.
+        "vscode": {
+            // Set *default* container specific settings.json values on container create.
+            "settings": { 
+                "python.defaultInterpreterPath": "/usr/local/bin/python",
+                "python.formatting.provider": "black",
+                "python.formatting.blackArgs": [
+                    "--line-length",
+                    "90",
+                    "--preview"
+                ],
+                "python.linting.enabled": true,
+                "python.linting.pylintEnabled": true,
+                "python.testing.pytestArgs": ["app"],
+                "python.testing.pytestEnabled": true,
+                "python.testing.unittestEnabled": false,
+                "terminal.integrated.defaultProfile.linux": "bash",
+            },
+            
+            // Add the IDs of extensions you want installed when the container is created.
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "GitHub.copilot",
+                "charliermarsh.ruff"
+            ]
+        }
+    },
+    "remoteUser": "signal-bot",
+    "remoteEnv": {
+        "PATH": "${containerEnv:PATH}:/app/.local/bin",
+        "PYTHONDONTWRITEBYTECODE": "1"
 
-	},
+    },
 
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": []
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    // "forwardPorts": []
 
-	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "pip3 install --user black autopep8 yapf bandit flake8 mypy pycodestyle pydocstyle pylint pre-commit"
+    // Use 'postCreateCommand' to run commands after the container is created.
+    "postCreateCommand": "pip3 install --user black autopep8 yapf bandit flake8 mypy pycodestyle pydocstyle pylint pre-commit"
 
-	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+    // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 }

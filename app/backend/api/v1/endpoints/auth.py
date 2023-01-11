@@ -15,7 +15,6 @@ router = APIRouter()
 
 @router.get("/")
 async def google_auth(request: Request, auth: Auth = Depends()):
-
     flow = Flow.from_client_config(get_google_config(), settings.GOOGLE.SCOPES)
     flow.redirect_uri = request.url_for("google_auth_callback")
     auth_url, state = flow.authorization_url()
@@ -30,7 +29,6 @@ async def google_auth(request: Request, auth: Auth = Depends()):
 async def google_auth_callback(
     request: Request, state: str, code: str, auth: Auth = Depends()
 ) -> AuthToken:
-
     if auth.inject_or_delete_state_token(state, "delete") is False:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Unknown state token"
