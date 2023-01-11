@@ -8,3 +8,8 @@ autoformat:  ## Run the autoformatter.
 l: lint  ## Alias for `lint`
 lint:  ## Run the linter.
 	PYTHONPATH=. ruff --config ruff.toml app
+
+
+t : test  ## Alias for `test`
+test:
+	PYTHONPATH=. pytest --cov=app --cov-config=.coveragerc app/test
