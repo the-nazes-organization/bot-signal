@@ -48,7 +48,6 @@ class Command:
 
         """
         for command in commands:
-
             if self.is_condition_true(command.get("condition"), data):
                 try:
                     logger.debug(msg=f"Start function {command['function'].__name__}")
@@ -144,6 +143,7 @@ class Command:
         return:
             True if the condition is true, False otherwise
         """
+
         # https://stackoverflow.com/questions/10048249/how-do-i-determine-if-current-time-is-within-a-specified-range-using-pythons-da
         def is_time_between(begin_time, end_time, check_time=None):
             # If check time is not given, default to current UTC time

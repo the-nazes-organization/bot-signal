@@ -24,4 +24,4 @@ jobs:
           make l
       - name: Run test codes with pytest
         run: |
-          python -m pytest .
+          make t

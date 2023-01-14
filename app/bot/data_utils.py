@@ -15,7 +15,6 @@ def _get_users_from_mentions_data(mentions: List[Mention] | None) -> List:
 def enrich_user_data_with_db_name(
     data: DataFormated, user_db: ObjectStorage
 ) -> DataFormated:
-
     users = [data.user]
     if data.message:
         if data.message.quote:

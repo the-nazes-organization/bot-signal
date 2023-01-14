@@ -290,7 +290,6 @@ class JsonRpcFormater(MessageFormater):
         return None
 
     def _get_attachments_formated_data(self, data: dict) -> List[AttachmentData] | None:
-
         attachments = None
         if data and data.get("attachments") and len(data.get("attachments")) > 0:
             attachments = list()
