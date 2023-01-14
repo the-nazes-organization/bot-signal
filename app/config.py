@@ -36,6 +36,7 @@ class Settings(BaseSettings):
     DB_STATE: str = "db/state.json"
     DB_USER: str = "db/users.json"
     GOOGLE: GoogleSettings = GoogleSettings()
+    LOG_PATH: str = "/var/log/signal_bot"
     LOG_LEVEL_BOT: str = "INFO"
     LOG_LEVEL_CLI: str = "INFO"
     LOG_LEVEL_CONSOLE: str = "DEBUG"

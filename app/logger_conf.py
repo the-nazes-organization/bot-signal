@@ -4,8 +4,8 @@ from app.config import get_settings
 
 settings = get_settings()
 
-if not os.path.exists(os.path.join(settings.VOLUME_PATH, "logs")):
-    os.makedirs(os.path.join(settings.VOLUME_PATH, "logs"))
+if not os.path.exists(os.path.join(settings.LOGS_PATH)):
+    os.makedirs(os.path.join(settings.LOGS_PATH))
 
 
 LOGGING = {
