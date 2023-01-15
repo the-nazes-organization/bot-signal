@@ -4,8 +4,8 @@ from app.config import get_settings
 
 settings = get_settings()
 
-if not os.path.exists(os.path.join(settings.VOLUME_PATH, "logs")):
-    os.makedirs(os.path.join(settings.VOLUME_PATH, "logs"))
+if not os.path.exists(os.path.join(settings.LOGS_PATH)):
+    os.makedirs(os.path.join(settings.LOGS_PATH))
 
 
 LOGGING = {
@@ -50,22 +50,22 @@ LOGGING = {
     },
     "loggers": {
         "app.backend.core.process_handler": {
-            "handlers": ["file_cli"],
+            "handlers": ["console", "file_cli"],
             "level": "DEBUG",
             "propagate": True,
         },
         "app.backend.api": {
-            "handlers": ["console"],
+            "handlers": ["console", ],
             "level": "DEBUG",
             "propagate": True,
         },
         "app.bot": {
-            "handlers": ["file_bot"],
+            "handlers": ["console", "file_bot"],
             "level": "DEBUG",
             "propagate": True,
         },
         "app.commands": {
-            "handlers": ["file_bot"],
+            "handlers": ["console", "file_cli"],
             "level": "DEBUG",
             "propagate": True,
         },
