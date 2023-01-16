@@ -307,6 +307,6 @@ class JsonRpcFormater(MessageFormater):
         # Receiving timestamp in millisec transform to sec
         return datetime.fromtimestamp(timestamp / 1000.0)
 
-    def _get_timestamp_from_datetime(self, time: datetime) -> float:
+    def _get_timestamp_from_datetime(self, time: datetime) -> int:
         # Transform timestamp back to millisec
-        return time.timestamp() * 1000
+        return int(time.timestamp() * 1000)
