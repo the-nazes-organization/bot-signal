@@ -1,5 +1,6 @@
 import logging
 import re
+import threading
 import time as check_timestamp
 import traceback
 from datetime import datetime, time
@@ -35,8 +36,8 @@ class Command:
         "reaction": [],
     }
 
-    def __init__(self):
-        pass
+    def __init__(self, threading=True):
+        self.threading = threading
 
     def _start_functions(self, commands, data: DataFormated):
         """
@@ -49,22 +50,35 @@ class Command:
         """
         for command in commands:
             if self.is_condition_true(command.get("condition"), data):
-                try:
-                    logger.debug(msg=f"Start function {command['function'].__name__}")
-                    start_time = check_timestamp.time()
 
-                    command["function"](data)
+                def run_thread_and_log():
+                    try:
+                        logger.debug(
+                            msg=f"Start function {command['function'].__name__}"
+                        )
+                        start_time = check_timestamp.time()
 
-                    end_time = check_timestamp.time()
-                    logger.debug(
-                        msg=f"End function executed in {end_time - start_time}"
+                        command["function"](data)
+
+                        end_time = check_timestamp.time()
+                        logger.debug(
+                            msg=f"End function executed in {end_time - start_time}"
+                        )
+                    except Exception:
+                        logger.error(
+                            "Error while handling function: %s: %s",
+                            command["function"].__name__,
+                            traceback.format_exc(),
+                        )
+
+                if self.threading:
+                    thread = threading.Thread(
+                        target=run_thread_and_log
                     )
-                except Exception:
-                    logger.error(
-                        "Error while handling function: %s: %s",
-                        command["function"].__name__,
-                        traceback.format_exc(),
-                    )
+                    thread.start()
+                else:
+                    run_thread_and_log()
+
 
     def handle_reaction(self, data: DataFormated) -> None:
         """
