@@ -36,8 +36,8 @@ class Command:
         "reaction": [],
     }
 
-    def __init__(self):
-        pass
+    def __init__(self, threading=True):
+        self.threading = threading
 
     def _start_functions(self, commands, data: DataFormated):
         """
@@ -71,10 +71,13 @@ class Command:
                             traceback.format_exc(),
                         )
 
-                thread = threading.Thread(
-                    target=run_thread_and_log
-                )
-                thread.start()
+                if self.threading:
+                    thread = threading.Thread(
+                        target=run_thread_and_log
+                    )
+                    thread.start()
+                else:
+                    run_thread_and_log()
 
 
     def handle_reaction(self, data: DataFormated) -> None:

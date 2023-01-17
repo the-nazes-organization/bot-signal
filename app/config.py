@@ -10,6 +10,7 @@ from app.bot.chat_client.clients.facebook_chatter import FacebookChatter
 from app.bot.chat_client.clients.signal.formater import MessageFormater
 from app.bot.chat_client.clients.signal.formaters.jsonrpc import JsonRpcFormater
 from app.bot.chat_client.clients.signal.signal_chatter import SignalChatter
+from app.bot.command import Command
 from app.db.object_storage import ObjectStorage
 from app.db.object_storage_provider.fs_storage import FsStorage
 from app.db.object_storage_provider.json_storage import JsonStorage
@@ -28,7 +29,7 @@ class GoogleSettings(BaseSettings):
 
 
 class Settings(BaseSettings):
-    ALLOW_EXECUTE_SELF_SEND: str = "n"
+    ALLOW_EXECUTE_SELF_SEND: str | None = None
     API_V1_STR: str = "/api/v1"
     CHATTER_CLIENT: str = "signal"
     DB_NUMBER_MAP: str = "db/numbers_map.json"
@@ -57,6 +58,7 @@ class Settings(BaseSettings):
     STORAGE_PROVIDER_PROCESS_DB: str = "file"
     STORAGE_PROVIDER_STATE_DB: str = "file"
     STORAGE_PROVIDER_USER_DB: str = "file"
+    THREADING_DISABLED: str | None = None
     VERSION: str = "0.0.1"
     VOLUME_PATH: str = "/tmp/signal-bot"
 
@@ -95,12 +97,6 @@ def get_google_config():
 
 
 @lru_cache()
-def is_allow_to_execute_self_send():
-    settings = get_settings()
-    return settings.ALLOW_EXECUTE_SELF_SEND == "y"
-
-
-@lru_cache()
 def get_signal_cli_config_path():
     settings = get_settings()
     return settings.VOLUME_PATH + "/" + settings.SIGNAL_CLI_CONFIG_DIR
@@ -136,6 +132,13 @@ def get_db_number_map_path():
     return settings.VOLUME_PATH + "/" + settings.DB_NUMBER_MAP
 
 
+def get_command() -> Command:
+    settings = get_settings()
+    return Command(
+        threading=settings.THREADING_DISABLED is None
+    )
+
+
 def get_formater(properties, debug) -> MessageFormater:
     return JsonRpcFormater(
         account=properties.account,
@@ -151,7 +154,7 @@ def get_chatter(queue, properties, phonebook) -> Chatter:
         "signal": SignalChatter,
         "facebook": FacebookChatter,
     }
-    formater = get_formater(properties, settings.ALLOW_EXECUTE_SELF_SEND == "y")
+    formater = get_formater(properties, bool(settings.ALLOW_EXECUTE_SELF_SEND))
     return mapping[settings.CHATTER_CLIENT](
         queue=queue,
         formater=formater,

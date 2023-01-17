@@ -9,7 +9,7 @@ from app.bot.chat_client.chatter import Chatter, ChatterHolder
 from app.bot.command import Command
 from app.bot.data_utils import enrich_user_data_with_db_name
 from app.bot.schema.data_formated import DataFormated
-from app.config import get_chatter, get_queue_storage, get_user_db
+from app.config import get_chatter, get_queue_storage, get_user_db, get_command
 from app.db.queue_storage import QueueStorage
 from app.logger_conf import LOGGING
 
@@ -62,7 +62,7 @@ def main():
     properties = BotProperties(
         account=args.account, receiver_type=args.receiver_type, receiver=args.receiver
     )
-    commander = Command()
+    commander = get_command()
     queue_storage = get_queue_storage()
     phonebook = get_user_db()
     chatter = get_chatter(

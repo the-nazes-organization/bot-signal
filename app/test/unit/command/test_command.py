@@ -201,7 +201,7 @@ def test_start_functions(capfd, bdata_formated):
         {"function": test_function_1, "condition": {"regex": "test"}},
     ]
     bdata_formated.message = Message(text="test")
-    cmd = Command()
+    cmd = Command(threading=False)
     assert cmd._start_functions(commands, bdata_formated) is None
     out, _ = capfd.readouterr()
     assert "1 worked\n2 worked\n" == out
@@ -214,7 +214,7 @@ def test_start_functions_exception(caplog, bdata_formated):
         raise ValueError("test")
 
     commands = [{"function": test_function}]
-    cmd = Command()
+    cmd = Command(threading=False)
     assert cmd._start_functions(commands, bdata_formated) is None
     assert "Error while handling function: test_function" in caplog.text
 
@@ -229,7 +229,7 @@ def test_handle_reaction(capfd, bdata_formated):
     bdata_formated.reaction = Reaction(
         reaction="🖖", target_author=bdata_formated.user, sent_at=bdata_formated.sent_at
     )
-    cmd = Command()
+    cmd = Command(threading=False)
     assert cmd.handle_reaction(bdata_formated) is None
     out, _ = capfd.readouterr()
     assert "🖖\n" == out
@@ -245,7 +245,7 @@ def test_handle_attachments(capfd, bdata_formated):
     bdata_formated.attachments = [
         AttachmentData(content_type="txt", filename="romfib_passwords", size=999999)
     ]
-    cmd = Command()
+    cmd = Command(threading=False)
     assert cmd.handle_attachments(bdata_formated) is None
     out, _ = capfd.readouterr()
     assert "romfib_passwords\n" == out
@@ -259,7 +259,7 @@ def test_handle_typing(capfd, bdata_formated):
         print(data.typing.status)
 
     bdata_formated.typing = Typing(status="STARTED")
-    cmd = Command()
+    cmd = Command(threading=False)
     assert cmd.handle_typing(bdata_formated) is None
     out, _ = capfd.readouterr()
     assert "TypingStatus.STARTED\n" == out
@@ -274,7 +274,7 @@ def test_handle_message(capfd, bdata_formated):
             print("oui")
 
     bdata_formated.message = Message(text="tu marches ?")
-    cmd = Command()
+    cmd = Command(threading=False)
     assert cmd.handle_message(bdata_formated) is None
     out, _ = capfd.readouterr()
     assert out == "oui\n"
@@ -288,7 +288,7 @@ def test_handle_message_command(capfd, bdata_formated):
         print(data.message.text)
 
     bdata_formated.message = Message(text="!test_command hello")
-    cmd = Command()
+    cmd = Command(threading=False)
     assert cmd.handle_message(bdata_formated) is None
     out, _ = capfd.readouterr()
     assert "hello\n" in out
@@ -303,7 +303,7 @@ def test_handle_message_command_only_prefix(capfd, bdata_formated):
             print("empty")
 
     bdata_formated.message = Message(text="!test_command")
-    cmd = Command()
+    cmd = Command(threading=False)
     assert cmd.handle_message(bdata_formated) is None
     out, _ = capfd.readouterr()
     assert "empty\n" in out
@@ -317,7 +317,7 @@ def test_handle_message_command_no_prefix(capfd, bdata_formated):
         print(data.message.text)
 
     bdata_formated.message = Message(text="!test_commandhello")
-    cmd = Command()
+    cmd = Command(threading=False)
     assert cmd.handle_message(bdata_formated) is None
     out, _ = capfd.readouterr()
     assert "hello\n" not in out
