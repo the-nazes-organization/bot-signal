@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+import time
 
 import pytest
 
@@ -20,14 +21,15 @@ def test_get_base_rpc_obj(formater):
 def test_format_reaction(formater):
     emoji = "🐒"
     user = "jacky"
-    time = datetime.now()
-    data = formater.format_reaction(emoji, user, time)
+    current_timestamp_in_millisec = round(time.time() * 1000) / 1000
+    sent = datetime.fromtimestamp(current_timestamp_in_millisec)
+    data = formater.format_reaction(emoji, user, sent)
     obj = json.loads(data)
     params = obj.get("params")
     assert obj.get("method") == "sendReaction"
     assert params.get("emoji") == emoji
     assert params.get("targetAuthor") == user
-    assert formater._get_datetime_from_timestamp(params.get("targetTimestamp")) == time
+    assert formater._get_datetime_from_timestamp(params.get("targetTimestamp")) == sent
 
 
 def test_format_typing(formater):
@@ -54,7 +56,8 @@ def test_format_message(formater, phonebook):
     message = "ok"
     attachments = ["image", "pok"]
     quote_author = "meyeurll"
-    quote_sent = datetime.now()
+    current_timestamp_in_millisec = round(time.time() * 1000) / 1000
+    quote_sent = datetime.fromtimestamp(current_timestamp_in_millisec)
     data = formater.format_message(
         phonebook, message, attachments, quote_author, quote_sent
     )
